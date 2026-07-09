@@ -1,20 +1,31 @@
 import 'package:flutter/material.dart';
 
+import 'pages/pagina_inicial.dart';
+import 'pages/home.dart';
+
+import 'theme/tema_claro.dart';
+import 'theme/tema_escuro.dart';
+
 void main() {
-  runApp(const MainApp());
+  runApp(const MyApp());
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
-      ),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'App de Tarefas',
+      theme: temaClaro(),
+      darkTheme: temaEscuro(),
+      themeMode: ThemeMode.light,
+      initialRoute: '/',
+      routes: {
+        '/': (_) => const PaginaInicial(),
+        '/home': (_) => const MinhasTarefas(),
+      },
     );
   }
 }
