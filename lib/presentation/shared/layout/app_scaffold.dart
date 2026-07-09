@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pei/pages/shared/widgets/bottom_nav_bar.dart';
+import 'package:pei/presentation/shared/widgets/bottom_nav_bar.dart';
 
 class AppScaffold extends StatelessWidget {
   const AppScaffold({

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'pages/pagina_inicial.dart';
-import 'pages/home.dart';
+import 'presentation/auth/pagina_inicial.dart';
+import 'presentation/minhas_tarefas/minhas_tarefas.dart';
 
 import 'theme/tema_claro.dart';
 import 'theme/tema_escuro.dart';

@@ -9,7 +9,7 @@ ThemeData temaClaro() => ThemeData(
 
   fontFamily: 'Inter',
 
-  colorScheme: const ColorScheme.light(
+  colorScheme: const .light(
     primary: AppCores.primary,
     onPrimary: Colors.white,
     secondary: AppCores.primary,
@@ -27,11 +27,10 @@ ThemeData temaClaro() => ThemeData(
     foregroundColor: AppCores.textoPrincipalClaro,
     actionsIconTheme: IconThemeData(color: AppCores.textoPrincipalClaro),
     shadowColor: AppCores.cardShadowClaro,
-    elevation: 0,
+    elevation: 2,
   ),
 
   bottomNavigationBarTheme: BottomNavigationBarThemeData(
-    backgroundColor: AppCores.backgroundClaro,
     selectedIconTheme: IconThemeData(color: AppCores.primary),
     unselectedIconTheme: IconThemeData(color: AppCores.iconClaro),
     selectedLabelStyle: TextStyle(color: AppCores.primary),
@@ -47,23 +46,30 @@ ThemeData temaClaro() => ThemeData(
     style: ElevatedButton.styleFrom(
       backgroundColor: AppCores.primary,
       foregroundColor: Colors.white,
-      textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+      textStyle: TextStyle(color: Colors.white, fontWeight: .w500),
     ),
   ),
 
   cardTheme: CardThemeData(
     color: AppCores.surfaceClaro,
     shadowColor: AppCores.cardShadowClaro,
-    elevation: 0,
+    elevation: 2,
   ),
 
-  floatingActionButtonTheme: FloatingActionButtonThemeData(
-    elevation: 0,
-  ),
+  floatingActionButtonTheme: FloatingActionButtonThemeData(elevation: 0),
 
   popupMenuTheme: PopupMenuThemeData(
     position: PopupMenuPosition.under,
-    
-    elevation: 0,
+    shadowColor: AppCores.cardShadowClaro,
+    elevation: 2,
+  ),
+
+  segmentedButtonTheme: SegmentedButtonThemeData(
+    style: SegmentedButton.styleFrom(
+      visualDensity: VisualDensity.comfortable,
+      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      backgroundColor: AppCores.surfaceClaro,
+      selectedBackgroundColor: AppCores.primary,
+    ),
   ),
 );

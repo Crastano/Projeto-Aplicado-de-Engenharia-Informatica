@@ -30,7 +30,7 @@ class BottomNavBar extends StatelessWidget {
         ),
         NavigationDestination(
           icon: Icon(Icons.more_horiz),
-          label: 'Configurações',
+          label: 'Mais',
         ),
       ],
     );

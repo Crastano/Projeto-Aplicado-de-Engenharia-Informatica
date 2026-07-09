@@ -9,7 +9,7 @@ class AppCores {
   static const textoSecundarioClaro = Color(0xFF6B7280);
   static const iconClaro = Color(0xFF8A8F98);
   static const borderClaro = Color(0xFFD6DAE0);
-  static const cardShadowClaro = Color(0x80000000);
+  static const cardShadowClaro = Color.fromARGB(255, 0, 0, 0);
 
   static const backgroundEscuro = Color(0xFF07101D);
   static const surfaceEscuro = Color(0xFF162233);
@@ -17,10 +17,10 @@ class AppCores {
   static const textoSecundarioEscuro = Color(0xFFA6ADB8);
   static const iconEscuro = Color(0xFF9AA3AF);
   static const borderEscuro = Color(0xFF2A3648);
-  static const cardShadowEscuro = Color(0x7fffffff);
+  static const cardShadowEscuro = Color.fromARGB(255, 255, 255, 255);
 
   static const concluidoBackgroundClaro = Color(0xFFCBF0C3);
-  static const concluidoTextClaro = Color(0xFFD1D5DB);
+  static const concluidoTextClaro = Color(0xFF2F7D32);
   static const concluidoBackgroundEscuro = Color(0xFF214D2A);
   static const concluidoTextEscuro = Color(0xFFB8F0B5);
 
