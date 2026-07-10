@@ -11,7 +11,7 @@ class BottomNavBar extends StatelessWidget {
   void _goTo(BuildContext context, int index) {
     final routes = ['/home', '/calendario', '/configuracoes'];
     if (index == currentIndex) return;
-    Navigator.pushReplacementNamed(context, routes[index]);
+    Navigator.pushNamed(context, routes[index]);
   }
 
   @override

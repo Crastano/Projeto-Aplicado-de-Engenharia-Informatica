@@ -7,8 +7,8 @@ import 'package:pei/models/tarefaItem.dart';
 import 'package:pei/controller/home_controller.dart';
 
 // Widgets personais
-import 'package:pei/presentation/minhas_tarefas/widgets/selecionar_data.dart';
-import 'package:pei/presentation/minhas_tarefas/widgets/selecionar_filter.dart';
+import 'widgets/selecionar_data.dart';
+import 'widgets/selecionar_filter.dart';
 
 // Widgets partilhados
 import 'package:pei/presentation/shared/layout/app_scaffold.dart';
@@ -104,7 +104,7 @@ class _MinhasTarefasState extends State<MinhasTarefas> {
                     physics: const BouncingScrollPhysics(),
                     itemCount: tarefasFiltradas.length,
                     separatorBuilder: (context, index) {
-                      return SizedBox(height: altura * 0.025);
+                      return SizedBox(height: altura * 0.02);
                     },
                     itemBuilder: (context, index) {
                       return TarefaCard(

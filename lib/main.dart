@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
+// Páginas
 import 'presentation/auth/pagina_inicial.dart';
-import 'presentation/minhas_tarefas/minhas_tarefas.dart';
+import 'presentation/home/minhas_tarefas.dart';
+import 'presentation/calendario/calendario.dart';
 
+// Temas
 import 'theme/tema_claro.dart';
 import 'theme/tema_escuro.dart';
 
@@ -25,6 +28,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (_) => const PaginaInicial(),
         '/home': (_) => const MinhasTarefas(),
+        '/calendario': (_) => const Calendario(),
       },
     );
   }
