@@ -56,7 +56,10 @@ ThemeData temaClaro() => ThemeData(
     elevation: 2,
   ),
 
-  floatingActionButtonTheme: FloatingActionButtonThemeData(elevation: 0),
+  floatingActionButtonTheme: FloatingActionButtonThemeData(
+    elevation: 0,
+    shape: CircleBorder(),
+  ),
 
   popupMenuTheme: PopupMenuThemeData(
     position: PopupMenuPosition.under,

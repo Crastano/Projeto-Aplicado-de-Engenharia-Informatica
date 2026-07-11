@@ -1,3 +1,5 @@
+// Modelos
+
 import 'package:pei/models/tarefaItem.dart';
 
 enum FilterData { nenhuma, ontem, hoje, amanha, mes, ano }
@@ -56,8 +58,7 @@ class TarefasController {
         return mesmoDia(dataTarefa, amanha);
 
       case FilterData.mes:
-        return dataTarefa.year == hoje.year &&
-            dataTarefa.month == hoje.month;
+        return dataTarefa.year == hoje.year && dataTarefa.month == hoje.month;
 
       case FilterData.ano:
         return dataTarefa.year == hoje.year;

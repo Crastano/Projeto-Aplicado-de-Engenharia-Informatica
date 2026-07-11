@@ -1,24 +1,29 @@
 import 'package:flutter/material.dart';
 
-class BottomNavBar extends StatelessWidget {
+class BottomNavBar extends StatefulWidget {
   const BottomNavBar({
     super.key,
-    required this.currentIndex,
+    required this.indexAtual,
   });
 
-  final int currentIndex;
+  final int indexAtual;
 
-  void _goTo(BuildContext context, int index) {
+  @override
+  State<BottomNavBar> createState() => _BottomNavBarState();
+}
+
+class _BottomNavBarState extends State<BottomNavBar> {
+  void irPara(BuildContext context, int index) {
     final routes = ['/home', '/calendario', '/configuracoes'];
-    if (index == currentIndex) return;
+    if (index == widget.indexAtual) return;
     Navigator.pushNamed(context, routes[index]);
   }
 
   @override
   Widget build(BuildContext context) {
     return NavigationBar(
-      selectedIndex: currentIndex,
-      onDestinationSelected: (index) => _goTo(context, index),
+      selectedIndex: widget.indexAtual,
+      onDestinationSelected: (index) => irPara(context, index),
       destinations: const [
         NavigationDestination(
           icon: Icon(Icons.checklist),

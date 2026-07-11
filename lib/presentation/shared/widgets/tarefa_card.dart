@@ -48,14 +48,14 @@ class _TarefaCardState extends State<TarefaCard> {
 
     return Card.outlined(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(widget.largura * 0.05),
+        borderRadius: .circular(widget.largura * 0.05),
         side: BorderSide(
           color: Theme.of(context).colorScheme.outline, // border color
           width: widget.largura * 0.005, // border width
         ),
       ),
       color: cardColor,
-      clipBehavior: .hardEdge,
+      clipBehavior: .antiAlias,
       child: InkWell(
         onTap: widget.cardTap,
         child: ListTile(

@@ -6,6 +6,9 @@ import 'package:pei/models/tarefaItem.dart';
 // Widgets partilhados
 import 'package:pei/presentation/shared/widgets/tarefa_card.dart';
 
+// Controladores
+import 'package:pei/controller/calendario_controller.dart';
+
 // ignore: must_be_immutable
 class CalendarioListaTarefas extends StatefulWidget {
   const CalendarioListaTarefas({
@@ -13,7 +16,6 @@ class CalendarioListaTarefas extends StatefulWidget {
     required this.tarefasSelecionados,
     required this.largura,
     required this.altura,
-    required this.formatarDataSelecionada,
     required this._focusedDay,
     required this._selectedDay,
   });
@@ -21,7 +23,6 @@ class CalendarioListaTarefas extends StatefulWidget {
   final ValueNotifier<List<TarefaItem>> tarefasSelecionados;
   final double largura;
   final double altura;
-  final Function(DateTime) formatarDataSelecionada;
   final DateTime _focusedDay;
   final DateTime? _selectedDay;
 
@@ -30,6 +31,8 @@ class CalendarioListaTarefas extends StatefulWidget {
 }
 
 class _CalendarioListaTarefasState extends State<CalendarioListaTarefas> {
+  final CalendarioController controlador = CalendarioController();
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<List<TarefaItem>>(
@@ -61,7 +64,7 @@ class _CalendarioListaTarefasState extends State<CalendarioListaTarefas> {
               SizedBox(height: widget.altura * 0.01),
 
               Text(
-                widget.formatarDataSelecionada(
+                controlador.formatarDataSelecionada(
                   widget._selectedDay ?? widget._focusedDay,
                 ),
                 style: TextStyle(
@@ -78,7 +81,9 @@ class _CalendarioListaTarefasState extends State<CalendarioListaTarefas> {
                   child: Center(
                     child: Text(
                       'Não existem tarefas neste dia.',
-                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: widget.largura * 0.04,
+                      ),
                     ),
                   ),
                 )

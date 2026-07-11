@@ -24,7 +24,7 @@ class MinhasTarefas extends StatefulWidget {
 }
 
 class _MinhasTarefasState extends State<MinhasTarefas> {
-  final TarefasController controller = TarefasController();
+  final TarefasController controlador = TarefasController();
   final List<TarefaItem> tarefas = Tarefas123().tarefas;
 
   void alterarEstadoTarefa(TarefaItem tarefa) {
@@ -41,7 +41,7 @@ class _MinhasTarefasState extends State<MinhasTarefas> {
 
   @override
   Widget build(BuildContext context) {
-    final List<TarefaItem> tarefasFiltradas = controller.filtrarTarefas(
+    final List<TarefaItem> tarefasFiltradas = controlador.filtrarTarefas(
       tarefas,
     );
 
@@ -66,6 +66,7 @@ class _MinhasTarefasState extends State<MinhasTarefas> {
           currentIndex: 0,
           floatingActionButton: true,
           bottomNavigationBar: true,
+          largura: largura,
 
           body: Padding(
             padding: .all(largura * 0.06),
@@ -76,10 +77,10 @@ class _MinhasTarefasState extends State<MinhasTarefas> {
                   children: [
                     SelecionarData(
                       largura: largura,
-                      selecionado: controller.dataSelecionada,
+                      selecionado: controlador.dataSelecionada,
                       onChanged: (value) {
                         setState(() {
-                          controller.dataSelecionada = value;
+                          controlador.dataSelecionada = value;
                         });
                       },
                     ),
@@ -88,10 +89,10 @@ class _MinhasTarefasState extends State<MinhasTarefas> {
 
                     SelecionarFilter(
                       largura: largura,
-                      selecionado: controller.filtroSelecionado,
+                      selecionado: controlador.filtroSelecionado,
                       onChanged: (value) {
                         setState(() {
-                          controller.filtroSelecionado = value;
+                          controlador.filtroSelecionado = value;
                         });
                       },
                     ),

@@ -42,6 +42,7 @@ class _SelecionarDataState extends State<SelecionarData> {
     final double largura = widget.largura;
 
     return PopupMenuButton<FilterData>(
+      tooltip: 'Filtrar tempo',
       initialValue: widget.selecionado,
       onSelected: (value) {
         setState(() {
@@ -75,11 +76,14 @@ class _SelecionarDataState extends State<SelecionarData> {
             label,
             style: TextStyle(fontWeight: .w500, fontSize: largura * 0.06),
           ),
-          Icon(
-            aberto
-                ? Icons.keyboard_arrow_up_rounded
-                : Icons.keyboard_arrow_down_rounded,
-            size: largura * 0.1,
+          AnimatedRotation(
+            turns: aberto ? 0.5 : 0,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            child: Icon(
+              Icons.keyboard_arrow_down_rounded,
+              size: widget.largura * 0.075,
+            ),
           ),
         ],
       ),

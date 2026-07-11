@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pei/presentation/calendario/widgets/calendario_lista_tarefas.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import 'utils.dart';
@@ -8,11 +7,15 @@ import 'package:pei/tarefas.dart';
 // Modelos
 import 'package:pei/models/tarefaItem.dart';
 
-// Widget persoais
+// Widget personais
 import 'widgets/calendario_widget.dart';
+import 'package:pei/presentation/calendario/widgets/calendario/calendario_lista_tarefas.dart';
+import 'package:pei/presentation/calendario/widgets/selecionar_tipo_calendario.dart';
 
 // Widgets partilhados
 import 'package:pei/presentation/shared/layout/app_scaffold.dart';
+
+import 'package:pei/controller/calendario_controller.dart';
 
 class Calendario extends StatefulWidget {
   const Calendario({super.key});
@@ -22,6 +25,7 @@ class Calendario extends StatefulWidget {
 }
 
 class _CalendarioState extends State<Calendario> {
+  final CalendarioController controlador = CalendarioController();
   late final ValueNotifier<List<TarefaItem>> tarefasSelecionados;
 
   DateTime _focusedDay = DateTime.now();
@@ -32,17 +36,15 @@ class _CalendarioState extends State<Calendario> {
     super.initState();
 
     _selectedDay = _focusedDay;
-    tarefasSelecionados = ValueNotifier(obterTarefasDoDia(_selectedDay!));
+    tarefasSelecionados = ValueNotifier(
+      controlador.obterTarefasDoDia(_selectedDay!),
+    );
   }
 
   @override
   void dispose() {
     tarefasSelecionados.dispose();
     super.dispose();
-  }
-
-  List<TarefaItem> obterTarefasDoDia(DateTime day) {
-    return kTarefas[day] ?? [];
   }
 
   void noDiaSelecionado(DateTime selectedDay, DateTime focusedDay) {
@@ -55,58 +57,12 @@ class _CalendarioState extends State<Calendario> {
       _focusedDay = focusedDay;
     });
 
-    tarefasSelecionados.value = obterTarefasDoDia(selectedDay);
-  }
-
-  String mesTitulo(DateTime dia) {
-    const meses = [
-      'Janeiro',
-      'Fevereiro',
-      'Março',
-      'Abril',
-      'Maio',
-      'Junho',
-      'Julho',
-      'Agosto',
-      'Setembro',
-      'Outubro',
-      'Novembro',
-      'Dezembro',
-    ];
-
-    return '${meses[dia.month - 1]} ${dia.year}';
-  }
-
-  String formatarDataSelecionada(DateTime dia) {
-    const diasSemana = [
-      'Segunda',
-      'Terça',
-      'Quarta',
-      'Quinta',
-      'Sexta',
-      'Sábado',
-      'Domingo',
-    ];
-
-    const meses = [
-      'Janeiro',
-      'Fevereiro',
-      'Março',
-      'Abril',
-      'Maio',
-      'Junho',
-      'Julho',
-      'Agosto',
-      'Setembro',
-      'Outubro',
-      'Novembro',
-      'Dezembro',
-    ];
-
-    return '${diasSemana[dia.weekday - 1]}, ${dia.day} de ${meses[dia.month - 1]}';
+    tarefasSelecionados.value = controlador.obterTarefasDoDia(selectedDay);
   }
 
   final List<TarefaItem> tarefas = Tarefas123().tarefas;
+
+  final CalendarioTipo selecionado = CalendarioTipo.calendario;
 
   @override
   Widget build(BuildContext context) {
@@ -122,15 +78,17 @@ class _CalendarioState extends State<Calendario> {
           currentIndex: 1,
           floatingActionButton: true,
           bottomNavigationBar: true,
+          largura: largura,
           actions: [
             Padding(
               padding: .only(right: largura * 0.05),
-              child: IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.menu_outlined, size: largura * 0.09),
+              child: SelecionarTipoCalendario(
+                paginaAtual: .calendario,
+                largura: largura,
               ),
             ),
           ],
+
           body: Padding(
             padding: .all(largura * 0.06),
             child: SingleChildScrollView(
@@ -143,9 +101,9 @@ class _CalendarioState extends State<Calendario> {
                     kLastDay: kLastDay,
                     focusedDay: _focusedDay,
                     selectedDay: _selectedDay,
-                    obterTarefasDoDia: obterTarefasDoDia,
                     noDiaSelecionado: noDiaSelecionado,
-                    mesTitulo: mesTitulo,
+                    headerVisibilidade: true,
+                    marcaEvento: true,
                   ),
 
                   SizedBox(height: altura * 0.03),
@@ -154,7 +112,6 @@ class _CalendarioState extends State<Calendario> {
                     tarefasSelecionados: tarefasSelecionados,
                     largura: largura,
                     altura: altura,
-                    formatarDataSelecionada: formatarDataSelecionada,
                     focusedDay: _focusedDay,
                     selectedDay: _selectedDay,
                   ),
