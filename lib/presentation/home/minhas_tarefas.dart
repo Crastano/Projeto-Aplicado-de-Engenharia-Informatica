@@ -57,8 +57,9 @@ class _MinhasTarefasState extends State<MinhasTarefas> {
             Padding(
               padding: .only(right: largura * 0.05),
               child: IconButton(
+                tooltip: 'Pesquisar',
                 onPressed: () {},
-                icon: Icon(Icons.search, size: largura * 0.1),
+                icon: Icon(Icons.search, size: largura * 0.075),
               ),
             ),
           ],
@@ -71,33 +72,32 @@ class _MinhasTarefasState extends State<MinhasTarefas> {
           body: Padding(
             padding: .all(largura * 0.06),
             child: Column(
+              crossAxisAlignment: .start,
               children: [
-                Column(
-                  crossAxisAlignment: .start,
-                  children: [
-                    SelecionarData(
-                      largura: largura,
-                      selecionado: controlador.dataSelecionada,
-                      onChanged: (value) {
-                        setState(() {
-                          controlador.dataSelecionada = value;
-                        });
-                      },
-                    ),
-
-                    SizedBox(height: altura * 0.02),
-
-                    SelecionarFilter(
-                      largura: largura,
-                      selecionado: controlador.filtroSelecionado,
-                      onChanged: (value) {
-                        setState(() {
-                          controlador.filtroSelecionado = value;
-                        });
-                      },
-                    ),
-                  ],
+                SelecionarData(
+                  largura: largura,
+                  selecionado: controlador.dataSelecionada,
+                  onChanged: (value) {
+                    setState(() {
+                      controlador.dataSelecionada = value;
+                    });
+                  },
                 ),
+
+                SizedBox(height: altura * 0.02),
+
+                Center(
+                  child: SelecionarFilter(
+                    largura: largura,
+                    selecionado: controlador.filtroSelecionado,
+                    onChanged: (value) {
+                      setState(() {
+                        controlador.filtroSelecionado = value;
+                      });
+                    },
+                  ),
+                ),
+
                 SizedBox(height: altura * 0.06),
 
                 Expanded(

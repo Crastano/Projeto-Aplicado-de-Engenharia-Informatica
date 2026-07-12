@@ -64,8 +64,10 @@ class _CalendarioListaTarefasState extends State<CalendarioListaTarefas> {
               SizedBox(height: widget.altura * 0.01),
 
               Text(
-                controlador.formatarDataSelecionada(
+                controlador.formatarData(
                   widget._selectedDay ?? widget._focusedDay,
+                  true,
+                  true,
                 ),
                 style: TextStyle(
                   fontSize: widget.largura * 0.045,
@@ -81,9 +83,7 @@ class _CalendarioListaTarefasState extends State<CalendarioListaTarefas> {
                   child: Center(
                     child: Text(
                       'Não existem tarefas neste dia.',
-                      style: TextStyle(
-                        fontSize: widget.largura * 0.04,
-                      ),
+                      style: TextStyle(fontSize: widget.largura * 0.04),
                     ),
                   ),
                 )

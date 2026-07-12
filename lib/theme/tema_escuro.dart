@@ -56,7 +56,10 @@ ThemeData temaEscuro() => ThemeData(
     elevation: 2,
   ),
 
-  floatingActionButtonTheme: FloatingActionButtonThemeData(elevation: 0),
+  floatingActionButtonTheme: FloatingActionButtonThemeData(
+    elevation: 0,
+    shape: CircleBorder(),
+  ),
 
   popupMenuTheme: PopupMenuThemeData(
     position: PopupMenuPosition.under,
@@ -70,5 +73,19 @@ ThemeData temaEscuro() => ThemeData(
       backgroundColor: AppCores.surfaceEscuro,
       selectedBackgroundColor: AppCores.primary,
     ),
+  ),
+
+  timePickerTheme: TimePickerThemeData(
+    backgroundColor: AppCores.backgroundEscuro,
+    dialBackgroundColor: AppCores.surfaceEscuro,
+    dialHandColor: AppCores.primary,
+    entryModeIconColor: AppCores.primary,
+    hourMinuteColor: WidgetStateColor.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) {
+        return AppCores.primary;
+      }
+
+      return AppCores.surfaceEscuro;
+    })
   ),
 );

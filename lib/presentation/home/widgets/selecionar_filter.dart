@@ -20,40 +20,33 @@ class SelecionarFilter extends StatefulWidget {
 class _SelecionarFilterState extends State<SelecionarFilter> {
   @override
   Widget build(BuildContext context) {
-    final double fontSize = widget.largura * 0.032;
-    final double iconSize = widget.largura * 0.045;
-
-    Text label(String texto) {
-      return Text(
-        texto,
-        maxLines: 1,
-        softWrap: false,
-        overflow: TextOverflow.visible,
-        style: TextStyle(fontSize: fontSize),
-      );
-    }
-
     return SegmentedButton<FilterTarefa>(
       showSelectedIcon: false,
       segments: <ButtonSegment<FilterTarefa>>[
         ButtonSegment<FilterTarefa>(
           value: FilterTarefa.todos,
-          label: label('Todos'),
-          icon: Icon(Icons.list_alt_rounded, size: iconSize),
+          label: Text(
+            'Todos',
+            style: TextStyle(fontSize: widget.largura * 0.04),
+          ),
         ),
         ButtonSegment<FilterTarefa>(
           value: FilterTarefa.pendentes,
-          label: label('Pendentes'),
-          icon: Icon(Icons.pending_actions_rounded, size: iconSize),
+          label: Text(
+            'Pendentes',
+            style: TextStyle(fontSize: widget.largura * 0.04),
+          ),
         ),
         ButtonSegment<FilterTarefa>(
           value: FilterTarefa.concluidos,
-          label: label('Concluídos'),
-          icon: Icon(Icons.task_alt_rounded, size: iconSize),
+          label: Text(
+            'Concluídos',
+            style: TextStyle(fontSize: widget.largura * 0.04),
+          ),
         ),
       ],
       selected: {widget.selecionado},
-      onSelectionChanged: (Set<FilterTarefa> novoSelecionado) {
+      onSelectionChanged: (novoSelecionado) {
         widget.onChanged(novoSelecionado.first);
       },
     );

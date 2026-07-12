@@ -81,7 +81,7 @@ class _CalendarioWidgetState extends State<CalendarioWidget> {
       calendarBuilders: CalendarBuilders<TarefaItem>(
         headerTitleBuilder: (context, day) {
           return Text(
-            controlador.mesTitulo(day),
+            controlador.formatarData(day, false, true),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: widget.largura * 0.06,

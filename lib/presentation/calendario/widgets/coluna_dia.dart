@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
 // Controladores
-import 'package:pei/controller/calendario_tres_dias_controller.dart';
-import 'package:pei/controller/calendario_um_dia_controller.dart';
+import 'package:pei/controller/calendario_controller.dart';
 
 // Widgets personais
 import 'package:pei/presentation/calendario/widgets/linha_hora_atual.dart';
@@ -33,10 +32,8 @@ class ColunaDia extends StatefulWidget {
 }
 
 class _ColunaDiaState extends State<ColunaDia> {
-  final CalendarioTresDiasController controladorTresDias =
-      CalendarioTresDiasController();
-  final CalendarioUmDiaController controladorUmDia =
-      CalendarioUmDiaController();
+  final CalendarioController controlador =
+      CalendarioController();
 
   @override
   Widget build(BuildContext context) {
@@ -87,25 +84,27 @@ class _ColunaDiaState extends State<ColunaDia> {
 
           ...widget.tarefas.map(
             (tarefa) => widget.umDia
-                ? controladorUmDia.posicionarTarefa(
+                ? controlador.posicionarTarefa(
                     tarefa,
                     alturaTotal,
                     widget.dia,
                     widget.alturaHora,
                     widget.largura,
+                    true,
                   )
-                : controladorTresDias.posicionarTarefa(
+                : controlador.posicionarTarefa(
                     tarefa,
                     alturaTotal,
                     widget.dia,
                     widget.alturaHora,
                     widget.largura,
+                    false,
                   ),
           ),
 
           if (widget.umDia
-              ? controladorUmDia.mesmoDia(widget.dia, DateTime.now())
-              : controladorTresDias.mesmoDia(widget.dia, DateTime.now()))
+              ? controlador.mesmoDia(widget.dia, DateTime.now())
+              : controlador.mesmoDia(widget.dia, DateTime.now()))
             LinhaHoraAtual(alturaHora: widget.alturaHora),
         ],
       ),

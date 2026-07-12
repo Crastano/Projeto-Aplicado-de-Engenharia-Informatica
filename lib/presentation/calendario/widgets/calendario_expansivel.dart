@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:pei/presentation/calendario/utils.dart';
+import 'package:pei/utils.dart';
 
 // Widgets partilhados
 import 'package:pei/presentation/calendario/widgets/calendario_widget.dart';
@@ -94,7 +94,7 @@ class _SeletorCalendarioExpansivelState
                 children: [
                   Expanded(
                     child: Text(
-                      controlador.mesTitulo(mesVisivel),
+                      controlador.formatarData(mesVisivel, false, true),
                       style: TextStyle(
                         fontSize: widget.largura * 0.055,
                         fontWeight: .w500,

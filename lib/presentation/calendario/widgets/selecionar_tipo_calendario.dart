@@ -24,16 +24,16 @@ class _SelecionarTipoCalendarioState extends State<SelecionarTipoCalendario> {
     final String rota;
 
     switch (tipo) {
-      case CalendarioTipo.calendario:
+      case .calendario:
         rota = '/calendario';
         break;
 
-      case CalendarioTipo.tresDias:
+      case .tresDias:
         rota = '/calendarioTresDias';
         break;
 
-      case CalendarioTipo.hoje:
-        rota = '/calendarioHoje';
+      case .hoje:
+        rota = '/calendarioUmDia';
         break;
     }
 

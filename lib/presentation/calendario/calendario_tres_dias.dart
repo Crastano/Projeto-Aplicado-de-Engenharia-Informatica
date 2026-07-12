@@ -11,7 +11,7 @@ import 'package:pei/presentation/shared/layout/app_scaffold.dart';
 import 'package:pei/presentation/calendario/widgets/calendario_expansivel.dart';
 
 // Controladores
-import 'package:pei/controller/calendario_tres_dias_controller.dart';
+import 'package:pei/controller/calendario_controller.dart';
 
 // Modelos
 import 'package:pei/models/eventoCalendario.dart';
@@ -27,8 +27,8 @@ class CalendarioTresDias extends StatefulWidget {
 
 class _CalendarioTresDiasState extends State<CalendarioTresDias>
     with WidgetsBindingObserver {
-  final CalendarioTresDiasController controlador =
-      CalendarioTresDiasController();
+  final CalendarioController controlador =
+      CalendarioController();
 
   late DateTime diaInicial;
 

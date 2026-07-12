@@ -69,10 +69,41 @@ ThemeData temaClaro() => ThemeData(
 
   segmentedButtonTheme: SegmentedButtonThemeData(
     style: SegmentedButton.styleFrom(
-      visualDensity: VisualDensity.comfortable,
-      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      visualDensity: VisualDensity.standard,
+      tapTargetSize: MaterialTapTargetSize.padded,
       backgroundColor: AppCores.surfaceClaro,
       selectedBackgroundColor: AppCores.primary,
     ),
+  ),
+
+  inputDecorationTheme: InputDecorationThemeData(
+    filled: true,
+    hintStyle: TextStyle(
+      color: AppCores.textoSecundarioClaro,
+    ),
+    border: OutlineInputBorder(
+      borderSide: BorderSide(
+        color: AppCores.borderClaro,
+      )
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(
+        color: AppCores.borderClaro,
+      )
+    ),
+  ),
+
+  timePickerTheme: TimePickerThemeData(
+    backgroundColor: AppCores.backgroundClaro,
+    dialBackgroundColor: AppCores.dialPickerClaro,
+    dialHandColor: AppCores.primary,
+    entryModeIconColor: AppCores.primary,
+    hourMinuteColor: WidgetStateColor.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) {
+        return AppCores.primary;
+      }
+
+      return AppCores.dialPickerClaro;
+    })
   ),
 );

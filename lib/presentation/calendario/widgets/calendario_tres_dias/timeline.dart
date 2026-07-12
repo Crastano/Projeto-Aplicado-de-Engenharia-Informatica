@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 // Controladores
-import 'package:pei/controller/calendario_tres_dias_controller.dart';
+import 'package:pei/controller/calendario_controller.dart';
 
 // Widgets partilhados
 import 'package:pei/presentation/calendario/widgets/coluna_horas.dart';
@@ -29,7 +29,7 @@ class TimelineTresDia extends StatefulWidget {
 }
 
 class _TimelineTresDiaState extends State<TimelineTresDia> {
-  final CalendarioTresDiasController controlador = CalendarioTresDiasController();
+  final CalendarioController controlador = CalendarioController();
 
   @override
   Widget build(BuildContext context) {

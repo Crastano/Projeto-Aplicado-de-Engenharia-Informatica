@@ -30,7 +30,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
           label: 'Tarefas',
         ),
         NavigationDestination(
-          icon: Icon(Icons.calendar_today_outlined),
+          icon: Icon(Icons.calendar_month_outlined),
           label: 'Calendário',
         ),
         NavigationDestination(

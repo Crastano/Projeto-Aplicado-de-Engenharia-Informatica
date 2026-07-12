@@ -43,6 +43,22 @@ class _AppScaffoldState extends State<AppScaffold> {
       actions: widget.actions,
       centerTitle: true,
       automaticallyImplyLeading: widget.automaticallyImplyLeading,
+      leading: widget.automaticallyImplyLeading
+          ? Builder(
+              builder: (context) {
+                return IconButton(
+                  tooltip: 'Voltar',
+                  onPressed: () {
+                    Navigator.maybePop(context);
+                  },
+                  icon: Icon(
+                    Icons.chevron_left_outlined,
+                    size: widget.largura * 0.075,
+                  ),
+                );
+              },
+            )
+          : null,
     ),
     body: SafeArea(top: true, child: widget.body),
     bottomNavigationBar: widget.bottomNavigationBar
@@ -53,7 +69,9 @@ class _AppScaffoldState extends State<AppScaffold> {
             width: widget.largura * 0.15,
             height: widget.largura * 0.15,
             child: FloatingActionButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, '/criarTarefa');
+              },
               child: Icon(Icons.add_rounded, size: widget.largura * 0.1),
             ),
           )

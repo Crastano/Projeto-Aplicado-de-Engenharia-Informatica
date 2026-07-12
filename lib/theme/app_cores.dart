@@ -10,6 +10,7 @@ class AppCores {
   static const iconClaro = Color(0xFF8A8F98);
   static const borderClaro = Color(0xFFD6DAE0);
   static const cardShadowClaro = Color.fromARGB(255, 0, 0, 0);
+  static const dialPickerClaro = Color(0xFFCED7EA);
 
   static const backgroundEscuro = Color(0xFF07101D);
   static const surfaceEscuro = Color(0xFF162233);

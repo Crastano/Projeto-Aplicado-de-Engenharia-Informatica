@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 // Controladores
-import 'package:pei/controller/calendario_um_dia_controller.dart';
+import 'package:pei/controller/calendario_controller.dart';
 
 // Widgets
 import 'package:pei/presentation/calendario/widgets/coluna_dia.dart';
@@ -31,7 +31,7 @@ class TimelineUmDia extends StatefulWidget {
 class _TimelineUmDiaState extends State<TimelineUmDia> {
   @override
   Widget build(BuildContext context) {
-    final CalendarioUmDiaController controlador = CalendarioUmDiaController();
+    final CalendarioController controlador = CalendarioController();
 
     final alturaTotal = widget.alturaHora * 24;
     final larguraHoras = widget.largura * 0.15;

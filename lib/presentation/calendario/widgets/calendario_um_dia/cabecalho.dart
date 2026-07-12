@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 // Controladores
-import 'package:pei/controller/calendario_um_dia_controller.dart';
+import 'package:pei/controller/calendario_controller.dart';
 
 class CabecalhoUmDia extends StatefulWidget {
   const CabecalhoUmDia({
@@ -22,7 +22,7 @@ class CabecalhoUmDia extends StatefulWidget {
 class _CabecalhoUmDiaState extends State<CabecalhoUmDia> {
   @override
   Widget build(BuildContext context) {
-    final CalendarioUmDiaController controlador = CalendarioUmDiaController();
+    final CalendarioController controlador = CalendarioController();
 
     final hoje = DateTime.now();
     final larguraHoras = widget.largura * 0.15;
@@ -66,7 +66,7 @@ class _CabecalhoUmDiaState extends State<CabecalhoUmDia> {
                 ),
               ),
               child: Text(
-                controlador.diasSemana(widget.dia),
+                '${controlador.formatarData(widget.dia, true, false)} ${widget.dia.day}',
                 style: TextStyle(
                   fontSize: widget.largura * 0.05,
                   fontWeight: .w500,

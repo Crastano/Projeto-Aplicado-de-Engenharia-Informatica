@@ -8,6 +8,7 @@ import 'presentation/home/minhas_tarefas.dart';
 import 'presentation/calendario/calendario.dart';
 import 'package:pei/presentation/calendario/calendario_um_dia.dart';
 import 'package:pei/presentation/calendario/calendario_tres_dias.dart';
+import 'package:pei/presentation/tarefas/criar_tarefa.dart';
 
 // Temas
 import 'theme/tema_claro.dart';
@@ -50,7 +51,7 @@ class MyApp extends StatelessWidget {
             ),
           ],
         ),
-        '/calendarioHoje': (_) => CalendarioUmDia(
+        '/calendarioUmDia': (_) => CalendarioUmDia(
           tarefas: [
             EventoCalendario(
               titulo: 'Cortar cabelo',
@@ -66,6 +67,7 @@ class MyApp extends StatelessWidget {
             ),
           ],
         ),
+        '/criarTarefa': (_) => CriarTarefa(),
       },
     );
   }

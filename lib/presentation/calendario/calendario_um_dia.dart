@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 // Controladores
-import 'package:pei/controller/calendario_um_dia_controller.dart';
+import 'package:pei/controller/calendario_controller.dart';
 
 // Widgets do calendário
 import 'package:pei/presentation/calendario/widgets/calendario_um_dia/cabecalho.dart';
@@ -27,7 +27,7 @@ class CalendarioUmDia extends StatefulWidget {
 
 class _CalendarioUmDiaState extends State<CalendarioUmDia>
     with WidgetsBindingObserver {
-  final CalendarioUmDiaController controlador = CalendarioUmDiaController();
+  final CalendarioController controlador = CalendarioController();
 
   late DateTime diaVisivel;
 
