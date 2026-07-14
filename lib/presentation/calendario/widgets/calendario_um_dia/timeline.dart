@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-// Controladores
+// Controlador
 import 'package:pei/controller/calendario_controller.dart';
 
 // Widgets
-import 'package:pei/presentation/calendario/widgets/coluna_dia.dart';
-import 'package:pei/presentation/calendario/widgets/coluna_horas.dart';
+import '../coluna_dia.dart';
+import '../coluna_horas.dart';
 
 // Modelos
-import 'package:pei/models/eventoCalendario.dart';
+import 'package:pei/models/tarefa_item.dart';
 
-class TimelineUmDia extends StatefulWidget {
-  const TimelineUmDia({
+class TimelineUmDia extends StatelessWidget {
+  TimelineUmDia({
     super.key,
     required this.dia,
     required this.tarefas,
@@ -20,21 +20,18 @@ class TimelineUmDia extends StatefulWidget {
   });
 
   final DateTime dia;
-  final List<EventoCalendario> tarefas;
+  final List<TarefaItem> tarefas;
   final double alturaHora;
   final double largura;
 
-  @override
-  State<TimelineUmDia> createState() => _TimelineUmDiaState();
-}
+  final CalendarioControlador controlador = CalendarioControlador();
 
-class _TimelineUmDiaState extends State<TimelineUmDia> {
   @override
   Widget build(BuildContext context) {
-    final CalendarioController controlador = CalendarioController();
+    final alturaTotal = alturaHora * 24;
+    final larguraHoras = largura * 0.15;
 
-    final alturaTotal = widget.alturaHora * 24;
-    final larguraHoras = widget.largura * 0.15;
+    final tarefasDoDia = controlador.tarefasAgendadasDoDia(dia, tarefas);
 
     return SingleChildScrollView(
       child: SizedBox(
@@ -45,17 +42,16 @@ class _TimelineUmDiaState extends State<TimelineUmDia> {
             SizedBox(
               width: larguraHoras,
               height: alturaTotal,
-              child: ColunaHoras(alturaHora: widget.alturaHora),
+              child: ColunaHoras(alturaHora: alturaHora),
             ),
-
             Expanded(
               child: ColunaDia(
-                key: ValueKey<DateTime>(widget.dia),
-                dia: widget.dia,
-                tarefas: controlador.tarefasDoDia(widget.dia, widget.tarefas),
-                alturaHora: widget.alturaHora,
+                key: ValueKey<DateTime>(dia),
+                dia: dia,
+                tarefas: tarefasDoDia,
+                alturaHora: alturaHora,
                 mostrarBordaDireita: true,
-                largura: widget.largura,
+                largura: largura,
                 umDia: true,
               ),
             ),

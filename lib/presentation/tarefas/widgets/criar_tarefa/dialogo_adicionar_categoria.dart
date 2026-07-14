@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-// Controladores
+// Controlador
 import 'package:pei/controller/tarefas_controller.dart';
 
 Future<void> mostrarDialogoAdicionarCategoria({
   required BuildContext context,
-  required TarefasController controlador,
+  required TarefasControlador controlador,
   required double largura,
 }) async {
   String nomeCategoria = '';
@@ -18,7 +18,7 @@ Future<void> mostrarDialogoAdicionarCategoria({
         title: const Text('Adicionar categoria'),
         content: TextField(
           autofocus: true,
-          textCapitalization: TextCapitalization.sentences,
+          textCapitalization: .sentences,
           decoration: InputDecoration(
             hintText: 'Nome da categoria',
             border: OutlineInputBorder(),

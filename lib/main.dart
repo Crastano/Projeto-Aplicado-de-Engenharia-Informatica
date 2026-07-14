@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-
-import 'package:pei/models/eventoCalendario.dart';
+import 'package:pei/models/tarefa_item.dart';
+import 'package:pei/tarefas.dart';
 
 // Páginas
 import 'presentation/auth/pagina_inicial.dart';
 import 'presentation/home/minhas_tarefas.dart';
 import 'presentation/calendario/calendario.dart';
-import 'package:pei/presentation/calendario/calendario_um_dia.dart';
-import 'package:pei/presentation/calendario/calendario_tres_dias.dart';
-import 'package:pei/presentation/tarefas/criar_tarefa.dart';
+import 'presentation/calendario/calendario_um_dia.dart';
+import 'presentation/calendario/calendario_tres_dias.dart';
+import 'presentation/tarefas/criar_tarefa.dart';
+import 'presentation/tarefas/pagina_tarefa.dart';
+import 'package:pei/presentation/pesquisar/pesquisar.dart';
 
 // Temas
 import 'theme/tema_claro.dart';
@@ -35,39 +37,44 @@ class MyApp extends StatelessWidget {
         '/': (_) => const PaginaInicial(),
         '/home': (_) => const MinhasTarefas(),
         '/calendario': (_) => const Calendario(),
-        '/calendarioTresDias': (_) => CalendarioTresDias(
-          tarefas: [
-            EventoCalendario(
-              titulo: 'Cortar cabelo',
-              inicio: DateTime(hoje.year, hoje.month, hoje.day, 10, 30),
-              fim: DateTime(hoje.year, hoje.month, hoje.day, 11, 30),
-            ),
-            EventoCalendario(
-              titulo: 'Tomar comprimido',
-              inicio: DateTime(hoje.year, hoje.month, hoje.day + 1, 14, 15),
-              fim: DateTime(hoje.year, hoje.month, hoje.day + 1, 14, 25),
-              corFundo: const Color(0xFFDBEAFE),
-              corTexto: const Color(0xFF1E40AF),
-            ),
-          ],
-        ),
-        '/calendarioUmDia': (_) => CalendarioUmDia(
-          tarefas: [
-            EventoCalendario(
-              titulo: 'Cortar cabelo',
-              inicio: DateTime(hoje.year, hoje.month, hoje.day, 10, 30),
-              fim: DateTime(hoje.year, hoje.month, hoje.day, 11, 30),
-            ),
-            EventoCalendario(
-              titulo: 'Tomar comprimido',
-              inicio: DateTime(hoje.year, hoje.month, hoje.day + 1, 14, 15),
-              fim: DateTime(hoje.year, hoje.month, hoje.day + 1, 14, 25),
-              corFundo: const Color(0xFFDBEAFE),
-              corTexto: const Color(0xFF1E40AF),
-            ),
-          ],
-        ),
+        '/calendarioTresDias': (_) => CalendarioTresDias(),
+        '/calendarioUmDia': (_) => CalendarioUmDia(),
         '/criarTarefa': (_) => CriarTarefa(),
+        '/pesquisar': (_) => PesquisarPage(tarefas: Tarefas123().tarefas,),
+      },
+      onGenerateRoute: (settings) {
+        switch (settings.name) {
+          case '/paginaTarefa':
+            final argumentos = settings.arguments;
+
+            if (argumentos is! TarefaItem) {
+              return MaterialPageRoute(
+                builder: (context) {
+                  return const Scaffold(
+                    body: Center(
+                      child: Text('Não foi possível carrefar a tarefa.'),
+                    ),
+                  );
+                },
+              );
+            }
+
+            return MaterialPageRoute(
+              settings: settings,
+              builder: (context) {
+                return PaginaTarefa(tarefa: argumentos);
+              },
+            );
+
+          default:
+            return MaterialPageRoute(
+              builder: (context) {
+                return const Scaffold(
+                  body: Center(child: Text('Página não encontrada.')),
+                );
+              },
+            );
+        }
       },
     );
   }

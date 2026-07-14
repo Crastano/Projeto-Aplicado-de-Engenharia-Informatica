@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-// Controladores
+// Controlador
 import 'package:pei/controller/calendario_controller.dart';
 
-class CabecalhoUmDia extends StatefulWidget {
+class CabecalhoUmDia extends StatelessWidget {
   const CabecalhoUmDia({
     super.key,
     required this.dia,
@@ -16,26 +16,21 @@ class CabecalhoUmDia extends StatefulWidget {
   final double altura;
 
   @override
-  State<CabecalhoUmDia> createState() => _CabecalhoUmDiaState();
-}
-
-class _CabecalhoUmDiaState extends State<CabecalhoUmDia> {
-  @override
   Widget build(BuildContext context) {
-    final CalendarioController controlador = CalendarioController();
+    final CalendarioControlador controlador = CalendarioControlador();
 
     final hoje = DateTime.now();
-    final larguraHoras = widget.largura * 0.15;
+    final larguraHoras = largura * 0.15;
 
-    final diaAtual = controlador.mesmoDia(widget.dia, hoje);
+    final diaAtual = controlador.mesmoDia(dia, hoje);
 
     return Container(
-      height: widget.altura * 0.07,
+      height: altura * 0.07,
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
             color: Theme.of(context).colorScheme.outline,
-            width: widget.largura * 0.005,
+            width: largura * 0.005,
           ),
         ),
       ),
@@ -55,20 +50,20 @@ class _CabecalhoUmDiaState extends State<CabecalhoUmDia> {
                       ? BorderSide.none
                       : BorderSide(
                           color: Theme.of(context).colorScheme.outline,
-                          width: widget.largura * 0.005,
+                          width: largura * 0.005,
                         ),
                   right: diaAtual
                       ? BorderSide.none
                       : BorderSide(
                           color: Theme.of(context).colorScheme.outline,
-                          width: widget.largura * 0.005,
+                          width: largura * 0.005,
                         ),
                 ),
               ),
               child: Text(
-                '${controlador.formatarData(widget.dia, true, false)} ${widget.dia.day}',
+                '${controlador.formatarData(dia, false, true, false)} ${dia.day}',
                 style: TextStyle(
-                  fontSize: widget.largura * 0.05,
+                  fontSize: largura * 0.05,
                   fontWeight: .w500,
                   color: diaAtual
                       ? Theme.of(context).colorScheme.onPrimary

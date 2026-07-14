@@ -1,114 +1,124 @@
 import 'package:flutter/material.dart';
 
-// Modelos
-import 'package:pei/models/tarefaItem.dart';
-
-// Widgets partilhados
-import 'package:pei/presentation/shared/widgets/tarefa_card.dart';
-
-// Controladores
+// Controlador
 import 'package:pei/controller/calendario_controller.dart';
 
-// ignore: must_be_immutable
-class CalendarioListaTarefas extends StatefulWidget {
-  const CalendarioListaTarefas({
+// Modelos
+import 'package:pei/models/tarefa_item.dart';
+
+//Widgets
+import 'package:pei/presentation/shared/widgets/tarefa_card.dart';
+import '../tarefa_data_limite_card.dart';
+
+class CalendarioListaTarefas extends StatelessWidget {
+  CalendarioListaTarefas({
     super.key,
-    required this.tarefasSelecionados,
+    required this.tarefas,
+    required this.dia,
     required this.largura,
     required this.altura,
-    required this._focusedDay,
-    required this._selectedDay,
   });
 
-  final ValueNotifier<List<TarefaItem>> tarefasSelecionados;
+  final List<TarefaItem> tarefas;
+  final DateTime dia;
   final double largura;
   final double altura;
-  final DateTime _focusedDay;
-  final DateTime? _selectedDay;
 
-  @override
-  State<CalendarioListaTarefas> createState() => _CalendarioListaTarefasState();
-}
-
-class _CalendarioListaTarefasState extends State<CalendarioListaTarefas> {
-  final CalendarioController controlador = CalendarioController();
+  final CalendarioControlador controlador = CalendarioControlador();
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<List<TarefaItem>>(
-      valueListenable: widget.tarefasSelecionados,
-      builder: (context, tarefas, _) {
-        return Container(
-          width: .infinity,
-          padding: .all(widget.largura * 0.025),
-          decoration: BoxDecoration(
-            color: Theme.of(context).cardTheme.color,
-            borderRadius: .circular(widget.largura * 0.05),
-            border: .all(
-              color: Theme.of(context).colorScheme.outline,
-              width: widget.largura * 0.005,
+    final tarefasAgendadas = controlador.tarefasAgendadasDoDia(dia, tarefas);
+    final tarefasComPrazo = controlador.tarefasComDataLimiteNoDia(dia, tarefas);
+    final vazio = tarefasAgendadas.isEmpty && tarefasComPrazo.isEmpty;
+
+    return Card(
+      shape: RoundedRectangleBorder(
+        side: BorderSide(
+          color: Theme.of(context).colorScheme.outline,
+          width: largura * 0.005,
+        ),
+        borderRadius: .circular(largura * 0.05),
+      ),
+      child: Padding(
+        padding: .all(largura * 0.04),
+        child: Column(
+          crossAxisAlignment: .start,
+          children: [
+            Text(
+              controlador.formatarData(dia, true, true, false),
+              style: TextStyle(fontSize: largura * 0.045, fontWeight: .w500),
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? Colors.white.withValues(alpha: 0.3)
-                    : Colors.black.withValues(alpha: 0.3),
-                offset: Offset(0, widget.altura * 0.003),
-                blurRadius: widget.largura * 0.005,
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: .start,
-            children: [
-              SizedBox(height: widget.altura * 0.01),
-
-              Text(
-                controlador.formatarData(
-                  widget._selectedDay ?? widget._focusedDay,
-                  true,
-                  true,
-                ),
-                style: TextStyle(
-                  fontSize: widget.largura * 0.045,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-
-              SizedBox(height: widget.altura * 0.02),
-
-              if (tarefas.isEmpty)
-                Padding(
-                  padding: .symmetric(vertical: widget.altura * 0.02),
-                  child: Center(
-                    child: Text(
-                      'Não existem tarefas neste dia.',
-                      style: TextStyle(fontSize: widget.largura * 0.04),
+            SizedBox(height: altura * 0.02),
+            if (vazio)
+              Padding(
+                padding: .all(altura * 0.02),
+                child: Center(
+                  child: Text(
+                    'Não existem tarefas neste dia.',
+                    style: TextStyle(
+                      fontSize: largura * 0.04,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
-                )
-              else
-                ListView.separated(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: tarefas.length,
-                  separatorBuilder: (context, index) {
-                    return SizedBox(height: widget.altura * 0.01);
-                  },
-                  itemBuilder: (context, index) {
-                    return TarefaCard(
-                      tarefa: tarefas[index],
-                      largura: widget.largura * 0.9,
-                      altura: widget.altura * 0.9,
-                      iconTap: () {},
-                      cardTap: () {},
-                    );
-                  },
                 ),
+              ),
+            if (tarefasAgendadas.isNotEmpty) ...[
+              Text(
+                'Tarefas marcadas',
+                style: TextStyle(
+                  fontSize: largura * 0.04,
+                  fontWeight: .w500,
+                ),
+              ),
+              SizedBox(height: altura * 0.01),
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: tarefasAgendadas.length,
+                separatorBuilder: (context, index) {
+                  return SizedBox(height: altura * 0.005);
+                },
+                itemBuilder: (context, index) {
+                  return TarefaCard(
+                    tarefa: tarefasAgendadas[index],
+                    largura: largura * 0.9,
+                    altura: altura * 0.9,
+                    iconTap: () {},
+                    mostrarIcones: false,
+                  );
+                },
+              ),
             ],
-          ),
-        );
-      },
+            if (tarefasAgendadas.isNotEmpty && tarefasComPrazo.isNotEmpty)
+              SizedBox(height: altura * 0.025),
+            if (tarefasComPrazo.isNotEmpty) ...[
+              Text(
+                'Datas limite',
+                style: TextStyle(
+                  fontSize: largura * 0.04,
+                  fontWeight: .w500,
+                ),
+              ),
+              SizedBox(height: altura * 0.01),
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: tarefasComPrazo.length,
+                separatorBuilder: (context, index) {
+                  return SizedBox(height: altura * 0.01);
+                },
+                itemBuilder: (context, index) {
+                  return TarefaDataLimiteCard(
+                    tarefa: tarefasComPrazo[index],
+                    largura: largura,
+                  );
+                },
+              ),
+            ],
+          ],
+        ),
+      ),
     );
   }
 }

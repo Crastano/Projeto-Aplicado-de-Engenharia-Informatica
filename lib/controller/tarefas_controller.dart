@@ -1,22 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:open_filex/open_filex.dart';
 
-enum Periodicidade { nenhuma, diaria, semanal, mensal, anual, personalizada }
-
-enum UnidadePeriodicidade { dias, semanas, meses, anos }
-
-enum Lembrete {
-  nenhum,
-  noMomento,
-  cincoMinutos,
-  dezMinutos,
-  quinzeMinutos,
-  trintaMinutos,
-  umaHora,
-  umDia,
-  personalizada,
-}
-
-enum UnidadeLembrete { minutos, horas, dias }
+// Enums
+import 'package:pei/enums/periodicidade.dart';
+import 'package:pei/enums/unidade_periodicidade.dart';
+import 'package:pei/enums/lembrete.dart';
+import 'package:pei/enums/unidade_lembrete.dart';
 
 class ConfiguracaoPeriodicidade {
   const ConfiguracaoPeriodicidade({
@@ -48,7 +38,7 @@ class ConfiguracaoLembrete {
   }
 }
 
-class TarefasController extends ChangeNotifier {
+class TarefasControlador extends ChangeNotifier {
   String formatarData(DateTime data) {
     final dia = data.day.toString().padLeft(2, '0');
     final mes = data.month.toString().padLeft(2, '0');
@@ -144,7 +134,10 @@ class TarefasController extends ChangeNotifier {
     }
   }
 
-  String formatarUnidadePeriodicidade(UnidadePeriodicidade unidade, int intervalo) {
+  String formatarUnidadePeriodicidade(
+    UnidadePeriodicidade unidade,
+    int intervalo,
+  ) {
     switch (unidade) {
       case UnidadePeriodicidade.dias:
         return intervalo == 1 ? 'dia' : 'dias';
@@ -203,6 +196,7 @@ class TarefasController extends ChangeNotifier {
   }
 
   // Lembrete
+
   ConfiguracaoLembrete configuracaoLembretePersonalizada =
       const ConfiguracaoLembrete(quantidade: 1, unidade: UnidadeLembrete.horas);
 
@@ -290,9 +284,74 @@ class TarefasController extends ChangeNotifier {
     }
   }
 
-  @override
-  void dispose() {
-    tituloController.dispose();
-    super.dispose();
+  // Anexos
+
+  List<PlatformFile> anexos = [];
+
+  IconData obterIconeAnexos(String? extensao) {
+    switch (extensao?.toLowerCase()) {
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+      case 'webp':
+        return Icons.image_outlined;
+
+      case 'pdf':
+        return Icons.picture_as_pdf_outlined;
+
+      case 'doc':
+      case 'docx':
+        return Icons.description_outlined;
+
+      case 'xls':
+      case 'xlsx':
+        return Icons.table_chart_outlined;
+
+      case 'mp3':
+      case 'wav':
+        return Icons.audio_file_outlined;
+
+      case 'mp4':
+      case 'mov':
+        return Icons.video_file_outlined;
+
+      default:
+        return Icons.insert_drive_file_outlined;
+    }
+  }
+
+  String obterNomeSemExtensao(PlatformFile anexo) {
+    final extensao = anexo.extension;
+
+    if (extensao == null || extensao.isEmpty) {
+      return anexo.name;
+    }
+
+    final sufixo = '.$extensao';
+
+    if (anexo.name.toLowerCase().endsWith(sufixo.toLowerCase())) {
+      return anexo.name.substring(0, anexo.name.length - sufixo.length);
+    }
+
+    return anexo.name;
+  }
+
+  String mensagemAnexo(OpenResult resultado) {
+    switch (resultado.type) {
+      case ResultType.fileNotFound:
+        return 'O ficheiro já não existe.';
+
+      case ResultType.noAppToOpen:
+        return 'Não existe nenhuma aplicação capaz de abrir este ficheiro.';
+
+      case ResultType.permissionDenied:
+        return 'Não existe permissão para abrir este ficheiro.';
+
+      case ResultType.error:
+        return 'Não foi possível abrir o ficheiro.';
+
+      case ResultType.done:
+        return '';
+    }
   }
 }

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-// Controladores
+// Controlador
 import 'package:pei/controller/calendario_controller.dart';
 
-// Widgets partilhados
-import 'package:pei/presentation/calendario/widgets/coluna_horas.dart';
-import 'package:pei/presentation/calendario/widgets/coluna_dia.dart';
-
 // Modelos
-import 'package:pei/models/eventoCalendario.dart';
+import 'package:pei/models/tarefa_item.dart';
 
-class TimelineTresDia extends StatefulWidget {
-  const TimelineTresDia({
+// Widgets
+import '../coluna_dia.dart';
+import '../coluna_horas.dart';
+
+class TimelineTresDia extends StatelessWidget {
+  TimelineTresDia({
     super.key,
     required this.dias,
     required this.tarefas,
@@ -20,21 +20,16 @@ class TimelineTresDia extends StatefulWidget {
   });
 
   final List<DateTime> dias;
-  final List<EventoCalendario> tarefas;
+  final List<TarefaItem> tarefas;
   final double alturaHora;
   final double largura;
 
-  @override
-  State<TimelineTresDia> createState() => _TimelineTresDiaState();
-}
-
-class _TimelineTresDiaState extends State<TimelineTresDia> {
-  final CalendarioController controlador = CalendarioController();
+  final CalendarioControlador controlador = CalendarioControlador();
 
   @override
   Widget build(BuildContext context) {
-    final alturaTotal = widget.alturaHora * 24;
-    final larguraHoras = widget.largura * 0.15;
+    final alturaTotal = alturaHora * 24;
+    final larguraHoras = largura * 0.15;
 
     return SingleChildScrollView(
       child: SizedBox(
@@ -45,19 +40,22 @@ class _TimelineTresDiaState extends State<TimelineTresDia> {
             SizedBox(
               width: larguraHoras,
               height: alturaTotal,
-              child: ColunaHoras(alturaHora: widget.alturaHora),
+              child: ColunaHoras(alturaHora: alturaHora),
             ),
-
-            ...List.generate(widget.dias.length, (index) {
-              final dia = widget.dias[index];
+            ...List.generate(dias.length, (index) {
+              final dia = dias[index];
+              final tarefasDoDia = controlador.tarefasAgendadasDoDia(
+                dia,
+                tarefas,
+              );
 
               return Expanded(
                 child: ColunaDia(
                   dia: dia,
-                  tarefas: controlador.tarefasDoDia(dia, widget.tarefas),
-                  alturaHora: widget.alturaHora,
-                  mostrarBordaDireita: index == widget.dias.length - 1,
-                  largura: widget.largura,
+                  tarefas: tarefasDoDia,
+                  alturaHora: alturaHora,
+                  mostrarBordaDireita: index == dias.length - 1,
+                  largura: largura,
                   umDia: false,
                 ),
               );

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:pei/utils.dart';
-
-// Widgets partilhados
-import 'package:pei/presentation/calendario/widgets/calendario_widget.dart';
-
-// Controladores
+// Controlador
 import 'package:pei/controller/calendario_controller.dart';
+
+// Widgets
+import 'calendario_widget.dart';
 
 class SeletorCalendarioExpansivel extends StatefulWidget {
   const SeletorCalendarioExpansivel({
@@ -30,7 +28,7 @@ class SeletorCalendarioExpansivel extends StatefulWidget {
 class _SeletorCalendarioExpansivelState
     extends State<SeletorCalendarioExpansivel>
     with TickerProviderStateMixin {
-  final CalendarioController controlador = CalendarioController();
+  final CalendarioControlador controlador = CalendarioControlador();
 
   bool calendarioAberto = false;
 
@@ -94,7 +92,7 @@ class _SeletorCalendarioExpansivelState
                 children: [
                   Expanded(
                     child: Text(
-                      controlador.formatarData(mesVisivel, false, true),
+                      controlador.formatarData(mesVisivel, false, false, true),
                       style: TextStyle(
                         fontSize: widget.largura * 0.055,
                         fontWeight: .w500,
@@ -115,7 +113,6 @@ class _SeletorCalendarioExpansivelState
             ),
           ),
         ),
-
         ClipRect(
           child: AnimatedSize(
             duration: const Duration(milliseconds: 350),
@@ -128,13 +125,13 @@ class _SeletorCalendarioExpansivelState
                     child: CalendarioWidget(
                       largura: widget.largura,
                       altura: widget.altura,
-                      kFirstDay: kFirstDay,
-                      kLastDay: kLastDay,
+                      primeiroDia: DateTime(2000),
+                      ultimoDia: DateTime(2100),
                       focusedDay: mesVisivel,
                       selectedDay: dataSelecionada,
                       noDiaSelecionado: selecionarDia,
                       headerVisibilidade: false,
-                      marcaEvento: false,
+                      marcaTarefa: false,
                     ),
                   )
                 : const SizedBox(width: .infinity, height: 0),

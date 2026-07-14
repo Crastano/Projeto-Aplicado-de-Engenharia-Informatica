@@ -1,25 +1,20 @@
 import 'package:flutter/material.dart';
 
-class ColunaHoras extends StatefulWidget {
+class ColunaHoras extends StatelessWidget {
   const ColunaHoras({super.key, required this.alturaHora});
 
   final double alturaHora;
 
-  @override
-  State<ColunaHoras> createState() => _ColunaHorasState();
-}
-
-class _ColunaHorasState extends State<ColunaHoras> {
   @override
   Widget build(BuildContext context) {
     return Stack(
       clipBehavior: Clip.none,
       children: List.generate(25, (hora) {
         final top = hora == 0
-            ? (hora * widget.alturaHora)
+            ? (hora * alturaHora)
             : hora == 24
-            ? (hora * widget.alturaHora) - 20
-            : hora * widget.alturaHora - 13;
+            ? (hora * alturaHora) - 20
+            : hora * alturaHora - 12.5;
 
         return Positioned(
           top: top,
@@ -28,10 +23,7 @@ class _ColunaHorasState extends State<ColunaHoras> {
           child: Text(
             '${hora.toString().padLeft(2, '0')}:00',
             textAlign: TextAlign.right,
-            style: TextStyle(
-              fontWeight: .w500,
-              fontSize: widget.alturaHora * 0.25,
-            ),
+            style: TextStyle(fontWeight: .w500, fontSize: alturaHora * 0.25),
           ),
         );
       }),

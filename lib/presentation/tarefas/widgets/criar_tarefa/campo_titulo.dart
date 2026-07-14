@@ -16,14 +16,14 @@ class CampoTitulo extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextField(
       controller: controlador,
-      textCapitalization: TextCapitalization.sentences,
+      textCapitalization: .sentences,
       style: TextStyle(
         fontSize: largura * 0.04,
       ),
       decoration: InputDecoration(
         hintText: 'Adicionar título',
         filled: true,
-        fillColor: Theme.of(context).colorScheme.surfaceContainer,
+        fillColor: Theme.of(context).colorScheme.surface,
         contentPadding: .all(largura * 0.035),
         border: OutlineInputBorder(
           borderRadius: .circular(
@@ -31,6 +31,7 @@ class CampoTitulo extends StatelessWidget {
           ),
           borderSide: BorderSide(
             color: Theme.of(context).colorScheme.outline,
+            width: largura * 0.005,
           ),
         ),
         enabledBorder: OutlineInputBorder(
@@ -39,7 +40,7 @@ class CampoTitulo extends StatelessWidget {
           ),
           borderSide: BorderSide(
             color: Theme.of(context).colorScheme.outline,
-            width: largura * 0.003,
+            width: largura * 0.005,
           ),
         ),
         focusedBorder: OutlineInputBorder(

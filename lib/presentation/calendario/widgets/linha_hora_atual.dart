@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 class LinhaHoraAtual extends StatefulWidget {
-  const LinhaHoraAtual({required this.alturaHora});
+  const LinhaHoraAtual({super.key, required this.alturaHora});
 
   final double alturaHora;
 

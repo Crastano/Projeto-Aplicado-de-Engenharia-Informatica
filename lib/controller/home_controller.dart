@@ -1,14 +1,13 @@
 // Modelos
+import 'package:pei/models/tarefa_item.dart';
 
-import 'package:pei/models/tarefaItem.dart';
+// Enums
+import 'package:pei/enums/filter_data.dart';
+import 'package:pei/enums/filter_tarefa.dart';
 
-enum FilterData { nenhuma, ontem, hoje, amanha, mes, ano }
-
-enum FilterTarefa { todos, pendentes, concluidos }
-
-class TarefasController {
-  FilterData dataSelecionada = FilterData.nenhuma;
-  FilterTarefa filtroSelecionado = FilterTarefa.todos;
+class HomeControlador {
+  FilterData dataSelecionada = .nenhuma;
+  FilterTarefa filtroSelecionado = .todos;
 
   List<TarefaItem> filtrarTarefas(List<TarefaItem> tarefas) {
     return tarefas.where((tarefa) {
@@ -18,19 +17,22 @@ class TarefasController {
 
   bool passaFiltroEstado(TarefaItem tarefa) {
     switch (filtroSelecionado) {
-      case FilterTarefa.todos:
+      case .todos:
         return true;
 
-      case FilterTarefa.pendentes:
-        return !tarefa.isCompleted;
+      case .pendentes:
+        return !tarefa.estaCompletado;
 
-      case FilterTarefa.concluidos:
-        return tarefa.isCompleted;
+      case .atrasados:
+        return tarefa.estaAtrasado;
+
+      case .concluidos:
+        return tarefa.estaCompletado;
     }
   }
 
   bool passaFiltroData(TarefaItem tarefa) {
-    if (dataSelecionada == FilterData.nenhuma) {
+    if (dataSelecionada == .nenhuma) {
       return true;
     }
 
@@ -45,22 +47,22 @@ class TarefasController {
     final amanha = hoje.add(const Duration(days: 1));
 
     switch (dataSelecionada) {
-      case FilterData.nenhuma:
+      case .nenhuma:
         return true;
 
-      case FilterData.ontem:
+      case .ontem:
         return mesmoDia(dataTarefa, ontem);
 
-      case FilterData.hoje:
+      case .hoje:
         return mesmoDia(dataTarefa, hoje);
 
-      case FilterData.amanha:
+      case .amanha:
         return mesmoDia(dataTarefa, amanha);
 
-      case FilterData.mes:
+      case .mes:
         return dataTarefa.year == hoje.year && dataTarefa.month == hoje.month;
 
-      case FilterData.ano:
+      case .ano:
         return dataTarefa.year == hoje.year;
     }
   }
@@ -68,12 +70,10 @@ class TarefasController {
   DateTime? parseData(String data) {
     final hoje = DateTime.now();
 
-    // Exemplo: "16:00"
     if (!data.contains('-')) {
       return DateTime(hoje.year, hoje.month, hoje.day);
     }
 
-    // Exemplo: "27-01-2026 01:00"
     final datePart = data.split(' ').first;
     final parts = datePart.split('-');
 
@@ -90,6 +90,23 @@ class TarefasController {
     }
 
     return DateTime(year, month, day);
+  }
+
+  String dataLabel(FilterData selecionado) {
+    switch (selecionado) {
+      case .nenhuma:
+        return 'Nenhuma';
+      case .ontem:
+        return 'Ontem';
+      case .hoje:
+        return 'Hoje';
+      case .amanha:
+        return 'Amanhã';
+      case .mes:
+        return 'Mês atual';
+      case .ano:
+        return 'Ano atual';
+    }
   }
 
   bool mesmoDia(DateTime a, DateTime b) {

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 
-// Widgets personais
-import 'package:pei/presentation/tarefas/widgets/criar_tarefa/seletor_periodicidade.dart';
-import 'package:pei/presentation/tarefas/widgets/criar_tarefa/seletor_periodicidade_personalizada.dart';
-
-// Controladores
+// Controlador
 import 'package:pei/controller/tarefas_controller.dart';
+
+// Widgets
+import 'seletor_periodicidade.dart';
+import 'seletor_periodicidade_personalizada.dart';
+
+// Enums
+import 'package:pei/enums/periodicidade.dart';
 
 class TarefaPeriodicidade extends StatefulWidget {
   const TarefaPeriodicidade({super.key, required this.largura});
@@ -17,7 +20,7 @@ class TarefaPeriodicidade extends StatefulWidget {
 }
 
 class _TarefaPeriodicidadeState extends State<TarefaPeriodicidade> {
-  final TarefasController controlador = TarefasController();
+  final TarefasControlador controlador = TarefasControlador();
 
   Periodicidade periodicidadeSelecionada = .nenhuma;
 
@@ -96,7 +99,7 @@ class _TarefaPeriodicidadeState extends State<TarefaPeriodicidade> {
                 Theme.of(context).colorScheme.surfaceContainerHighest,
               ),
               foregroundColor: WidgetStatePropertyAll(
-                Theme.of(context).colorScheme.onSurface,
+                Theme.of(context).colorScheme.onSurfaceVariant,
               ),
               side: WidgetStatePropertyAll(
                 BorderSide(

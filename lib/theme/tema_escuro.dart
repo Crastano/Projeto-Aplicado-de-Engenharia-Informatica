@@ -18,6 +18,7 @@ ThemeData temaEscuro() => ThemeData(
     onError: AppCores.atrasadoTextEscuro,
     surface: AppCores.surfaceEscuro,
     onSurface: AppCores.textoPrincipalEscuro,
+    onSurfaceVariant: AppCores.textoSecundarioEscuro,
     outline: AppCores.borderEscuro,
     shadow: AppCores.cardShadowEscuro,
   ),
@@ -41,6 +42,14 @@ ThemeData temaEscuro() => ThemeData(
   dividerTheme: DividerThemeData(color: AppCores.borderEscuro, thickness: 2),
 
   iconTheme: IconThemeData(color: AppCores.iconEscuro),
+
+  iconButtonTheme: IconButtonThemeData(
+    style: ButtonStyle(
+      iconColor: WidgetStatePropertyAll(
+        AppCores.iconEscuro,
+      ),
+    )
+  ),
 
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(

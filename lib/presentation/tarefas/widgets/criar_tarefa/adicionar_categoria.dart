@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-class AdicionarCategoria extends StatefulWidget {
+class AdicionarCategoria extends StatelessWidget {
   const AdicionarCategoria({
+    super.key,
     required this.largura,
     required this.altura,
     required this.onTap,
@@ -13,16 +14,11 @@ class AdicionarCategoria extends StatefulWidget {
   final VoidCallback onTap;
 
   @override
-  State<AdicionarCategoria> createState() => _AdicionarCategoriaState();
-}
-
-class _AdicionarCategoriaState extends State<AdicionarCategoria> {
-  @override
   Widget build(BuildContext context) {
     return ActionChip(
       avatar: Icon(
         Icons.add,
-        size: widget.largura * 0.045,
+        size: largura * 0.045,
         color: Theme.of(context).colorScheme.onPrimary,
       ),
       label: Text(
@@ -30,10 +26,10 @@ class _AdicionarCategoriaState extends State<AdicionarCategoria> {
         style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
       ),
       backgroundColor: Theme.of(context).colorScheme.primary,
-      side: BorderSide.none,
-      shape: const StadiumBorder(),
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      onPressed: widget.onTap,
+      side: .none,
+      shape: StadiumBorder(),
+      materialTapTargetSize: .shrinkWrap,
+      onPressed: onTap,
     );
   }
 }

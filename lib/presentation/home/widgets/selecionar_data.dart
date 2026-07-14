@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+
+// Controlador
 import 'package:pei/controller/home_controller.dart';
+
+// Enums
+import 'package:pei/enums/filter_data.dart';
 
 class SelecionarData extends StatefulWidget {
   const SelecionarData({
@@ -18,24 +23,9 @@ class SelecionarData extends StatefulWidget {
 }
 
 class _SelecionarDataState extends State<SelecionarData> {
-  bool aberto = false;
+  final HomeControlador controlador = HomeControlador();
 
-  String get label {
-    switch (widget.selecionado) {
-      case .nenhuma:
-        return 'Nenhuma';
-      case .ontem:
-        return 'Ontem';
-      case .hoje:
-        return 'Hoje';
-      case .amanha:
-        return 'Amanhã';
-      case .mes:
-        return 'Mês atual';
-      case .ano:
-        return 'Ano atual';
-    }
-  }
+  bool aberto = false;
 
   @override
   Widget build(BuildContext context) {
@@ -51,13 +41,49 @@ class _SelecionarDataState extends State<SelecionarData> {
 
         widget.onChanged(value);
       },
-      itemBuilder: (context) => const [
-        PopupMenuItem(value: .nenhuma, child: Text('Nenhuma')),
-        PopupMenuItem(value: .ontem, child: Text('Ontem')),
-        PopupMenuItem(value: .hoje, child: Text('Hoje')),
-        PopupMenuItem(value: .amanha, child: Text('Amanhã')),
-        PopupMenuItem(value: .mes, child: Text('Mês atual')),
-        PopupMenuItem(value: .ano, child: Text('Ano atual')),
+      itemBuilder: (context) => [
+        PopupMenuItem(value: .nenhuma, child: Row(
+          children: [
+            Icon(Icons.block_outlined),
+            SizedBox(width: widget.largura * 0.01,),
+            Text('Nenhuma', style: TextStyle(fontWeight: .w400),),
+          ],
+        )),
+        PopupMenuItem(value: .ontem, child: Row(
+          children: [
+            Icon(Icons.history_rounded),
+            SizedBox(width: widget.largura * 0.01,),
+            Text('Ontem', style: TextStyle(fontWeight: .w400),),
+          ],
+        )),
+        PopupMenuItem(value: .hoje, child: Row(
+          children: [
+            Icon(Icons.today_outlined),
+            SizedBox(width: widget.largura * 0.01,),
+            Text('Hoje', style: TextStyle(fontWeight: .w400),),
+          ],
+        )),
+        PopupMenuItem(value: .amanha, child: Row(
+          children: [
+            Icon(Icons.event_outlined),
+            SizedBox(width: widget.largura * 0.01,),
+            Text('Amanhã', style: TextStyle(fontWeight: .w400),),
+          ],
+        )),
+        PopupMenuItem(value: .mes, child: Row(
+          children: [
+            Icon(Icons.calendar_month_outlined),
+            SizedBox(width: widget.largura * 0.01,),
+            Text('Mês atual', style: TextStyle(fontWeight: .w400),),
+          ],
+        )),
+        PopupMenuItem(value: .ano, child: Row(
+          children: [
+            Icon(Icons.date_range_outlined),
+            SizedBox(width: widget.largura * 0.01,),
+            Text('Ano atual', style: TextStyle(fontWeight: .w400),),
+          ],
+        )),
       ],
       onOpened: () {
         setState(() {
@@ -70,10 +96,10 @@ class _SelecionarDataState extends State<SelecionarData> {
         });
       },
       child: Row(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: .min,
         children: [
           Text(
-            label,
+            controlador.dataLabel(widget.selecionado),
             style: TextStyle(fontWeight: .w500, fontSize: largura * 0.06),
           ),
           AnimatedRotation(

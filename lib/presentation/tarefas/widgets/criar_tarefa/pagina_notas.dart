@@ -4,8 +4,10 @@ class PaginaNotas extends StatefulWidget {
   const PaginaNotas({
     super.key,
     required this.notaInicial,
+    required this.largura,
   });
 
+  final double largura;
   final String notaInicial;
 
   @override
@@ -19,9 +21,7 @@ class _PaginaNotasState extends State<PaginaNotas> {
   void initState() {
     super.initState();
 
-    notaController = TextEditingController(
-      text: widget.notaInicial,
-    );
+    notaController = TextEditingController(text: widget.notaInicial);
   }
 
   @override
@@ -30,53 +30,57 @@ class _PaginaNotasState extends State<PaginaNotas> {
     super.dispose();
   }
 
-  void voltar() {
-    Navigator.pop(
-      context,
-      notaController.text.trim(),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-
     return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, result) {
-        if (didPop) return;
-
-        voltar();
-      },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Notas'),
-          automaticallyImplyLeading: false,
+          title: Text('Notas'),
           leading: IconButton(
-            onPressed: voltar,
-            icon: const Icon(
-              Icons.arrow_back_outlined,
+            onPressed: () {
+              Navigator.pop(context, notaController.text.trim());
+            },
+            icon: Icon(
+              Icons.chevron_left_outlined,
+              size: widget.largura * 0.075,
             ),
           ),
         ),
         body: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: .all(widget.largura * 0.06),
           child: TextField(
             controller: notaController,
             autofocus: true,
             expands: true,
             minLines: null,
             maxLines: null,
-            textAlignVertical: TextAlignVertical.top,
-            keyboardType: TextInputType.multiline,
-            textCapitalization: TextCapitalization.sentences,
+            textAlignVertical: .top,
+            keyboardType: .multiline,
+            textCapitalization: .sentences,
             decoration: InputDecoration(
               hintText: 'Escreve uma nota...',
               filled: true,
-              fillColor: colors.surface,
-              border: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              focusedBorder: InputBorder.none,
+              border: OutlineInputBorder(
+                borderSide: BorderSide(
+                  width: widget.largura * 0.005,
+                  color: Theme.of(context).colorScheme.outline,
+                ),
+                borderRadius: .circular(widget.largura * 0.025),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  width: widget.largura * 0.005,
+                  color: Theme.of(context).colorScheme.outline,
+                ),
+                borderRadius: .circular(widget.largura * 0.025),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  width: widget.largura * 0.005,
+                  color: Theme.of(context).colorScheme.outline,
+                ),
+                borderRadius: .circular(widget.largura * 0.025),
+              ),
             ),
           ),
         ),

@@ -1,0 +1,1 @@
+enum FilterData { nenhuma, ontem, hoje, amanha, mes, ano }

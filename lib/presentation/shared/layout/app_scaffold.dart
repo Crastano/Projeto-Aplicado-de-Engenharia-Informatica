@@ -44,19 +44,15 @@ class _AppScaffoldState extends State<AppScaffold> {
       centerTitle: true,
       automaticallyImplyLeading: widget.automaticallyImplyLeading,
       leading: widget.automaticallyImplyLeading
-          ? Builder(
-              builder: (context) {
-                return IconButton(
-                  tooltip: 'Voltar',
-                  onPressed: () {
-                    Navigator.maybePop(context);
-                  },
-                  icon: Icon(
-                    Icons.chevron_left_outlined,
-                    size: widget.largura * 0.075,
-                  ),
-                );
+          ? IconButton(
+              tooltip: 'Voltar',
+              onPressed: () {
+                Navigator.maybePop(context);
               },
+              icon: Icon(
+                Icons.chevron_left_outlined,
+                size: widget.largura * 0.075,
+              ),
             )
           : null,
     ),

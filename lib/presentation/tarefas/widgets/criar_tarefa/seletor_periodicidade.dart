@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
-// Controladores
+// Controlador
 import 'package:pei/controller/tarefas_controller.dart';
+
+// Enums
+import 'package:pei/enums/periodicidade.dart';
 
 class SeletorPeriodicidade extends StatefulWidget {
   const SeletorPeriodicidade({
@@ -18,7 +21,7 @@ class SeletorPeriodicidade extends StatefulWidget {
 }
 
 class _SeletorPeriodicidadeState extends State<SeletorPeriodicidade> {
-  final TarefasController controlador = TarefasController();
+  final TarefasControlador controlador = TarefasControlador();
 
   late Periodicidade periodicidadeSelecionado;
 

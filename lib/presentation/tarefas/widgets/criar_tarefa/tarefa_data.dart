@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
-// Controladores
+// Controlador
 import 'package:pei/controller/tarefas_controller.dart';
-
-import 'package:pei/utils.dart';
 
 class TarefaData extends StatefulWidget {
   const TarefaData({super.key, required this.largura});
@@ -15,7 +13,7 @@ class TarefaData extends StatefulWidget {
 }
 
 class _TarefaDataState extends State<TarefaData> {
-  final TarefasController controlador = TarefasController();
+  final TarefasControlador controlador = TarefasControlador();
 
   DateTime dataSelecionada = DateTime.now();
 
@@ -23,8 +21,11 @@ class _TarefaDataState extends State<TarefaData> {
     final DateTime? dataEscolhido = await showDatePicker(
       context: context,
       initialDate: dataSelecionada,
-      firstDate: kFirstDay,
-      lastDate: kLastDay,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+      helpText: 'Selecionar data',
+      cancelText: 'Cancelar',
+      confirmText: 'Confirmar',
     );
 
     if (!mounted || dataEscolhido == null) return;
@@ -37,7 +38,7 @@ class _TarefaDataState extends State<TarefaData> {
   @override
   Widget build(BuildContext context) {
     return Row(
-      crossAxisAlignment: .start,
+      crossAxisAlignment: .center,
       children: [
         Row(
           children: [
@@ -60,7 +61,7 @@ class _TarefaDataState extends State<TarefaData> {
               Theme.of(context).colorScheme.surface,
             ),
             foregroundColor: WidgetStatePropertyAll(
-              Theme.of(context).colorScheme.onSurface,
+              Theme.of(context).colorScheme.onSurfaceVariant,
             ),
             side: WidgetStatePropertyAll(
               BorderSide(
@@ -69,7 +70,9 @@ class _TarefaDataState extends State<TarefaData> {
               ),
             ),
           ),
-          child: Text(controlador.formatarData(dataSelecionada)),
+          child: Text(
+            controlador.formatarData(dataSelecionada),
+          ),
         ),
       ],
     );

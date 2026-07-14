@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 
-// Widgets partilhados
-import 'package:pei/presentation/shared/layout/app_scaffold.dart';
-
-// Widgets personais
-import 'package:pei/presentation/tarefas/widgets/criar_tarefa/campo_titulo.dart';
-import 'package:pei/presentation/tarefas/widgets/criar_tarefa/tarefa_data.dart';
-import 'package:pei/presentation/tarefas/widgets/criar_tarefa/tarefa_hora.dart';
-import 'package:pei/presentation/tarefas/widgets/criar_tarefa/tarefa_periodicidade.dart';
-import 'package:pei/presentation/tarefas/widgets/criar_tarefa/tarefa_selecionar_categoria.dart';
-import 'package:pei/presentation/tarefas/widgets/criar_tarefa/tarefa_lembrete.dart';
-import 'package:pei/presentation/tarefas/widgets/criar_tarefa/tarefa_notas.dart';
-
-// Controladores
+// Controlador
 import 'package:pei/controller/tarefas_controller.dart';
+
+// Widgets
+import 'package:pei/presentation/shared/layout/app_scaffold.dart';
+import 'widgets/criar_tarefa/campo_titulo.dart';
+import 'widgets/criar_tarefa/tarefa_data.dart';
+import 'widgets/criar_tarefa/tarefa_data_limite.dart';
+import 'widgets/criar_tarefa/tarefa_hora.dart';
+import 'widgets/criar_tarefa/tarefa_periodicidade.dart';
+import 'widgets/criar_tarefa/tarefa_selecionar_categoria.dart';
+import 'widgets/criar_tarefa/tarefa_lembrete.dart';
+import 'widgets/criar_tarefa/tarefa_notas.dart';
+import 'widgets/criar_tarefa/tarefas_anexos.dart';
 
 class CriarTarefa extends StatefulWidget {
   const CriarTarefa({super.key});
@@ -23,7 +23,7 @@ class CriarTarefa extends StatefulWidget {
 }
 
 class _CriarTarefaState extends State<CriarTarefa> {
-  final TarefasController controlador = TarefasController();
+  final TarefasControlador controlador = TarefasControlador();
 
   @override
   Widget build(BuildContext context) {
@@ -86,6 +86,14 @@ class _CriarTarefaState extends State<CriarTarefa> {
 
                   SizedBox(height: altura * 0.005),
 
+                  TarefaDataLimite(largura: largura),
+
+                  SizedBox(height: altura * 0.005),
+
+                  Divider(),
+
+                  SizedBox(height: altura * 0.005),
+
                   TarefaHora(largura: largura),
 
                   SizedBox(height: altura * 0.005),
@@ -117,6 +125,8 @@ class _CriarTarefaState extends State<CriarTarefa> {
                   Divider(),
 
                   SizedBox(height: altura * 0.005),
+
+                  TarefaAnexos(largura: largura),
                 ],
               ),
             ),

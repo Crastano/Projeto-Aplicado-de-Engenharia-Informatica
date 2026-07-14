@@ -1,42 +1,114 @@
-import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
-// Modelos
-import 'package:pei/models/tarefaItem.dart';
-import 'package:pei/models/eventoCalendario.dart';
+import 'package:pei/models/tarefa_item.dart';
 
-// Widgets partilhados
-import 'package:pei/presentation/calendario/widgets/tarefa_timeline_card.dart';
-
-import 'package:pei/utils.dart';
-
-class CalendarioController {
-  List<TarefaItem> obterTarefasDoDia(DateTime day) {
-    return kTarefas[day] ?? [];
-  }
-
-  List<DateTime> diasVisiveis(DateTime dataInicial) {
-    return List.generate(3, (index) => dataInicial.add(Duration(days: index)));
+class CalendarioControlador {
+  DateTime normalizarData(DateTime data) {
+    return DateTime(data.year, data.month, data.day);
   }
 
   bool mesmoDia(DateTime a, DateTime b) {
     return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
-  DateTime normalizarData(DateTime data) {
-    return DateTime(data.year, data.month, data.day);
+  List<DateTime> diasVisiveis(DateTime dataInicial) {
+    final inicio = normalizarData(dataInicial);
+
+    return List.generate(3, (index) => inicio.add(Duration(days: index)));
   }
 
-  String formatarData(DateTime dia, bool diaSemana, bool mes) {
+  List<TarefaItem> tarefasAgendadasDoDia(
+    DateTime dia,
+    List<TarefaItem> tarefas,
+  ) {
+    final resultado = tarefas
+        .where((tarefa) => mesmoDia(tarefa.dataHora, dia))
+        .toList();
+
+    resultado.sort((a, b) => a.dataHora.compareTo(b.dataHora));
+
+    return resultado;
+  }
+
+  List<TarefaItem> tarefasComDataLimiteNoDia(
+    DateTime dia,
+    List<TarefaItem> tarefas,
+  ) {
+    final resultado = tarefas.where((tarefa) {
+      final dataLimite = tarefa.dataLimite;
+
+      return dataLimite != null && mesmoDia(dataLimite, dia);
+    }).toList();
+
+    resultado.sort((a, b) => a.dataLimite!.compareTo(b.dataLimite!));
+
+    return resultado;
+  }
+
+  List<TarefaItem> tarefasIndicadasNoDia(
+    DateTime dia,
+    List<TarefaItem> tarefas,
+  ) {
+    return tarefas.where((tarefa) {
+      final tarefaMarcada = mesmoDia(tarefa.dataHora, dia);
+
+      final terminaNesteDia =
+          tarefa.dataLimite != null && mesmoDia(tarefa.dataLimite!, dia);
+
+      return tarefaMarcada || terminaNesteDia;
+    }).toList();
+  }
+
+  double calcularTopTarefa(TarefaItem tarefa, double alturaHora) {
+    final minutos = tarefa.dataHora.hour * 60 + tarefa.dataHora.minute;
+
+    return (minutos / 60) * alturaHora;
+  }
+
+  /// Cada tarefa ocupa exatamente uma hora.
+  double calcularAlturaTarefa(TarefaItem tarefa, double alturaHora) {
+    final alturaTotal = alturaHora * 24;
+    final top = calcularTopTarefa(tarefa, alturaHora);
+
+    final espacoDisponivel = alturaTotal - top;
+
+    return math.max(0, math.min(alturaHora, espacoDisponivel));
+  }
+
+  String formatarHora(DateTime data) {
+    final hora = data.hour.toString().padLeft(2, '0');
+
+    final minuto = data.minute.toString().padLeft(2, '0');
+
+    return '$hora:$minuto';
+  }
+
+  String formatarDataHora(DateTime data) {
+    final dia = data.day.toString().padLeft(2, '0');
+
+    final mes = data.month.toString().padLeft(2, '0');
+
+    return '$dia/$mes/${data.year} '
+        '${formatarHora(data)}';
+  }
+
+  String formatarData(
+    DateTime data,
+    bool mostrarDia,
+    bool mostrarDiaSemana,
+    bool mostrarAno,
+  ) {
     const diasSemana = [
-      'Segunda',
-      'Terça',
-      'Quarta',
-      'Quinta',
-      'Sexta',
+      'Segunda-feira',
+      'Terça-feira',
+      'Quarta-feira',
+      'Quinta-feira',
+      'Sexta-feira',
       'Sábado',
       'Domingo',
     ];
+
+    const diasSemanaCurtos = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
 
     const meses = [
       'Janeiro',
@@ -53,78 +125,21 @@ class CalendarioController {
       'Dezembro',
     ];
 
-    if (diaSemana && mes) {
-      return '${diasSemana[dia.weekday - 1]}, ${dia.day} de ${meses[dia.month - 1]}';
-    }
-    else if (diaSemana && !mes) {
-      return diasSemana[dia.weekday - 1];
-    }
-    else if (!diaSemana && mes) {
-      return '${meses[dia.month - 1]} ${dia.year}';
+    if (mostrarDia && mostrarDiaSemana) {
+      return '${diasSemana[data.weekday - 1]}, '
+          '${data.day} de '
+          '${meses[data.month - 1]}';
     }
 
-    return '';
-  }
-
-  Widget posicionarTarefa(
-    EventoCalendario tarefa,
-    double alturaTotal,
-    DateTime dia,
-    double alturaHora,
-    double largura,
-    bool umDia,
-  ) {
-    final inicioDia = DateTime(dia.year, dia.month, dia.day);
-
-    final fimDia = inicioDia.add(const Duration(days: 1));
-
-    final inicioVisivel = tarefa.inicio.isBefore(inicioDia)
-        ? inicioDia
-        : tarefa.inicio;
-
-    final fimVisivel = tarefa.fim.isAfter(fimDia) ? fimDia : tarefa.fim;
-
-    final minutosInicio = inicioVisivel.difference(inicioDia).inMinutes;
-
-    final duracaoMinutos = fimVisivel.difference(inicioVisivel).inMinutes;
-
-    final top = (minutosInicio / 60) * alturaHora;
-
-    final alturaCalculada = (duracaoMinutos / 60) * alturaHora;
-
-    final espacoDisponivel = alturaTotal - top;
-
-    final alturaCard = math
-        .min(math.max(24.0, alturaCalculada), espacoDisponivel)
-        .toDouble();
-
-    if (duracaoMinutos <= 0 || alturaCard <= 0) {
-      return const SizedBox.shrink();
+    if (mostrarDiaSemana) {
+      return diasSemanaCurtos[data.weekday - 1];
     }
 
-    return Positioned(
-      top: top,
-      left: 8,
-      right: 4,
-      height: alturaCard,
-      child: TarefaTimelineCard(tarefa: tarefa, largura: largura, umDia: umDia),
-    );
-  }
+    if (mostrarAno) {
+      return '${meses[data.month - 1]} '
+          '${data.year}';
+    }
 
-  List<EventoCalendario> tarefasDoDia(
-    DateTime dia,
-    List<EventoCalendario> tarefas,
-  ) {
-    final inicioDia = DateTime(dia.year, dia.month, dia.day);
-
-    final fimDia = inicioDia.add(const Duration(days: 1));
-
-    final resultado = tarefas.where((tarefa) {
-      return tarefa.fim.isAfter(inicioDia) && tarefa.inicio.isBefore(fimDia);
-    }).toList();
-
-    resultado.sort((a, b) => a.inicio.compareTo(b.inicio));
-
-    return resultado;
+    return meses[data.month - 1];
   }
 }

@@ -18,6 +18,7 @@ ThemeData temaClaro() => ThemeData(
     onError: AppCores.atrasadoTextClaro,
     surface: AppCores.surfaceClaro,
     onSurface: AppCores.textoPrincipalClaro,
+    onSurfaceVariant: AppCores.textoSecundarioClaro,
     outline: AppCores.borderClaro,
     shadow: AppCores.cardShadowClaro,
   ),
@@ -41,6 +42,14 @@ ThemeData temaClaro() => ThemeData(
   dividerTheme: DividerThemeData(color: AppCores.borderClaro, thickness: 2),
 
   iconTheme: IconThemeData(color: AppCores.iconClaro),
+
+  iconButtonTheme: IconButtonThemeData(
+    style: ButtonStyle(
+      iconColor: WidgetStatePropertyAll(
+        AppCores.iconClaro,
+      ),
+    )
+  ),
 
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
@@ -106,4 +115,6 @@ ThemeData temaClaro() => ThemeData(
       return AppCores.dialPickerClaro;
     })
   ),
+
+  
 );

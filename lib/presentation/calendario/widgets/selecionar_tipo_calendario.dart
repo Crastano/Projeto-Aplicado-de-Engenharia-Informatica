@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
-enum CalendarioTipo { calendario, tresDias, hoje }
+// Enums
+import 'package:pei/enums/calendario_tipo.dart';
 
-class SelecionarTipoCalendario extends StatefulWidget {
+class SelecionarTipoCalendario extends StatelessWidget {
   const SelecionarTipoCalendario({
     super.key,
     required this.paginaAtual,
@@ -12,14 +13,8 @@ class SelecionarTipoCalendario extends StatefulWidget {
   final CalendarioTipo paginaAtual;
   final double largura;
 
-  @override
-  State<SelecionarTipoCalendario> createState() =>
-      _SelecionarTipoCalendarioState();
-}
-
-class _SelecionarTipoCalendarioState extends State<SelecionarTipoCalendario> {
   void irPara(BuildContext context, CalendarioTipo tipo) {
-    if (tipo == widget.paginaAtual) return;
+    if (tipo == paginaAtual) return;
 
     final String rota;
 
@@ -44,8 +39,12 @@ class _SelecionarTipoCalendarioState extends State<SelecionarTipoCalendario> {
   Widget build(BuildContext context) {
     return PopupMenuButton<CalendarioTipo>(
       tooltip: 'Alterar visualização',
-      initialValue: widget.paginaAtual,
-      icon: Icon(Icons.menu_outlined, size: widget.largura * 0.09),
+      initialValue: paginaAtual,
+      icon: Icon(
+        Icons.menu,
+        size: largura * 0.075,
+        color: Theme.of(context).iconTheme.color,
+      ),
       onSelected: (tipo) {
         irPara(context, tipo);
       },

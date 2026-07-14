@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
-// Controladores
+// Controlador
 import 'package:pei/controller/tarefas_controller.dart';
+
+// Enums
+import 'package:pei/enums/unidade_lembrete.dart';
 
 class SeletorLembretePersonalizado extends StatefulWidget {
   const SeletorLembretePersonalizado({
@@ -20,7 +23,7 @@ class SeletorLembretePersonalizado extends StatefulWidget {
 
 class _SeletorLembretePersonalizadoState
     extends State<SeletorLembretePersonalizado> {
-  final TarefasController controlador = TarefasController();
+  final TarefasControlador controlador = TarefasControlador();
 
   late int quantidade;
   late UnidadeLembrete unidade;

@@ -1,0 +1,1 @@
+enum FilterTarefa { todos, pendentes, atrasados, concluidos }

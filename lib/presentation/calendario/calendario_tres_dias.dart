@@ -1,25 +1,25 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:flutter/material.dart';
 
-// Widgets pessonais
-import 'package:pei/presentation/calendario/widgets/selecionar_tipo_calendario.dart';
-import 'package:pei/presentation/calendario/widgets/calendario_tres_dias/cabecalho.dart';
-import 'package:pei/presentation/calendario/widgets/calendario_tres_dias/timeline.dart';
-
-// Widgets partilhados
-import 'package:pei/presentation/shared/layout/app_scaffold.dart';
-import 'package:pei/presentation/calendario/widgets/calendario_expansivel.dart';
-
-// Controladores
+// Controlador
 import 'package:pei/controller/calendario_controller.dart';
 
 // Modelos
-import 'package:pei/models/eventoCalendario.dart';
+import 'package:pei/models/tarefa_item.dart';
+import 'package:pei/tarefas.dart';
+
+// Widgets
+import 'package:pei/presentation/shared/layout/app_scaffold.dart';
+import 'widgets/calendario_expansivel.dart';
+import 'widgets/calendario_tres_dias/cabecalho.dart';
+import 'widgets/calendario_tres_dias/timeline.dart';
+import 'widgets/datas_limite_calendario.dart';
+import 'widgets/selecionar_tipo_calendario.dart';
 
 class CalendarioTresDias extends StatefulWidget {
-  const CalendarioTresDias({super.key, this.tarefas = const []});
+  const CalendarioTresDias({super.key, this.tarefas});
 
-  final List<EventoCalendario> tarefas;
+  final List<TarefaItem>? tarefas;
 
   @override
   State<CalendarioTresDias> createState() => _CalendarioTresDiasState();
@@ -27,13 +27,12 @@ class CalendarioTresDias extends StatefulWidget {
 
 class _CalendarioTresDiasState extends State<CalendarioTresDias>
     with WidgetsBindingObserver {
-  final CalendarioController controlador =
-      CalendarioController();
+  final CalendarioControlador controlador = CalendarioControlador();
 
+  late final List<TarefaItem> tarefas;
   late DateTime diaInicial;
 
   Timer? temporizadorMeiaNoite;
-
   double deslocamentoHorizontal = 0;
 
   @override
@@ -41,18 +40,15 @@ class _CalendarioTresDiasState extends State<CalendarioTresDias>
     super.initState();
 
     WidgetsBinding.instance.addObserver(this);
-
+    tarefas = widget.tarefas ?? Tarefas123().tarefas;
     diaInicial = controlador.normalizarData(DateTime.now());
-
     agendarMudancaDeDia();
   }
 
   @override
   void dispose() {
     temporizadorMeiaNoite?.cancel();
-
     WidgetsBinding.instance.removeObserver(this);
-
     super.dispose();
   }
 
@@ -70,12 +66,7 @@ class _CalendarioTresDiasState extends State<CalendarioTresDias>
       return;
     }
 
-    if (deslocamentoHorizontal < 0) {
-      mudarDia(1);
-    } else {
-      mudarDia(-1);
-    }
-
+    mudarDia(deslocamentoHorizontal < 0 ? 1 : -1);
     deslocamentoHorizontal = 0;
   }
 
@@ -83,15 +74,10 @@ class _CalendarioTresDiasState extends State<CalendarioTresDias>
     temporizadorMeiaNoite?.cancel();
 
     final agora = DateTime.now();
-
     final proximaMeiaNoite = DateTime(agora.year, agora.month, agora.day + 1);
 
-    final tempoRestante = proximaMeiaNoite.difference(agora);
-
-    temporizadorMeiaNoite = Timer(tempoRestante, () {
-      if (!mounted) {
-        return;
-      }
+    temporizadorMeiaNoite = Timer(proximaMeiaNoite.difference(agora), () {
+      if (!mounted) return;
 
       setState(() {
         diaInicial = controlador.normalizarData(DateTime.now());
@@ -103,22 +89,22 @@ class _CalendarioTresDiasState extends State<CalendarioTresDias>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      final hoje = controlador.normalizarData(DateTime.now());
+    if (state != AppLifecycleState.resumed) return;
 
-      if (!controlador.mesmoDia(diaInicial, hoje)) {
-        setState(() {
-          diaInicial = hoje;
-        });
-      }
+    final hoje = controlador.normalizarData(DateTime.now());
 
-      agendarMudancaDeDia();
+    if (!controlador.mesmoDia(diaInicial, hoje)) {
+      setState(() {
+        diaInicial = hoje;
+      });
     }
+
+    agendarMudancaDeDia();
   }
 
   void selecionarData(DateTime data) {
     setState(() {
-      diaInicial = DateTime(data.year, data.month, data.day);
+      diaInicial = controlador.normalizarData(data);
     });
   }
 
@@ -128,7 +114,6 @@ class _CalendarioTresDiasState extends State<CalendarioTresDias>
       builder: (context, constraints) {
         final largura = constraints.maxWidth;
         final altura = constraints.maxHeight;
-
         final diasVisiveis = controlador.diasVisiveis(diaInicial);
 
         return AppScaffold(
@@ -149,7 +134,7 @@ class _CalendarioTresDiasState extends State<CalendarioTresDias>
             ),
           ],
           body: Padding(
-            padding: .all(largura * 0.06),
+            padding: EdgeInsets.all(largura * 0.06),
             child: Column(
               children: [
                 SeletorCalendarioExpansivel(
@@ -158,31 +143,30 @@ class _CalendarioTresDiasState extends State<CalendarioTresDias>
                   altura: altura,
                   onDataSelecionada: selecionarData,
                 ),
-
                 SizedBox(height: largura * 0.025),
-
                 Expanded(
                   child: GestureDetector(
-                    behavior: .opaque,
-
+                    behavior: HitTestBehavior.opaque,
                     onHorizontalDragStart: (_) {
                       deslocamentoHorizontal = 0;
                     },
-
-                    onHorizontalDragUpdate: (detalhes) {
-                      deslocamentoHorizontal += detalhes.delta.dx;
+                    onHorizontalDragUpdate: (details) {
+                      deslocamentoHorizontal += details.delta.dx;
                     },
-
                     onHorizontalDragEnd: (_) {
                       terminarDeslize(largura);
                     },
-
                     onHorizontalDragCancel: () {
                       deslocamentoHorizontal = 0;
                     },
-
                     child: Column(
                       children: [
+                        DatasLimiteCalendario(
+                          dias: diasVisiveis,
+                          tarefas: tarefas,
+                          largura: largura,
+                          altura: altura,
+                        ),
                         CabecalhoTresDias(
                           dias: diasVisiveis,
                           largura: largura,
@@ -191,7 +175,7 @@ class _CalendarioTresDiasState extends State<CalendarioTresDias>
                         Expanded(
                           child: TimelineTresDia(
                             dias: diasVisiveis,
-                            tarefas: widget.tarefas,
+                            tarefas: tarefas,
                             alturaHora: altura * 0.075,
                             largura: largura,
                           ),

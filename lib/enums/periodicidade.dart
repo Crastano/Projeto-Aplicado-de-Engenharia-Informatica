@@ -1,0 +1,1 @@
+enum Periodicidade { nenhuma, diaria, semanal, mensal, anual, personalizada }

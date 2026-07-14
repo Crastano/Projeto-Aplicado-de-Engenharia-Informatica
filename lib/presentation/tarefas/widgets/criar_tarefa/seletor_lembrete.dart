@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
-// Controladores
+// Controlador
 import 'package:pei/controller/tarefas_controller.dart';
+
+// Enums
+import 'package:pei/enums/lembrete.dart';
 
 class SeletorLembrete extends StatefulWidget {
   const SeletorLembrete({
@@ -18,7 +21,7 @@ class SeletorLembrete extends StatefulWidget {
 }
 
 class _SeletorLembreteState extends State<SeletorLembrete> {
-  final TarefasController controlador = TarefasController();
+  final TarefasControlador controlador = TarefasControlador();
 
   late Lembrete lembreteTemporario;
 

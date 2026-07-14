@@ -1,25 +1,25 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:flutter/material.dart';
 
-// Controladores
+// Controlador
 import 'package:pei/controller/calendario_controller.dart';
 
-// Widgets do calendário
-import 'package:pei/presentation/calendario/widgets/calendario_um_dia/cabecalho.dart';
-import 'package:pei/presentation/calendario/widgets/calendario_um_dia/timeline.dart';
-import 'package:pei/presentation/calendario/widgets/selecionar_tipo_calendario.dart';
-
-// Widgets partilhados
-import 'package:pei/presentation/shared/layout/app_scaffold.dart';
-import 'package:pei/presentation/calendario/widgets/calendario_expansivel.dart';
-
 // Modelos
-import 'package:pei/models/eventoCalendario.dart';
+import 'package:pei/models/tarefa_item.dart';
+import 'package:pei/tarefas.dart';
+
+// Widgets
+import 'package:pei/presentation/shared/layout/app_scaffold.dart';
+import 'widgets/calendario_expansivel.dart';
+import 'widgets/calendario_um_dia/cabecalho.dart';
+import 'widgets/calendario_um_dia/timeline.dart';
+import 'widgets/datas_limite_calendario.dart';
+import 'widgets/selecionar_tipo_calendario.dart';
 
 class CalendarioUmDia extends StatefulWidget {
-  const CalendarioUmDia({super.key, this.tarefas = const []});
+  const CalendarioUmDia({super.key, this.tarefas});
 
-  final List<EventoCalendario> tarefas;
+  final List<TarefaItem>? tarefas;
 
   @override
   State<CalendarioUmDia> createState() => _CalendarioUmDiaState();
@@ -27,8 +27,9 @@ class CalendarioUmDia extends StatefulWidget {
 
 class _CalendarioUmDiaState extends State<CalendarioUmDia>
     with WidgetsBindingObserver {
-  final CalendarioController controlador = CalendarioController();
+  final CalendarioControlador controlador = CalendarioControlador();
 
+  late final List<TarefaItem> tarefas;
   late DateTime diaVisivel;
 
   Timer? temporizadorMeiaNoite;
@@ -40,20 +41,15 @@ class _CalendarioUmDiaState extends State<CalendarioUmDia>
     super.initState();
 
     WidgetsBinding.instance.addObserver(this);
-
-    final agora = DateTime.now();
-
-    diaVisivel = DateTime(agora.year, agora.month, agora.day);
-
+    tarefas = widget.tarefas ?? Tarefas123().tarefas;
+    diaVisivel = controlador.normalizarData(DateTime.now());
     agendarMudancaDeDia();
   }
 
   @override
   void dispose() {
     temporizadorMeiaNoite?.cancel();
-
     WidgetsBinding.instance.removeObserver(this);
-
     super.dispose();
   }
 
@@ -71,12 +67,7 @@ class _CalendarioUmDiaState extends State<CalendarioUmDia>
       return;
     }
 
-    if (deslocamentoHorizontal < 0) {
-      mudarDia(1);
-    } else {
-      mudarDia(-1);
-    }
-
+    mudarDia(deslocamentoHorizontal < 0 ? 1 : -1);
     deslocamentoHorizontal = 0;
   }
 
@@ -84,15 +75,10 @@ class _CalendarioUmDiaState extends State<CalendarioUmDia>
     temporizadorMeiaNoite?.cancel();
 
     final agora = DateTime.now();
-
     final proximaMeiaNoite = DateTime(agora.year, agora.month, agora.day + 1);
 
-    final tempoRestante = proximaMeiaNoite.difference(agora);
-
-    temporizadorMeiaNoite = Timer(tempoRestante, () {
-      if (!mounted) {
-        return;
-      }
+    temporizadorMeiaNoite = Timer(proximaMeiaNoite.difference(agora), () {
+      if (!mounted) return;
 
       setState(() {
         diaVisivel = controlador.normalizarData(DateTime.now());
@@ -104,22 +90,22 @@ class _CalendarioUmDiaState extends State<CalendarioUmDia>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      final hoje = controlador.normalizarData(DateTime.now());
+    if (state != AppLifecycleState.resumed) return;
 
-      if (!controlador.mesmoDia(diaVisivel, hoje)) {
-        setState(() {
-          diaVisivel = hoje;
-        });
-      }
+    final hoje = controlador.normalizarData(DateTime.now());
 
-      agendarMudancaDeDia();
+    if (!controlador.mesmoDia(diaVisivel, hoje)) {
+      setState(() {
+        diaVisivel = hoje;
+      });
     }
+
+    agendarMudancaDeDia();
   }
 
   void selecionarData(DateTime data) {
     setState(() {
-      diaVisivel = DateTime(data.year, data.month, data.day);
+      diaVisivel = controlador.normalizarData(data);
     });
   }
 
@@ -140,7 +126,7 @@ class _CalendarioUmDiaState extends State<CalendarioUmDia>
           largura: largura,
           actions: [
             Padding(
-              padding: .only(right: largura * 0.05),
+              padding: EdgeInsets.only(right: largura * 0.05),
               child: SelecionarTipoCalendario(
                 paginaAtual: .hoje,
                 largura: largura,
@@ -148,64 +134,59 @@ class _CalendarioUmDiaState extends State<CalendarioUmDia>
             ),
           ],
           body: Padding(
-  padding: EdgeInsets.all(
-    largura * 0.06,
-  ),
-  child: Column(
-    children: [
-      SeletorCalendarioExpansivel(
-        dataSelecionada: diaVisivel,
-        largura: largura,
-        altura: altura,
-        onDataSelecionada: selecionarData,
-      ),
-
-      SizedBox(
-        height: largura * 0.02,
-      ),
-
-      Expanded(
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-
-          onHorizontalDragStart: (_) {
-            deslocamentoHorizontal = 0;
-          },
-
-          onHorizontalDragUpdate: (details) {
-            deslocamentoHorizontal += details.delta.dx;
-          },
-
-          onHorizontalDragEnd: (_) {
-            terminarDeslize(largura);
-          },
-
-          onHorizontalDragCancel: () {
-            deslocamentoHorizontal = 0;
-          },
-
-          child: Column(
-            children: [
-              CabecalhoUmDia(
-                dia: diaVisivel,
-                largura: largura,
-                altura: altura,
-              ),
-              Expanded(
-                child: TimelineUmDia(
-                  dia: diaVisivel,
-                  tarefas: widget.tarefas,
-                  alturaHora: altura * 0.075,
+            padding: EdgeInsets.all(largura * 0.06),
+            child: Column(
+              children: [
+                SeletorCalendarioExpansivel(
+                  dataSelecionada: diaVisivel,
                   largura: largura,
+                  altura: altura,
+                  onDataSelecionada: selecionarData,
                 ),
-              ),
-            ],
+                SizedBox(height: largura * 0.02),
+                Expanded(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onHorizontalDragStart: (_) {
+                      deslocamentoHorizontal = 0;
+                    },
+                    onHorizontalDragUpdate: (details) {
+                      deslocamentoHorizontal += details.delta.dx;
+                    },
+                    onHorizontalDragEnd: (_) {
+                      terminarDeslize(largura);
+                    },
+                    onHorizontalDragCancel: () {
+                      deslocamentoHorizontal = 0;
+                    },
+                    child: Column(
+                      children: [
+                        DatasLimiteCalendario(
+                          dias: [diaVisivel],
+                          tarefas: tarefas,
+                          largura: largura,
+                          altura: altura,
+                        ),
+                        CabecalhoUmDia(
+                          dia: diaVisivel,
+                          largura: largura,
+                          altura: altura,
+                        ),
+                        Expanded(
+                          child: TimelineUmDia(
+                            dia: diaVisivel,
+                            tarefas: tarefas,
+                            alturaHora: altura * 0.075,
+                            largura: largura,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      ),
-    ],
-  ),
-),
         );
       },
     );

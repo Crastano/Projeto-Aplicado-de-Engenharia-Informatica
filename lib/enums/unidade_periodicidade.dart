@@ -1,0 +1,1 @@
+enum UnidadePeriodicidade { dias, semanas, meses, anos }

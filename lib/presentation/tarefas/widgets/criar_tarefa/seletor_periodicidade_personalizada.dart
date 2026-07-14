@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
-// Controladores
+// Controlador
 import 'package:pei/controller/tarefas_controller.dart';
+
+// Enums
+import 'package:pei/enums/unidade_periodicidade.dart';
 
 class SeletorPeriodicidadePersonalizada extends StatefulWidget {
   const SeletorPeriodicidadePersonalizada({
@@ -20,7 +23,7 @@ class SeletorPeriodicidadePersonalizada extends StatefulWidget {
 
 class _SeletorPeriodicidadePersonalizadaState
     extends State<SeletorPeriodicidadePersonalizada> {
-  final TarefasController controlador = TarefasController();
+  final TarefasControlador controlador = TarefasControlador();
 
   late int intervalo;
   late UnidadePeriodicidade unidade;

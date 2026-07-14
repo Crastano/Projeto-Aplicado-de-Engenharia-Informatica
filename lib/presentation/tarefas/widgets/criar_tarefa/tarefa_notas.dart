@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-// Widgets personais
-import 'package:pei/presentation/tarefas/widgets/criar_tarefa/pagina_notas.dart';
+// Widgets
+import 'pagina_notas.dart';
 
 class TarefaNotas extends StatefulWidget {
   const TarefaNotas({super.key, required this.largura, this.notaInicial = ''});
@@ -27,7 +27,7 @@ class _TarefaNotasState extends State<TarefaNotas> {
       context,
       MaterialPageRoute(
         builder: (context) {
-          return PaginaNotas(notaInicial: nota);
+          return PaginaNotas(notaInicial: nota, largura: widget.largura,);
         },
       ),
     );
@@ -55,13 +55,13 @@ class _TarefaNotasState extends State<TarefaNotas> {
                 fontSize: widget.largura * 0.045,
               ),
             ),
-            const Spacer(),
+            Spacer(),
             TextButton(
               onPressed: abrirPaginaNotas,
               child: Text(
                 nota.isEmpty ? 'Adicionar' : 'Editar',
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontWeight: .w500,
                   fontSize: widget.largura * 0.04
                 ),

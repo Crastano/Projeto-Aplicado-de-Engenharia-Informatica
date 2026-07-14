@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-// Widgets partilhados
-import 'package:pei/presentation/tarefas/widgets/categoria.dart';
-import 'package:pei/presentation/tarefas/widgets/dialogo_adicionar_categoria.dart';
-import 'package:pei/presentation/tarefas/widgets/adicionar_categoria.dart';
-
-// Controladores
+// Controlador
 import 'package:pei/controller/tarefas_controller.dart';
+
+// Widgets
+import 'categoria_choice_chip.dart';
+import 'dialogo_adicionar_categoria.dart';
+import 'adicionar_categoria.dart';
 
 class TarefaSelecionarCategoria extends StatefulWidget {
   const TarefaSelecionarCategoria({
@@ -24,7 +24,7 @@ class TarefaSelecionarCategoria extends StatefulWidget {
 }
 
 class _TarefaSelecionarCategoriaState extends State<TarefaSelecionarCategoria> {
-  final TarefasController controlador = TarefasController();
+  final TarefasControlador controlador = TarefasControlador();
 
   @override
   Widget build(BuildContext context) {

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-// Controladores
+// Controlador
 import 'package:pei/controller/calendario_controller.dart';
 
-class CabecalhoTresDias extends StatefulWidget {
+class CabecalhoTresDias extends StatelessWidget {
   const CabecalhoTresDias({
     super.key,
     required this.dias,
@@ -16,24 +16,19 @@ class CabecalhoTresDias extends StatefulWidget {
   final double altura;
 
   @override
-  State<CabecalhoTresDias> createState() => _CabecalhoTresDiasState();
-}
-
-class _CabecalhoTresDiasState extends State<CabecalhoTresDias> {
-  @override
   Widget build(BuildContext context) {
-    final CalendarioController controlador = CalendarioController();
+    final CalendarioControlador controlador = CalendarioControlador();
 
     final hoje = DateTime.now();
-    final larguraHoras = widget.largura * 0.15;
+    final larguraHoras = largura * 0.15;
 
     return Container(
-      height: widget.altura * 0.07,
+      height: altura * 0.07,
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
             color: Theme.of(context).colorScheme.outline,
-            width: widget.largura * 0.005,
+            width: largura * 0.005,
           ),
         ),
       ),
@@ -41,7 +36,7 @@ class _CabecalhoTresDiasState extends State<CabecalhoTresDias> {
         children: [
           SizedBox(width: larguraHoras),
 
-          ...widget.dias.map((dia) {
+          ...dias.map((dia) {
             final diaAtual = controlador.mesmoDia(dia, hoje);
 
             return Expanded(
@@ -54,7 +49,7 @@ class _CabecalhoTresDiasState extends State<CabecalhoTresDias> {
                   border: Border(
                     left: BorderSide(
                       color: Theme.of(context).colorScheme.outline,
-                      width: widget.largura * 0.005,
+                      width: largura * 0.005,
                     ),
                   ),
                 ),
@@ -62,7 +57,7 @@ class _CabecalhoTresDiasState extends State<CabecalhoTresDias> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      controlador.formatarData(dia, true, false),
+                      controlador.formatarData(dia, false, true, false),
                       style: TextStyle(
                         fontWeight: .w500,
                         color: diaAtual

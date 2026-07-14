@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 
-// Controladores
+// Controlador
 import 'package:pei/controller/calendario_controller.dart';
 
-// Widgets personais
-import 'package:pei/presentation/calendario/widgets/linha_hora_atual.dart';
-
 // Modelos
-import 'package:pei/models/eventoCalendario.dart';
+import 'package:pei/models/tarefa_item.dart';
 
-class ColunaDia extends StatefulWidget {
-  const ColunaDia({
+// Widgets
+import 'linha_hora_atual.dart';
+import 'tarefa_timeline_card.dart';
+
+class ColunaDia extends StatelessWidget {
+  ColunaDia({
     super.key,
     required this.dia,
     required this.tarefas,
@@ -21,91 +22,84 @@ class ColunaDia extends StatefulWidget {
   });
 
   final DateTime dia;
-  final List<EventoCalendario> tarefas;
+  final List<TarefaItem> tarefas;
   final double alturaHora;
   final bool mostrarBordaDireita;
   final double largura;
   final bool umDia;
 
-  @override
-  State<ColunaDia> createState() => _ColunaDiaState();
-}
-
-class _ColunaDiaState extends State<ColunaDia> {
-  final CalendarioController controlador =
-      CalendarioController();
+  final CalendarioControlador controlador = CalendarioControlador();
 
   @override
   Widget build(BuildContext context) {
-    final alturaTotal = widget.alturaHora * 24;
+    final alturaTotal = alturaHora * 24;
 
     return SizedBox(
       height: alturaTotal,
       child: Stack(
-        clipBehavior: Clip.hardEdge,
+        clipBehavior: .hardEdge,
         children: [
           Column(
             children: List.generate(24, (index) {
-              final BorderSide topBorder = index == 0
-                  ? BorderSide.none
-                  : BorderSide(
-                      color: Theme.of(context).colorScheme.outline,
-                      width: widget.largura * 0.005,
-                    );
-              final BorderSide bottomBorder = index == 23
-                  ? BorderSide(
-                      color: Theme.of(context).colorScheme.outline,
-                      width: widget.largura * 0.005,
-                    )
-                  : BorderSide.none;
-              final BorderSide rightBorder = widget.mostrarBordaDireita
-                  ? BorderSide(
-                      color: Theme.of(context).colorScheme.outline,
-                      width: widget.largura * 0.005,
-                    )
-                  : BorderSide.none;
-
               return Container(
-                height: widget.alturaHora,
+                height: alturaHora,
                 decoration: BoxDecoration(
                   border: Border(
-                    top: topBorder,
+                    top: index == 0
+                        ? BorderSide.none
+                        : BorderSide(
+                            color: Theme.of(context).colorScheme.outline,
+                            width: largura * 0.005,
+                          ),
                     left: BorderSide(
                       color: Theme.of(context).colorScheme.outline,
-                      width: widget.largura * 0.005,
+                      width: largura * 0.005,
                     ),
-                    right: rightBorder,
-                    bottom: bottomBorder,
+                    right: mostrarBordaDireita
+                        ? BorderSide(
+                            color: Theme.of(context).colorScheme.outline,
+                            width: largura * 0.005,
+                          )
+                        : BorderSide.none,
+                    bottom: index == 23
+                        ? BorderSide(
+                            color: Theme.of(context).colorScheme.outline,
+                            width: largura * 0.005,
+                          )
+                        : BorderSide.none,
                   ),
                 ),
               );
             }),
           ),
 
-          ...widget.tarefas.map(
-            (tarefa) => widget.umDia
-                ? controlador.posicionarTarefa(
-                    tarefa,
-                    alturaTotal,
-                    widget.dia,
-                    widget.alturaHora,
-                    widget.largura,
-                    true,
-                  )
-                : controlador.posicionarTarefa(
-                    tarefa,
-                    alturaTotal,
-                    widget.dia,
-                    widget.alturaHora,
-                    widget.largura,
-                    false,
-                  ),
-          ),
+          ...tarefas.map((tarefa) {
+            final top = controlador.calcularTopTarefa(tarefa, alturaHora);
 
-          if (widget.umDia
-              ? controlador.mesmoDia(widget.dia, DateTime.now())
-              : controlador.mesmoDia(widget.dia, DateTime.now()))
-            LinhaHoraAtual(alturaHora: widget.alturaHora),
+            final alturaCard = controlador.calcularAlturaTarefa(
+              tarefa,
+              alturaHora,
+            );
+
+            if (alturaCard <= 0) {
+              return const SizedBox.shrink();
+            }
+
+            return Positioned(
+              top: top,
+              left: largura * 0.015,
+              right: largura * 0.015,
+              height: alturaCard,
+              child: TarefaTimelineCard(
+                tarefa: tarefa,
+                largura: largura,
+                umDia: umDia,
+              ),
+            );
+          }),
+
+          if (controlador.mesmoDia(dia, DateTime.now()))
+            LinhaHoraAtual(alturaHora: alturaHora),
         ],
       ),
     );

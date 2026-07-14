@@ -1,62 +1,71 @@
 import 'package:flutter/material.dart';
 
-// Modelos
-import 'package:pei/models/eventoCalendario.dart';
+// Controlador
+import 'package:pei/controller/calendario_controller.dart';
 
-class TarefaTimelineCard extends StatefulWidget {
-  const TarefaTimelineCard({
+// Modelos
+import 'package:pei/models/tarefa_item.dart';
+
+class TarefaTimelineCard extends StatelessWidget {
+  TarefaTimelineCard({
     super.key,
     required this.tarefa,
     required this.largura,
     required this.umDia,
+    this.onTap,
   });
 
-  final EventoCalendario tarefa;
+  final TarefaItem tarefa;
   final double largura;
   final bool umDia;
+  final VoidCallback? onTap;
 
-  @override
-  State<TarefaTimelineCard> createState() => _TarefaTimelineCardState();
-}
+  final CalendarioControlador controlador = CalendarioControlador();
 
-class _TarefaTimelineCardState extends State<TarefaTimelineCard> {
   @override
   Widget build(BuildContext context) {
     return Card.filled(
       margin: .zero,
       shape: RoundedRectangleBorder(
-        borderRadius: .circular(widget.largura * 0.025),
+        borderRadius: .circular(largura * 0.025),
         side: BorderSide(
-          color: Theme.of(context).colorScheme.outline, // border color
-          width: widget.largura * 0.005, //
+          color: Theme.of(context).colorScheme.outline,
+          width: largura * 0.005,
         ),
       ),
-      color: widget.tarefa.corFundo ?? Theme.of(context).colorScheme.surface,
+      color: tarefa.categoryBackground ?? Theme.of(context).colorScheme.surface,
       clipBehavior: .antiAlias,
       child: InkWell(
-        onTap: () {},
+        onTap: onTap,
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final bool cardPequeno = constraints.maxHeight < widget.largura * 0.075;
-
             return Padding(
-              padding: .symmetric(
-                horizontal: widget.largura * 0.015,
-                vertical: cardPequeno ? 3 : widget.largura * 0.015,
-              ),
-              child: Align(
-                alignment: .topLeft,
-                child: Text(
-                  widget.tarefa.titulo,
-                  style: TextStyle(
-                    color:
-                        widget.tarefa.corTexto ??
-                        Theme.of(context).colorScheme.onSurface,
-                    fontSize: widget.umDia ? widget.largura * 0.05 : widget.largura * 0.03,
-                    fontWeight: .w600,
-                    height: 1.05,
+              padding: EdgeInsets.all(largura * 0.02),
+              child: Column(
+                mainAxisAlignment: .start,
+                crossAxisAlignment: .start,
+                children: [
+                  Text(
+                    tarefa.titulo,
+                    style: TextStyle(
+                      color: tarefa.categoryText,
+                      fontSize: umDia ? largura * 0.0425 : largura * 0.03,
+                      fontWeight: .w500,
+                      height: 1.1,
+                    ),
                   ),
-                ),
+                  if (umDia) ...[
+                    SizedBox(height: largura * 0.005),
+                    Text(
+                      '${controlador.formatarHora(tarefa.dataHora)}'
+                      ' · ${tarefa.category}',
+                      style: TextStyle(
+                        color: tarefa.categoryText,
+                        fontSize: largura * 0.03,
+                      ),
+                    ),
+                  ],
+                ],
               ),
             );
           },

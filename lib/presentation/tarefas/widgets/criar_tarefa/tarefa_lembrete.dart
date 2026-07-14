@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 
-// Controladores
+// Controlador
 import 'package:pei/controller/tarefas_controller.dart';
 
-// Widgets personais
-import 'package:pei/presentation/tarefas/widgets/criar_tarefa/seletor_lembrete.dart';
-import 'package:pei/presentation/tarefas/widgets/criar_tarefa/seletor_lembrete_personalizada.dart';
+// Widgets
+import 'seletor_lembrete.dart';
+import 'seletor_lembrete_personalizada.dart';
+
+// Enums
+import 'package:pei/enums/lembrete.dart';
 
 class TarefaLembrete extends StatefulWidget {
   const TarefaLembrete({super.key, required this.largura});
@@ -17,7 +20,7 @@ class TarefaLembrete extends StatefulWidget {
 }
 
 class _TarefaLembreteState extends State<TarefaLembrete> {
-  final TarefasController controlador = TarefasController();
+  final TarefasControlador controlador = TarefasControlador();
 
   Lembrete lembreteSelecionado = .nenhum;
 
@@ -98,7 +101,7 @@ class _TarefaLembreteState extends State<TarefaLembrete> {
                 Theme.of(context).colorScheme.surfaceContainerHighest,
               ),
               foregroundColor: WidgetStatePropertyAll(
-                Theme.of(context).colorScheme.onSurface,
+                Theme.of(context).colorScheme.onSurfaceVariant,
               ),
               side: WidgetStatePropertyAll(
                 BorderSide(

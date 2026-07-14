@@ -1,31 +1,43 @@
 import 'package:flutter/material.dart';
 
 // Modelos
-import 'package:pei/models/tarefaItem.dart';
+import 'package:pei/models/tarefa_item.dart';
 
 // Controlador
 import 'package:pei/controller/home_controller.dart';
+import 'package:pei/presentation/home/widgets/selecionar_opcao.dart';
 
-// Widgets personais
+// Widgets
 import 'widgets/selecionar_data.dart';
 import 'widgets/selecionar_filter.dart';
-
-// Widgets partilhados
 import 'package:pei/presentation/shared/layout/app_scaffold.dart';
 import 'package:pei/presentation/shared/widgets/tarefa_card.dart';
+
+// Enums
+import 'package:pei/enums/filter_data.dart';
+import 'package:pei/enums/filter_tarefa.dart';
 
 import 'package:pei/tarefas.dart';
 
 class MinhasTarefas extends StatefulWidget {
-  const MinhasTarefas({super.key});
+  const MinhasTarefas({super.key, this.tarefas});
+
+  final List<TarefaItem>? tarefas;
 
   @override
   State<MinhasTarefas> createState() => _MinhasTarefasState();
 }
 
 class _MinhasTarefasState extends State<MinhasTarefas> {
-  final TarefasController controlador = TarefasController();
-  final List<TarefaItem> tarefas = Tarefas123().tarefas;
+  final HomeControlador controlador = HomeControlador();
+  late final List<TarefaItem> tarefas;
+
+  @override
+  void initState() {
+    super.initState();
+
+    tarefas = widget.tarefas ?? Tarefas123().tarefas;
+  }
 
   void alterarEstadoTarefa(TarefaItem tarefa) {
     final indexOriginal = tarefas.indexOf(tarefa);
@@ -34,7 +46,7 @@ class _MinhasTarefasState extends State<MinhasTarefas> {
 
     setState(() {
       tarefas[indexOriginal] = tarefa.copyWith(
-        isCompleted: !tarefa.isCompleted,
+        estaCompletado: !tarefa.estaCompletado,
       );
     });
   }
@@ -56,11 +68,7 @@ class _MinhasTarefasState extends State<MinhasTarefas> {
           actions: [
             Padding(
               padding: .only(right: largura * 0.05),
-              child: IconButton(
-                tooltip: 'Pesquisar',
-                onPressed: () {},
-                icon: Icon(Icons.search, size: largura * 0.075),
-              ),
+              child: SelecionarOpcao(largura: largura),
             ),
           ],
           automaticallyImplyLeading: false,
@@ -77,7 +85,7 @@ class _MinhasTarefasState extends State<MinhasTarefas> {
                 SelecionarData(
                   largura: largura,
                   selecionado: controlador.dataSelecionada,
-                  onChanged: (value) {
+                  onChanged: (FilterData value) {
                     setState(() {
                       controlador.dataSelecionada = value;
                     });
@@ -90,7 +98,7 @@ class _MinhasTarefasState extends State<MinhasTarefas> {
                   child: SelecionarFilter(
                     largura: largura,
                     selecionado: controlador.filtroSelecionado,
-                    onChanged: (value) {
+                    onChanged: (FilterTarefa value) {
                       setState(() {
                         controlador.filtroSelecionado = value;
                       });
@@ -105,7 +113,7 @@ class _MinhasTarefasState extends State<MinhasTarefas> {
                     physics: const BouncingScrollPhysics(),
                     itemCount: tarefasFiltradas.length,
                     separatorBuilder: (context, index) {
-                      return SizedBox(height: altura * 0.02);
+                      return SizedBox(height: altura * 0.01);
                     },
                     itemBuilder: (context, index) {
                       return TarefaCard(
@@ -115,7 +123,7 @@ class _MinhasTarefasState extends State<MinhasTarefas> {
                         iconTap: () {
                           alterarEstadoTarefa(tarefasFiltradas[index]);
                         },
-                        cardTap: () {},
+                        mostrarIcones: true,
                       );
                     },
                   ),

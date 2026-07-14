@@ -1,68 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-import '../../utils.dart';
+// Modelos
+import 'package:pei/models/tarefa_item.dart';
+
 import 'package:pei/tarefas.dart';
 
-// Modelos
-import 'package:pei/models/tarefaItem.dart';
-
-// Widget personais
-import 'widgets/calendario_widget.dart';
-import 'package:pei/presentation/calendario/widgets/calendario/calendario_lista_tarefas.dart';
-import 'package:pei/presentation/calendario/widgets/selecionar_tipo_calendario.dart';
-
-// Widgets partilhados
+// Widgets
 import 'package:pei/presentation/shared/layout/app_scaffold.dart';
-
-import 'package:pei/controller/calendario_controller.dart';
+import 'widgets/calendario_widget.dart';
+import 'widgets/calendario/calendario_lista_tarefas.dart';
+import 'widgets/selecionar_tipo_calendario.dart';
 
 class Calendario extends StatefulWidget {
-  const Calendario({super.key});
+  const Calendario({super.key, this.tarefas});
+
+  final List<TarefaItem>? tarefas;
 
   @override
   State<Calendario> createState() => _CalendarioState();
 }
 
 class _CalendarioState extends State<Calendario> {
-  final CalendarioController controlador = CalendarioController();
-  late final ValueNotifier<List<TarefaItem>> tarefasSelecionados;
+  late final List<TarefaItem> tarefas;
 
-  DateTime _focusedDay = DateTime.now();
-  DateTime? _selectedDay;
+  DateTime focusedDay = DateTime.now();
+  DateTime? selectedDay;
 
   @override
   void initState() {
     super.initState();
 
-    _selectedDay = _focusedDay;
-    tarefasSelecionados = ValueNotifier(
-      controlador.obterTarefasDoDia(_selectedDay!),
-    );
+    tarefas = widget.tarefas ?? Tarefas123().tarefas;
+    selectedDay = focusedDay;
   }
 
-  @override
-  void dispose() {
-    tarefasSelecionados.dispose();
-    super.dispose();
-  }
-
-  void noDiaSelecionado(DateTime selectedDay, DateTime focusedDay) {
-    if (isSameDay(_selectedDay, selectedDay)) {
+  void noDiaSelecionado(DateTime novoDia, DateTime novoDiaFocado) {
+    if (isSameDay(selectedDay, novoDia)) {
       return;
     }
 
     setState(() {
-      _selectedDay = selectedDay;
-      _focusedDay = focusedDay;
+      selectedDay = novoDia;
+      focusedDay = novoDiaFocado;
     });
-
-    tarefasSelecionados.value = controlador.obterTarefasDoDia(selectedDay);
   }
-
-  final List<TarefaItem> tarefas = Tarefas123().tarefas;
-
-  final CalendarioTipo selecionado = CalendarioTipo.calendario;
 
   @override
   Widget build(BuildContext context) {
@@ -70,6 +52,7 @@ class _CalendarioState extends State<Calendario> {
       builder: (context, constraints) {
         final largura = constraints.maxWidth;
         final altura = constraints.maxHeight;
+        final diaAtual = selectedDay ?? focusedDay;
 
         return AppScaffold(
           title: 'Calendário',
@@ -88,7 +71,6 @@ class _CalendarioState extends State<Calendario> {
               ),
             ),
           ],
-
           body: Padding(
             padding: .all(largura * 0.06),
             child: SingleChildScrollView(
@@ -97,25 +79,27 @@ class _CalendarioState extends State<Calendario> {
                   CalendarioWidget(
                     largura: largura,
                     altura: altura,
-                    kFirstDay: kFirstDay,
-                    kLastDay: kLastDay,
-                    focusedDay: _focusedDay,
-                    selectedDay: _selectedDay,
+                    primeiroDia: DateTime(2000),
+                    ultimoDia: DateTime(2100),
+                    focusedDay: focusedDay,
+                    selectedDay: selectedDay,
                     noDiaSelecionado: noDiaSelecionado,
                     headerVisibilidade: true,
-                    marcaEvento: true,
+                    marcaTarefa: true,
+                    tarefas: tarefas,
+                    onPageChanged: (novoDiaFocado) {
+                      setState(() {
+                        focusedDay = novoDiaFocado;
+                      });
+                    },
                   ),
-
                   SizedBox(height: altura * 0.03),
-
                   CalendarioListaTarefas(
-                    tarefasSelecionados: tarefasSelecionados,
+                    tarefas: tarefas,
+                    dia: diaAtual,
                     largura: largura,
                     altura: altura,
-                    focusedDay: _focusedDay,
-                    selectedDay: _selectedDay,
                   ),
-
                   SizedBox(height: altura * 0.05),
                 ],
               ),

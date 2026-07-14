@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:pei/controller/home_controller.dart';
 
-class SelecionarFilter extends StatefulWidget {
+// Enums
+import 'package:pei/enums/filter_tarefa.dart';
+
+class SelecionarFilter extends StatelessWidget {
   const SelecionarFilter({
     super.key,
     required this.largura,
@@ -14,40 +16,30 @@ class SelecionarFilter extends StatefulWidget {
   final ValueChanged<FilterTarefa> onChanged;
 
   @override
-  State<SelecionarFilter> createState() => _SelecionarFilterState();
-}
-
-class _SelecionarFilterState extends State<SelecionarFilter> {
-  @override
   Widget build(BuildContext context) {
     return SegmentedButton<FilterTarefa>(
       showSelectedIcon: false,
       segments: <ButtonSegment<FilterTarefa>>[
         ButtonSegment<FilterTarefa>(
           value: FilterTarefa.todos,
-          label: Text(
-            'Todos',
-            style: TextStyle(fontSize: widget.largura * 0.04),
-          ),
+          label: Text('Todos', style: TextStyle(fontSize: largura * 0.03)),
         ),
         ButtonSegment<FilterTarefa>(
           value: FilterTarefa.pendentes,
-          label: Text(
-            'Pendentes',
-            style: TextStyle(fontSize: widget.largura * 0.04),
-          ),
+          label: Text('Pendentes', style: TextStyle(fontSize: largura * 0.03)),
+        ),
+        ButtonSegment<FilterTarefa>(
+          value: FilterTarefa.atrasados,
+          label: Text('Atrasados', style: TextStyle(fontSize: largura * 0.03)),
         ),
         ButtonSegment<FilterTarefa>(
           value: FilterTarefa.concluidos,
-          label: Text(
-            'Concluídos',
-            style: TextStyle(fontSize: widget.largura * 0.04),
-          ),
+          label: Text('Concluídos', style: TextStyle(fontSize: largura * 0.03)),
         ),
       ],
-      selected: {widget.selecionado},
+      selected: {selecionado},
       onSelectionChanged: (novoSelecionado) {
-        widget.onChanged(novoSelecionado.first);
+        onChanged(novoSelecionado.first);
       },
     );
   }
