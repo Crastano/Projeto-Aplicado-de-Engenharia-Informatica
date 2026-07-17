@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 // Controlador
-import 'package:pei/controller/tarefas_controller.dart';
+import 'package:pei/controller/tarefas_controlador.dart';
 
 class TarefaHora extends StatefulWidget {
   const TarefaHora({super.key, required this.largura});

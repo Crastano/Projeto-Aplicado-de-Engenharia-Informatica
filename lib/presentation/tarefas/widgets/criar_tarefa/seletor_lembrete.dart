@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 // Controlador
-import 'package:pei/controller/tarefas_controller.dart';
+import 'package:pei/controller/tarefas_controlador.dart';
 
 // Enums
 import 'package:pei/enums/lembrete.dart';
@@ -43,8 +43,8 @@ class _SeletorLembreteState extends State<SeletorLembrete> {
             Text(
               'Lembrete',
               style: TextStyle(
-                fontSize: widget.largura * 0.055,
-                fontWeight: .w600,
+                fontSize: widget.largura * 0.06,
+                fontWeight: .w500,
               ),
             ),
             SizedBox(height: widget.largura * 0.015),
@@ -52,7 +52,7 @@ class _SeletorLembreteState extends State<SeletorLembrete> {
               'Escolhe quanto tempo antes queres receber o lembrete.',
               style: TextStyle(
                 fontSize: widget.largura * 0.04,
-                fontWeight: .w500,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
             SizedBox(height: widget.largura * 0.05),

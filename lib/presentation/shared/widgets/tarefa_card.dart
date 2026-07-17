@@ -9,7 +9,7 @@ import 'package:pei/theme/app_cores.dart';
 // Widget partilhados
 import 'package:pei/presentation/shared/widgets/categoria_chip.dart';
 
-class TarefaCard extends StatefulWidget {
+class TarefaCard extends StatelessWidget {
   const TarefaCard({
     super.key,
     required this.tarefa,
@@ -26,21 +26,16 @@ class TarefaCard extends StatefulWidget {
   final bool mostrarIcones;
 
   @override
-  State<TarefaCard> createState() => _TarefaCardState();
-}
-
-class _TarefaCardState extends State<TarefaCard> {
-  @override
   Widget build(BuildContext context) {
     final bool isEscuro = Theme.of(context).brightness == Brightness.dark;
 
-    final Color cardColor = widget.tarefa.estaCompletado
+    final Color cardColor = tarefa.estaCompletado
         ? isEscuro
               ? AppCores.concluidoBackgroundEscuro
               : AppCores.concluidoBackgroundClaro
         : Theme.of(context).colorScheme.surface;
 
-    final Color cardIconColor = widget.tarefa.estaCompletado
+    final Color cardIconColor = tarefa.estaCompletado
         ? isEscuro
               ? AppCores.concluidoTextEscuro
               : AppCores.concluidoTextClaro
@@ -48,58 +43,70 @@ class _TarefaCardState extends State<TarefaCard> {
 
     return Card.outlined(
       shape: RoundedRectangleBorder(
-        borderRadius: .circular(widget.largura * 0.05),
+        borderRadius: .circular(largura * 0.05),
         side: BorderSide(
-          color: Theme.of(context).colorScheme.outline, // border color
-          width: widget.largura * 0.005, // border width
+          color: Theme.of(context).colorScheme.outline,
+          width: largura * 0.005,
         ),
       ),
       color: cardColor,
       clipBehavior: .antiAlias,
       child: InkWell(
         onTap: () {
-          Navigator.pushNamed(context, '/paginaTarefa', arguments: widget.tarefa);
+          Navigator.pushNamed(context, '/paginaTarefa', arguments: tarefa);
         },
         child: ListTile(
+          contentPadding: .symmetric(
+            horizontal: largura * 0.025,
+            vertical: altura * 0.005,
+          ),
+          horizontalTitleGap: largura * 0.015,
+          minLeadingWidth: largura * 0.1,
           leading: IconButton(
+            padding: .zero,
+            constraints: BoxConstraints(),
             icon: Icon(
-              widget.tarefa.estaCompletado
+              tarefa.estaCompletado
                   ? Icons.check_circle_outline
                   : Icons.radio_button_unchecked,
               color: cardIconColor,
             ),
-            onPressed: widget.iconTap,
+            onPressed: iconTap,
           ),
           title: Text(
-            widget.tarefa.titulo,
-            style: TextStyle(
-              fontWeight: .w500,
-              fontSize: widget.largura * 0.04,
-            ),
+            tarefa.titulo,
+            maxLines: 2,
+            overflow: .ellipsis,
+            style: TextStyle(fontWeight: .w500, fontSize: largura * 0.04),
           ),
           subtitle: Row(
             children: [
               Text(
-                widget.tarefa.data,
-                style: TextStyle(fontSize: widget.largura * 0.03,),
+                tarefa.data,
+                maxLines: 1,
+                overflow: .ellipsis,
+                style: TextStyle(fontSize: largura * 0.03),
               ),
-              if (widget.tarefa.estaRepetindo && widget.mostrarIcones) ...[
-                SizedBox(width: widget.largura * 0.012),
-                Icon(Icons.repeat, size: widget.largura * 0.035),
+              if (tarefa.estaRepetindo && mostrarIcones) ...[
+                SizedBox(width: largura * 0.012),
+                Icon(Icons.repeat, size: largura * 0.035),
               ],
-              if (widget.tarefa.temLembrete && widget.mostrarIcones) ...[
-                SizedBox(width: widget.largura * 0.012),
-                Icon(Icons.notifications_none, size: widget.largura * 0.035),
+              if (tarefa.temLembrete && mostrarIcones) ...[
+                SizedBox(width: largura * 0.012),
+                Icon(Icons.notifications_none, size: largura * 0.035),
               ],
             ],
           ),
-          trailing: widget.tarefa.category == null ? null : CategoriaChip(
-            label: widget.tarefa.category ?? '',
-            backgroundColor: widget.tarefa.categoryBackground ?? Colors.transparent,
-            textColor: widget.tarefa.categoryText ?? Colors.transparent,
-            largura: widget.largura,
-            altura: widget.altura,
-          ),
+          trailing: tarefa.category == null
+              ? null
+              : CategoriaChip(
+                  label: tarefa.category!,
+                  backgroundColor:
+                      tarefa.categoryBackground ?? Colors.transparent,
+                  textColor: tarefa.categoryText ?? Colors.transparent,
+                  largura: largura,
+                  altura: altura,
+                ),
         ),
       ),
     );

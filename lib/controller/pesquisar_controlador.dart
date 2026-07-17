@@ -13,16 +13,31 @@ class PesquisarController extends ChangeNotifier {
 
   List<TarefaItem> tarefas;
 
-  List<TarefaItem> get tarefasPesquisadas {
+  String? categoriaSelecionada;
+
+  List<TarefaItem> get tarefasFiltradas {
     final pesquisa = pesquisaController.text.trim().toLowerCase();
 
-    if (pesquisa.isEmpty) {
-      return tarefas;
-    }
+    final categoria = categoriaSelecionada?.trim().toLowerCase();
 
     return tarefas.where((tarefa) {
-      return tarefa.titulo.toLowerCase().contains(pesquisa);
+      final tituloTarefa = tarefa.titulo.trim().toLowerCase();
+
+      final categoriaTarefa = tarefa.category?.trim().toLowerCase();
+
+      final correspondeAoNome =
+          pesquisa.isEmpty || tituloTarefa.contains(pesquisa);
+
+      final correspondeACategoria =
+          categoria == null || categoriaTarefa == categoria;
+
+      return correspondeAoNome && correspondeACategoria;
     }).toList();
+  }
+
+  void selecionarCategoria(String? categoria) {
+    categoriaSelecionada = categoria;
+    notifyListeners();
   }
 
   void atualizarTarefas(List<TarefaItem> tarefas) {

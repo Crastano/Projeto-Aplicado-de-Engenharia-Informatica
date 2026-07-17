@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 // Controlador
-import 'package:pei/controller/calendario_controller.dart';
+import 'package:pei/controller/calendario_controlador.dart';
 
 // Modelos
 import 'package:pei/models/tarefa_item.dart';

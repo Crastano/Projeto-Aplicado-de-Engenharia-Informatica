@@ -27,7 +27,7 @@ class SelecionarTipoCalendario extends StatelessWidget {
         rota = '/calendarioTresDias';
         break;
 
-      case .hoje:
+      case .umDia:
         rota = '/calendarioUmDia';
         break;
     }
@@ -48,10 +48,28 @@ class SelecionarTipoCalendario extends StatelessWidget {
       onSelected: (tipo) {
         irPara(context, tipo);
       },
-      itemBuilder: (context) => const [
-        PopupMenuItem(value: .calendario, child: Text('Calendário')),
-        PopupMenuItem(value: .tresDias, child: Text('3 Dias')),
-        PopupMenuItem(value: .hoje, child: Text('1 Dia')),
+      itemBuilder: (context) => [
+        PopupMenuItem(value: .calendario, child: Row(
+          children: [
+            Icon(Icons.calendar_today_outlined),
+            SizedBox(width: largura * 0.015,),
+            Text('Calendário'),
+          ],
+        )),
+        PopupMenuItem(value: .tresDias, child: Row(
+          children: [
+            Icon(Icons.view_week_outlined),
+            SizedBox(width: largura * 0.015,),
+            Text('3 Dias'),
+          ],
+        )),
+        PopupMenuItem(value: .umDia, child: Row(
+          children: [
+            Icon(Icons.view_day_outlined),
+            SizedBox(width: largura * 0.015,),
+            Text('1 Dia'),
+          ],
+        )),
       ],
     );
   }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 // Controlador
-import 'package:pei/controller/calendario_controller.dart';
+import 'package:pei/controller/calendario_controlador.dart';
 
 class CabecalhoTresDias extends StatelessWidget {
   const CabecalhoTresDias({

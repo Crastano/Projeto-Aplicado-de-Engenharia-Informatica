@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 // Controlador
-import 'package:pei/controller/calendario_controller.dart';
+import 'package:pei/controller/calendario_controlador.dart';
 
 // Modelos
 import 'package:pei/models/tarefa_item.dart';
@@ -128,7 +128,7 @@ class _CalendarioUmDiaState extends State<CalendarioUmDia>
             Padding(
               padding: EdgeInsets.only(right: largura * 0.05),
               child: SelecionarTipoCalendario(
-                paginaAtual: .hoje,
+                paginaAtual: .umDia,
                 largura: largura,
               ),
             ),

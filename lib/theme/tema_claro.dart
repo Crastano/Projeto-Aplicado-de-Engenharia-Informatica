@@ -116,5 +116,4 @@ ThemeData temaClaro() => ThemeData(
     })
   ),
 
-  
 );

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 // Controlador
-import 'package:pei/controller/tarefas_controller.dart';
+import 'package:pei/controller/tarefas_controlador.dart';
 
 // Enums
 import 'package:pei/enums/unidade_periodicidade.dart';
@@ -48,8 +48,8 @@ class _SeletorPeriodicidadePersonalizadaState
             Text(
               'Periodicidade personalizada',
               style: TextStyle(
-                fontSize: widget.largura * 0.055,
-                fontWeight: .w600,
+                fontSize: widget.largura * 0.06,
+                fontWeight: .w500,
               ),
             ),
             SizedBox(height: widget.largura * 0.015),
@@ -57,7 +57,7 @@ class _SeletorPeriodicidadePersonalizadaState
               'Repetir a tarefa a cada:',
               style: TextStyle(
                 fontSize: widget.largura * 0.04,
-                color: Theme.of(context).colorScheme.onSurface,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
             SizedBox(height: widget.largura * 0.05),

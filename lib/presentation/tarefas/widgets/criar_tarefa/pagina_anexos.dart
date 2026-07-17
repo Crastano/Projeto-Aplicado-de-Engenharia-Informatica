@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:open_filex/open_filex.dart';
 
 // Controlador
-import 'package:pei/controller/tarefas_controller.dart';
+import 'package:pei/controller/tarefas_controlador.dart';
 
 class PaginaAnexos extends StatefulWidget {
   const PaginaAnexos({

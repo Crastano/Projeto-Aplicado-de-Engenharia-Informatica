@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 // Controlador
-import 'package:pei/controller/tarefas_controller.dart';
+import 'package:pei/controller/tarefas_controlador.dart';
 
 // Enums
 import 'package:pei/enums/unidade_lembrete.dart';
@@ -48,8 +48,8 @@ class _SeletorLembretePersonalizadoState
             Text(
               'Lembrete personalizado',
               style: TextStyle(
-                fontSize: widget.largura * 0.055,
-                fontWeight: .w600,
+                fontSize: widget.largura * 0.06,
+                fontWeight: .w500,
               ),
             ),
             SizedBox(height: widget.largura * 0.025),
@@ -57,7 +57,7 @@ class _SeletorLembretePersonalizadoState
               'Receber o lembrete antes da tarefa:',
               style: TextStyle(
                 fontSize: widget.largura * 0.04,
-                color: Theme.of(context).colorScheme.onSurface,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
             SizedBox(height: widget.largura * 0.06),

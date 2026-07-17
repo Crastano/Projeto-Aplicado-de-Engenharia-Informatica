@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 // Controlador
-import 'package:pei/controller/home_controller.dart';
+import 'package:pei/controller/home_controlador.dart';
 
 // Enums
 import 'package:pei/enums/filter_data.dart';
@@ -29,8 +29,6 @@ class _SelecionarDataState extends State<SelecionarData> {
 
   @override
   Widget build(BuildContext context) {
-    final double largura = widget.largura;
-
     return PopupMenuButton<FilterData>(
       tooltip: 'Filtrar tempo',
       initialValue: widget.selecionado,
@@ -44,42 +42,42 @@ class _SelecionarDataState extends State<SelecionarData> {
       itemBuilder: (context) => [
         PopupMenuItem(value: .nenhuma, child: Row(
           children: [
-            Icon(Icons.block_outlined),
+            Icon(controlador.retornarIcon(.nenhuma)),
             SizedBox(width: widget.largura * 0.01,),
             Text('Nenhuma', style: TextStyle(fontWeight: .w400),),
           ],
         )),
         PopupMenuItem(value: .ontem, child: Row(
           children: [
-            Icon(Icons.history_rounded),
+            Icon(controlador.retornarIcon(.ontem)),
             SizedBox(width: widget.largura * 0.01,),
             Text('Ontem', style: TextStyle(fontWeight: .w400),),
           ],
         )),
         PopupMenuItem(value: .hoje, child: Row(
           children: [
-            Icon(Icons.today_outlined),
+            Icon(controlador.retornarIcon(.hoje)),
             SizedBox(width: widget.largura * 0.01,),
             Text('Hoje', style: TextStyle(fontWeight: .w400),),
           ],
         )),
         PopupMenuItem(value: .amanha, child: Row(
           children: [
-            Icon(Icons.event_outlined),
+            Icon(controlador.retornarIcon(.amanha)),
             SizedBox(width: widget.largura * 0.01,),
             Text('Amanhã', style: TextStyle(fontWeight: .w400),),
           ],
         )),
         PopupMenuItem(value: .mes, child: Row(
           children: [
-            Icon(Icons.calendar_month_outlined),
+            Icon(controlador.retornarIcon(.mes)),
             SizedBox(width: widget.largura * 0.01,),
             Text('Mês atual', style: TextStyle(fontWeight: .w400),),
           ],
         )),
         PopupMenuItem(value: .ano, child: Row(
           children: [
-            Icon(Icons.date_range_outlined),
+            Icon(controlador.retornarIcon(.ano)),
             SizedBox(width: widget.largura * 0.01,),
             Text('Ano atual', style: TextStyle(fontWeight: .w400),),
           ],
@@ -98,9 +96,11 @@ class _SelecionarDataState extends State<SelecionarData> {
       child: Row(
         mainAxisSize: .min,
         children: [
+          Icon(controlador.retornarIcon(widget.selecionado)),
+          SizedBox(width: widget.largura * 0.015,),
           Text(
             controlador.dataLabel(widget.selecionado),
-            style: TextStyle(fontWeight: .w500, fontSize: largura * 0.06),
+            style: TextStyle(fontSize: widget.largura * 0.055),
           ),
           AnimatedRotation(
             turns: aberto ? 0.5 : 0,

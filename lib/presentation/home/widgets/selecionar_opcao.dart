@@ -29,7 +29,7 @@ class SelecionarOpcao extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PopupMenuButton(
+    return PopupMenuButton<String>(
       tooltip: 'Alterar visualização',
       icon: Icon(
         Icons.menu,

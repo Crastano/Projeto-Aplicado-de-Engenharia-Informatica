@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:pei/controller/calendario_controller.dart';
+import 'package:pei/controller/calendario_controlador.dart';
 import 'package:pei/models/tarefa_item.dart';
 
 class TarefaDataLimiteCard extends StatelessWidget {

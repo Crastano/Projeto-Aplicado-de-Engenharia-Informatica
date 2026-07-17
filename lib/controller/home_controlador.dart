@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 // Modelos
 import 'package:pei/models/tarefa_item.dart';
 
@@ -93,20 +95,25 @@ class HomeControlador {
   }
 
   String dataLabel(FilterData selecionado) {
-    switch (selecionado) {
-      case .nenhuma:
-        return 'Nenhuma';
-      case .ontem:
-        return 'Ontem';
-      case .hoje:
-        return 'Hoje';
-      case .amanha:
-        return 'Amanhã';
-      case .mes:
-        return 'Mês atual';
-      case .ano:
-        return 'Ano atual';
-    }
+    return switch(selecionado) {
+      .nenhuma => 'Nenhuma',
+      .ontem => 'Ontem',
+      .hoje => 'Hoje',
+      .amanha => 'Amanhã',
+      .mes => 'Mês',
+      .ano => 'Ano'
+    };
+  }
+
+  IconData retornarIcon(FilterData selecionado) {
+    return switch(selecionado) {
+      .nenhuma => Icons.block_outlined,
+      .ontem => Icons.history_rounded,
+      .hoje => Icons.today_outlined,
+      .amanha => Icons.event_outlined,
+      .mes => Icons.calendar_month_outlined,
+      .ano => Icons.calendar_today_outlined
+    };
   }
 
   bool mesmoDia(DateTime a, DateTime b) {

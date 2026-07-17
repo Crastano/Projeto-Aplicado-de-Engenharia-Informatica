@@ -1,1 +1,1 @@
-enum CalendarioTipo { calendario, tresDias, hoje }
+enum CalendarioTipo { calendario, tresDias, umDia }

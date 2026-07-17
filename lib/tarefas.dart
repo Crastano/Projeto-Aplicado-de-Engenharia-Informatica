@@ -29,18 +29,19 @@ class Tarefas123 {
       titulo: 'Comprar alimentos',
       dataHora: DateTime(hoje.year, hoje.month, hoje.day, 15, 0),
       dataLimite: DateTime(hoje.year, hoje.month, hoje.day, 18, 0),
-      category: 'Compras',
+      category: 'ComprasCom',
       categoryBackground: const Color(0xFFE5F5E0),
       categoryText: const Color(0xFF287A28),
     ),
 
     TarefaItem(
-      titulo: 'Treino no ginásio',
+      titulo: 'Treino no ginásio SandasVista',
       dataHora: DateTime(hoje.year, hoje.month, hoje.day, 19, 30),
       category: 'Saúde',
       categoryBackground: const Color(0xFFFFDDE5),
       categoryText: const Color(0xFFA52245),
       temLembrete: true,
+      estaRepetindo: true
     ),
 
     // Amanhã

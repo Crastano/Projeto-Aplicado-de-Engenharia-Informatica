@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class CategoriaChip extends StatefulWidget {
+class CategoriaChip extends StatelessWidget {
   const CategoriaChip({
     super.key,
     required this.label,
@@ -17,26 +17,28 @@ class CategoriaChip extends StatefulWidget {
   final double altura;
 
   @override
-  State<CategoriaChip> createState() => _CategoriaChipState();
-}
-
-class _CategoriaChipState extends State<CategoriaChip> {
-  @override
   Widget build(BuildContext context) {
     return Chip(
+      materialTapTargetSize: .shrinkWrap,
+      visualDensity: .compact,
+      padding: .zero,
       label: Text(
-        widget.label,
+        label,
+        maxLines: 1,
+        overflow: .ellipsis,
         style: TextStyle(
-          color: widget.textColor,
+          color: textColor,
           fontWeight: .w500,
-          fontSize: widget.largura * 0.035,
+          fontSize: largura * 0.03,
         ),
       ),
-      backgroundColor: widget.backgroundColor,
-      shape: RoundedRectangleBorder(
-        side: BorderSide(color: widget.backgroundColor),
-        borderRadius: .circular(widget.largura * 0.05),
-      ),
+      backgroundColor: backgroundColor,
+      shape: StadiumBorder(
+        side: BorderSide(
+          color: Theme.of(context).colorScheme.outline,
+          width: largura * 0.005,
+        )
+      )
     );
   }
 }

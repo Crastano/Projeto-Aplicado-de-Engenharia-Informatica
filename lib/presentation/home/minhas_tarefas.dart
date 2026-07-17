@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pei/models/tarefa_item.dart';
 
 // Controlador
-import 'package:pei/controller/home_controller.dart';
+import 'package:pei/controller/home_controlador.dart';
 import 'package:pei/presentation/home/widgets/selecionar_opcao.dart';
 
 // Widgets

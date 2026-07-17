@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 // Controlador
-import 'package:pei/controller/pesquisar_controller.dart';
+import 'package:pei/controller/pesquisar_controlador.dart';
+import 'package:pei/controller/categorias_controlador.dart';
 
 // Modelos
 import 'package:pei/models/tarefa_item.dart';
@@ -21,14 +22,14 @@ class PesquisarPage extends StatefulWidget {
 
 class _PesquisarPageState extends State<PesquisarPage> {
   late final PesquisarController controlador;
+  late final CategoriasController categoriasControlador;
 
   @override
   void initState() {
     super.initState();
 
-    controlador = PesquisarController(
-      tarefas: widget.tarefas,
-    );
+    controlador = PesquisarController(tarefas: widget.tarefas);
+    categoriasControlador = CategoriasController();
   }
 
   @override
@@ -62,6 +63,7 @@ class _PesquisarPageState extends State<PesquisarPage> {
           bottomNavigationBar: false,
           largura: largura,
           actions: [],
+          
           body: Padding(
             padding: .all(largura * 0.06),
             child: Column(
@@ -118,13 +120,118 @@ class _PesquisarPageState extends State<PesquisarPage> {
                   },
                 ),
 
+                SizedBox(height: altura * 0.018),
+
+                AnimatedBuilder(
+                  animation: controlador,
+                  builder: (context, child) {
+                    return AnimatedBuilder(
+                      animation: categoriasControlador,
+                      builder: (context, child) {
+                        final categorias = categoriasControlador.categorias;
+
+                        return SizedBox(
+                          width: .infinity,
+                          child: SingleChildScrollView(
+                            scrollDirection: .horizontal,
+                            child: Row(
+                              children: [
+                                ChoiceChip(
+                                  label: Text('Todas'),
+                                  avatar: Icon(
+                                    Icons.category_outlined,
+                                    size: largura * 0.045,
+                                    color:
+                                        controlador.categoriaSelecionada == null
+                                        ? Theme.of(
+                                            context,
+                                          ).colorScheme.onSurface
+                                        : Theme.of(
+                                            context,
+                                          ).colorScheme.onSurfaceVariant,
+                                  ),
+                                  selected:
+                                      controlador.categoriaSelecionada == null,
+                                  showCheckmark: false,
+                                  onSelected: (_) {
+                                    controlador.selecionarCategoria(null);
+                                  },
+                                  side: BorderSide(
+                                    color:
+                                        controlador.categoriaSelecionada == null
+                                        ? Colors.transparent
+                                        : Theme.of(context).colorScheme.outline,
+                                    width: largura * 0.005,
+                                  ),
+                                ),
+                                SizedBox(width: largura * 0.025),
+                                ...categorias.map((categoria) {
+                                  final selecionada =
+                                      controlador.categoriaSelecionada ==
+                                      categoria.nome;
+
+                                  return Padding(
+                                    padding: .only(right: largura * 0.025),
+                                    child: ChoiceChip(
+                                      label: Text(
+                                        categoria.nome,
+                                        overflow: .ellipsis,
+                                      ),
+                                      avatar: Icon(
+                                        Icons.label_outline_rounded,
+                                        size: largura * 0.045,
+                                        color: selecionada
+                                            ? categoria.cor.texto
+                                            : Theme.of(
+                                                context,
+                                              ).colorScheme.onSurfaceVariant,
+                                      ),
+                                      selected: selecionada,
+                                      showCheckmark: false,
+                                      selectedColor: categoria.cor.fundo,
+                                      side: BorderSide(
+                                        color: selecionada
+                                            ? categoria.cor.texto
+                                            : Theme.of(
+                                                context,
+                                              ).colorScheme.outline,
+                                        width: largura * 0.005,
+                                      ),
+                                      labelStyle: TextStyle(
+                                        fontSize: largura * 0.035,
+                                        fontWeight: .w500,
+                                        color: selecionada
+                                            ? categoria.cor.texto
+                                            : Theme.of(
+                                                context,
+                                              ).colorScheme.onSurfaceVariant,
+                                      ),
+                                      onSelected: (_) {
+                                        controlador.selecionarCategoria(
+                                          categoria.nome,
+                                        );
+                                      },
+                                    ),
+                                  );
+                                }),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+
+                SizedBox(height: altura * 0.035),
+
                 SizedBox(height: altura * 0.07),
 
                 Expanded(
                   child: AnimatedBuilder(
                     animation: controlador,
                     builder: (context, child) {
-                      final tarefas = controlador.tarefasPesquisadas;
+                      final tarefas = controlador.tarefasFiltradas;
 
                       if (tarefas.isEmpty) {
                         return Center(
