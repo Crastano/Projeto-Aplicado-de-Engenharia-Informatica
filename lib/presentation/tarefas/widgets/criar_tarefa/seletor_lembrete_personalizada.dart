@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-// Controlador
+// Controlaodr
 import 'package:pei/controller/tarefas_controlador.dart';
 
 // Enums
@@ -9,10 +9,12 @@ import 'package:pei/enums/unidade_lembrete.dart';
 class SeletorLembretePersonalizado extends StatefulWidget {
   const SeletorLembretePersonalizado({
     super.key,
+    required this.controlador,
     required this.largura,
     required this.configuracaoInicial,
   });
 
+  final TarefasControlador controlador;
   final double largura;
   final ConfiguracaoLembrete configuracaoInicial;
 
@@ -23,15 +25,12 @@ class SeletorLembretePersonalizado extends StatefulWidget {
 
 class _SeletorLembretePersonalizadoState
     extends State<SeletorLembretePersonalizado> {
-  final TarefasControlador controlador = TarefasControlador();
-
   late int quantidade;
   late UnidadeLembrete unidade;
 
   @override
   void initState() {
     super.initState();
-
     quantidade = widget.configuracaoInicial.quantidade;
     unidade = widget.configuracaoInicial.unidade;
   }
@@ -52,26 +51,24 @@ class _SeletorLembretePersonalizadoState
                 fontWeight: .w500,
               ),
             ),
-            SizedBox(height: widget.largura * 0.025),
+            SizedBox(height: widget.largura * 0.015),
             Text(
-              'Receber o lembrete antes da tarefa:',
+              'Avisar antes da tarefa:',
               style: TextStyle(
                 fontSize: widget.largura * 0.04,
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
-            SizedBox(height: widget.largura * 0.06),
+            SizedBox(height: widget.largura * 0.05),
             Row(
               children: [
                 IconButton.outlined(
                   onPressed: quantidade > 1
                       ? () {
-                          setState(() {
-                            quantidade--;
-                          });
+                          setState(() => quantidade--);
                         }
                       : null,
-                  icon: const Icon(Icons.remove),
+                  icon: Icon(Icons.remove),
                   style: ButtonStyle(
                     side: WidgetStatePropertyAll(
                       BorderSide(
@@ -84,22 +81,17 @@ class _SeletorLembretePersonalizadoState
                 SizedBox(width: widget.largura * 0.025),
                 Container(
                   width: widget.largura * 0.15,
-                  padding: EdgeInsets.symmetric(
-                    vertical: widget.largura * 0.02,
-                  ),
+                  padding: .symmetric(vertical: widget.largura * 0.02),
                   decoration: BoxDecoration(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(widget.largura * 0.025),
-                    border: Border.all(
+                    borderRadius: .circular(widget.largura * 0.025),
+                    border: .all(
                       color: Theme.of(context).colorScheme.outline,
                       width: widget.largura * 0.005,
                     ),
                   ),
                   child: Text(
                     '$quantidade',
-                    textAlign: TextAlign.center,
+                    textAlign: .center,
                     style: TextStyle(
                       fontSize: widget.largura * 0.05,
                       fontWeight: .w500,
@@ -108,12 +100,8 @@ class _SeletorLembretePersonalizadoState
                 ),
                 SizedBox(width: widget.largura * 0.025),
                 IconButton.outlined(
-                  onPressed: () {
-                    setState(() {
-                      quantidade++;
-                    });
-                  },
-                  icon: const Icon(Icons.add),
+                  onPressed: () => setState(() => quantidade++),
+                  icon: Icon(Icons.add),
                   style: ButtonStyle(
                     side: WidgetStatePropertyAll(
                       BorderSide(
@@ -149,20 +137,19 @@ class _SeletorLembretePersonalizadoState
                       ),
                     ),
                     items: UnidadeLembrete.values.map((item) {
-                      return DropdownMenuItem<UnidadeLembrete>(
+                      return DropdownMenuItem(
                         value: item,
                         child: Text(
-                          controlador.formatarUnidadeLembrete(item, quantidade),
-                          overflow: TextOverflow.ellipsis,
+                          widget.controlador.formatarUnidadeLembrete(
+                            item,
+                            quantidade,
+                          ),
+                          overflow: .ellipsis,
                         ),
                       );
                     }).toList(),
-                    onChanged: (novaUnidade) {
-                      if (novaUnidade == null) return;
-
-                      setState(() {
-                        unidade = novaUnidade;
-                      });
+                    onChanged: (value) {
+                      if (value != null) setState(() => unidade = value);
                     },
                   ),
                 ),
@@ -181,7 +168,7 @@ class _SeletorLembretePersonalizadoState
                     ),
                   );
                 },
-                child: const Text('Confirmar'),
+                child: Text('Confirmar'),
               ),
             ),
           ],

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-// Controlador
+// Controladores
 import 'package:pei/controller/calendario_controlador.dart';
+import 'package:pei/controller/tarefas_estado.dart';
 
 // Modelos
 import 'package:pei/models/tarefa_item.dart';
@@ -25,12 +26,13 @@ class CalendarioListaTarefas extends StatelessWidget {
   final double altura;
 
   final CalendarioControlador controlador = CalendarioControlador();
+  final TarefasEstado tarefasEstado = TarefasEstado.instancia;
 
   @override
   Widget build(BuildContext context) {
-    final tarefasAgendadas = controlador.tarefasAgendadasDoDia(dia, tarefas);
+    final tarefasDoDia = controlador.tarefasDoDia(dia, tarefas);
     final tarefasComPrazo = controlador.tarefasComDataLimiteNoDia(dia, tarefas);
-    final vazio = tarefasAgendadas.isEmpty && tarefasComPrazo.isEmpty;
+    final vazio = tarefasDoDia.isEmpty && tarefasComPrazo.isEmpty;
 
     return Card(
       shape: RoundedRectangleBorder(
@@ -63,42 +65,38 @@ class CalendarioListaTarefas extends StatelessWidget {
                   ),
                 ),
               ),
-            if (tarefasAgendadas.isNotEmpty) ...[
+            if (tarefasDoDia.isNotEmpty) ...[
               Text(
                 'Tarefas marcadas',
-                style: TextStyle(
-                  fontSize: largura * 0.04,
-                  fontWeight: .w500,
-                ),
+                style: TextStyle(fontSize: largura * 0.04, fontWeight: .w500),
               ),
               SizedBox(height: altura * 0.01),
               ListView.separated(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: tarefasAgendadas.length,
+                itemCount: tarefasDoDia.length,
                 separatorBuilder: (context, index) {
                   return SizedBox(height: altura * 0.005);
                 },
                 itemBuilder: (context, index) {
                   return TarefaCard(
-                    tarefa: tarefasAgendadas[index],
+                    tarefa: tarefasDoDia[index],
                     largura: largura * 0.9,
                     altura: altura * 0.9,
-                    iconTap: () {},
+                    iconTap: () {
+                      tarefasEstado.alternarConclusao(tarefasDoDia[index].id);
+                    },
                     mostrarIcones: false,
                   );
                 },
               ),
             ],
-            if (tarefasAgendadas.isNotEmpty && tarefasComPrazo.isNotEmpty)
+            if (tarefasDoDia.isNotEmpty && tarefasComPrazo.isNotEmpty)
               SizedBox(height: altura * 0.025),
             if (tarefasComPrazo.isNotEmpty) ...[
               Text(
                 'Datas limite',
-                style: TextStyle(
-                  fontSize: largura * 0.04,
-                  fontWeight: .w500,
-                ),
+                style: TextStyle(fontSize: largura * 0.04, fontWeight: .w500),
               ),
               SizedBox(height: altura * 0.01),
               ListView.separated(
@@ -112,6 +110,13 @@ class CalendarioListaTarefas extends StatelessWidget {
                   return TarefaDataLimiteCard(
                     tarefa: tarefasComPrazo[index],
                     largura: largura,
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        '/paginaTarefa',
+                        arguments: tarefasComPrazo[index].id,
+                      );
+                    },
                   );
                 },
               ),

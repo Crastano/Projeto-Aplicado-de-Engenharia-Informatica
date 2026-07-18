@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 // Controlador
 import 'package:pei/controller/calendario_controlador.dart';
+import 'package:pei/controller/categorias_controlador.dart';
 
 // Modelos
 import 'package:pei/models/tarefa_item.dart';
@@ -24,6 +25,10 @@ class TarefaTimelineCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final categoria = CategoriasControlador.instancia.obterPorId(
+      tarefa.categoryId,
+    );
+
     return Card.filled(
       margin: .zero,
       shape: RoundedRectangleBorder(
@@ -33,7 +38,9 @@ class TarefaTimelineCard extends StatelessWidget {
           width: largura * 0.005,
         ),
       ),
-      color: tarefa.categoryBackground ?? Theme.of(context).colorScheme.surface,
+      color:
+          categoria?.cor.fundo(context) ??
+          Theme.of(context).colorScheme.surface,
       clipBehavior: .antiAlias,
       child: InkWell(
         onTap: onTap,
@@ -47,8 +54,10 @@ class TarefaTimelineCard extends StatelessWidget {
                 children: [
                   Text(
                     tarefa.titulo,
+                    maxLines: umDia ? 2 : 3,
+                    overflow: .ellipsis,
                     style: TextStyle(
-                      color: tarefa.categoryText,
+                      color: categoria?.cor.texto(context),
                       fontSize: umDia ? largura * 0.0425 : largura * 0.03,
                       fontWeight: .w500,
                       height: 1.1,
@@ -58,9 +67,9 @@ class TarefaTimelineCard extends StatelessWidget {
                     SizedBox(height: largura * 0.005),
                     Text(
                       '${controlador.formatarHora(tarefa.dataHora)}'
-                      ' · ${tarefa.category}',
+                      " · ${tarefa.category ?? 'Sem categoria'}",
                       style: TextStyle(
-                        color: tarefa.categoryText,
+                        color: categoria?.cor.texto(context),
                         fontSize: largura * 0.03,
                       ),
                     ),

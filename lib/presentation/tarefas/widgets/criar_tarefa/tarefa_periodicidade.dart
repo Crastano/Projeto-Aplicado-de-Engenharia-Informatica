@@ -3,45 +3,41 @@ import 'package:flutter/material.dart';
 // Controlador
 import 'package:pei/controller/tarefas_controlador.dart';
 
+// Enums
+import 'package:pei/enums/periodicidade.dart';
+
 // Widgets
 import 'seletor_periodicidade.dart';
 import 'seletor_periodicidade_personalizada.dart';
 
-// Enums
-import 'package:pei/enums/periodicidade.dart';
+class TarefaPeriodicidade extends StatelessWidget {
+  const TarefaPeriodicidade({
+    super.key,
+    required this.controlador,
+    required this.largura,
+  });
 
-class TarefaPeriodicidade extends StatefulWidget {
-  const TarefaPeriodicidade({super.key, required this.largura});
-
+  final TarefasControlador controlador;
   final double largura;
 
-  @override
-  State<TarefaPeriodicidade> createState() => _TarefaPeriodicidadeState();
-}
-
-class _TarefaPeriodicidadeState extends State<TarefaPeriodicidade> {
-  final TarefasControlador controlador = TarefasControlador();
-
-  Periodicidade periodicidadeSelecionada = .nenhuma;
-
-  Future<void> selecionarPeriodicidade() async {
-    final Periodicidade? periodicidadeEscolhida =
-        await showModalBottomSheet<Periodicidade>(
-          context: context,
-          showDragHandle: true,
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          builder: (context) {
-            return SeletorPeriodicidade(
-              largura: widget.largura,
-              periodicidadeInicial: periodicidadeSelecionada,
-            );
-          },
+  Future<void> selecionarPeriodicidade(BuildContext context) async {
+    final escolhida = await showModalBottomSheet<Periodicidade>(
+      context: context,
+      showDragHandle: true,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      builder: (context) {
+        return SeletorPeriodicidade(
+          controlador: controlador,
+          largura: largura,
+          periodicidadeInicial: controlador.periodicidadeSelecionada,
         );
+      },
+    );
 
-    if (!mounted || periodicidadeEscolhida == null) return;
+    if (escolhida == null || !context.mounted) return;
 
-    if (periodicidadeEscolhida == .personalizada) {
-      final ConfiguracaoPeriodicidade? configuracao =
+    if (escolhida == Periodicidade.personalizada) {
+      final configuracao =
           await showModalBottomSheet<ConfiguracaoPeriodicidade>(
             context: context,
             showDragHandle: true,
@@ -49,88 +45,80 @@ class _TarefaPeriodicidadeState extends State<TarefaPeriodicidade> {
             backgroundColor: Theme.of(context).colorScheme.surface,
             builder: (context) {
               return SeletorPeriodicidadePersonalizada(
-                largura: widget.largura,
+                controlador: controlador,
+                largura: largura,
                 configuracaoInicial:
                     controlador.configuracaoPeriodicidadePersonalizada,
               );
             },
           );
 
-      if (!mounted || configuracao == null) return;
+      if (configuracao == null) return;
 
-      setState(() {
-        controlador.configuracaoPeriodicidadePersonalizada = configuracao;
-        periodicidadeSelecionada = .personalizada;
-      });
-
+      controlador.selecionarPeriodicidade(
+        Periodicidade.personalizada,
+        configuracao: configuracao,
+      );
       return;
     }
 
-    setState(() {
-      periodicidadeSelecionada = periodicidadeEscolhida;
-    });
+    controlador.selecionarPeriodicidade(escolhida);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: .center,
-      children: [
-        Row(
-          children: [
-            Icon(Icons.repeat_outlined, size: widget.largura * 0.09),
-            SizedBox(width: widget.largura * 0.05),
-            Text(
-              'Periodicidade',
-              style: TextStyle(
-                fontWeight: .w500,
-                fontSize: widget.largura * 0.045,
-              ),
-            ),
-          ],
-        ),
-        Spacer(),
-        Flexible(
-          flex: 15,
-          child: OutlinedButton(
-            onPressed: selecionarPeriodicidade,
-            style: ButtonStyle(
-              backgroundColor: WidgetStatePropertyAll(
-                Theme.of(context).colorScheme.surfaceContainerHighest,
-              ),
-              foregroundColor: WidgetStatePropertyAll(
-                Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-              side: WidgetStatePropertyAll(
-                BorderSide(
-                  color: Theme.of(context).colorScheme.outline,
-                  width: widget.largura * 0.005,
-                ),
-              ),
-              padding: WidgetStatePropertyAll(.all(widget.largura * 0.025)),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  controlador.obterIconePeriodicidade(periodicidadeSelecionada),
-                  size: widget.largura * 0.045,
-                ),
-                SizedBox(width: widget.largura * 0.015),
-                Flexible(
-                  child: Text(
-                    controlador.formatarPeriodicidade(periodicidadeSelecionada),
+    return ListenableBuilder(
+      listenable: controlador,
+      builder: (context, _) {
+        final periodicidade = controlador.periodicidadeSelecionada;
+
+        return Padding(
+          padding: .symmetric(vertical: largura * 0.012),
+          child: Row(
+            children: [
+              Icon(Icons.repeat_outlined, size: largura * 0.075),
+              SizedBox(width: largura * 0.04),
+              Expanded(
+                child: Text(
+                  'Periodicidade',
+                  style: TextStyle(
+                    fontWeight: .w500,
+                    fontSize: largura * 0.045,
                   ),
                 ),
-                SizedBox(width: widget.largura * 0.01),
-                Icon(
-                  Icons.keyboard_arrow_down_outlined,
-                  size: widget.largura * 0.05,
+              ),
+              Flexible(
+                child: OutlinedButton.icon(
+                  onPressed: () => selecionarPeriodicidade(context),
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStatePropertyAll(
+                      Theme.of(context).colorScheme.surfaceContainerHighest,
+                    ),
+                    foregroundColor: WidgetStatePropertyAll(
+                      Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                    side: WidgetStatePropertyAll(
+                      BorderSide(
+                        color: Theme.of(context).colorScheme.outline,
+                        width: largura * 0.005,
+                      ),
+                    ),
+                    padding: WidgetStatePropertyAll(.all(largura * 0.025)),
+                  ),
+                  icon: Icon(
+                    controlador.obterIconePeriodicidade(periodicidade),
+                    size: largura * 0.045,
+                  ),
+                  label: Text(
+                    controlador.formatarPeriodicidade(periodicidade),
+                    overflow: .ellipsis,
+                  ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ),
-      ],
+        );
+      },
     );
   }
 }

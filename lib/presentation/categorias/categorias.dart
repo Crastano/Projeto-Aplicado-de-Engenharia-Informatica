@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-// Controladores
+// Controlador
 import 'package:pei/controller/categorias_controlador.dart';
 
 // Modelos
 import 'package:pei/models/categoria_item.dart';
-import 'package:pei/presentation/shared/layout/app_scaffold.dart';
-import 'package:pei/presentation/shared/widgets/categoria_chip.dart';
 
 // Widgets
+import 'package:pei/presentation/shared/layout/app_scaffold.dart';
+import 'package:pei/presentation/shared/widgets/categoria_chip.dart';
 import 'widgets/categoria_dialog.dart';
 
 class CategoriasPage extends StatefulWidget {
@@ -19,12 +19,13 @@ class CategoriasPage extends StatefulWidget {
 }
 
 class _CategoriasPageState extends State<CategoriasPage> {
-  final CategoriasController controlador = CategoriasController();
+  final CategoriasControlador controlador = CategoriasControlador.instancia;
 
-  late final double largura;
-  late final double altura;
-
-  Future<void> abrirDialog({CategoriaItem? categoria}) async {
+  Future<void> abrirDialog({
+    CategoriaItem? categoria,
+    required double largura,
+    required double altura,
+  }) async {
     final resultado = await showDialog<CategoriaResultado>(
       context: context,
       builder: (context) {
@@ -57,26 +58,19 @@ class _CategoriasPageState extends State<CategoriasPage> {
   }
 
   Future<void> eliminar(CategoriaItem categoria) async {
-    final eliminar = await showDialog<bool>(
+    final confirmado = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: Text('Eliminar categoria?'),
-          content: Text(
-            'Queres eliminar a categoria '
-            '"${categoria.nome}"?',
-          ),
+          title: const Text('Eliminar categoria?'),
+          content: Text('Queres eliminar a categoria “${categoria.nome}”?'),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.pop(dialogContext, false);
-              },
+              onPressed: () => Navigator.pop(dialogContext, false),
               child: Text('Cancelar'),
             ),
             FilledButton(
-              onPressed: () {
-                Navigator.pop(dialogContext, true);
-              },
+              onPressed: () => Navigator.pop(dialogContext, true),
               style: FilledButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.error,
                 foregroundColor: Theme.of(context).colorScheme.onError,
@@ -88,17 +82,15 @@ class _CategoriasPageState extends State<CategoriasPage> {
       },
     );
 
-    if (eliminar != true) return;
-
-    controlador.eliminarCategoria(categoria.id);
+    if (confirmado == true) controlador.eliminarCategoria(categoria.id);
   }
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        largura = constraints.maxWidth;
-        altura = constraints.maxHeight;
+        final largura = constraints.maxWidth;
+        final altura = constraints.maxHeight;
 
         return AppScaffold(
           title: 'Categorias',
@@ -110,17 +102,16 @@ class _CategoriasPageState extends State<CategoriasPage> {
           largura: largura,
           actions: [
             TextButton(
-              onPressed: abrirDialog,
+              onPressed: () => abrirDialog(largura: largura, altura: altura),
               child: Text(
                 'Adicionar',
                 style: TextStyle(fontSize: largura * 0.035, fontWeight: .w500),
               ),
             ),
           ],
-
           body: AnimatedBuilder(
             animation: controlador,
-            builder: (context, child) {
+            builder: (context, _) {
               final categorias = controlador.categorias;
 
               if (categorias.isEmpty) {
@@ -134,7 +125,7 @@ class _CategoriasPageState extends State<CategoriasPage> {
                         SizedBox(height: altura * 0.025),
                         Text(
                           'Ainda não tens categorias',
-                          textAlign: TextAlign.center,
+                          textAlign: .center,
                           style: TextStyle(
                             fontWeight: .w500,
                             fontSize: largura * 0.075,
@@ -142,9 +133,10 @@ class _CategoriasPageState extends State<CategoriasPage> {
                         ),
                         SizedBox(height: altura * 0.01),
                         FilledButton.icon(
-                          onPressed: abrirDialog,
-                          icon: const Icon(Icons.add_rounded),
-                          label: const Text('Criar categoria'),
+                          onPressed: () =>
+                              abrirDialog(largura: largura, altura: altura),
+                          icon: Icon(Icons.add_rounded),
+                          label: Text('Criar categoria'),
                         ),
                       ],
                     ),
@@ -163,7 +155,7 @@ class _CategoriasPageState extends State<CategoriasPage> {
                   return Card(
                     margin: .zero,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(largura * 0.05),
+                      borderRadius: .circular(largura * 0.05),
                       side: BorderSide(
                         color: Theme.of(context).colorScheme.outline,
                         width: largura * 0.005,
@@ -176,24 +168,24 @@ class _CategoriasPageState extends State<CategoriasPage> {
                           Spacer(),
                           CategoriaChip(
                             label: categoria.nome,
-                            backgroundColor: categoria.cor.fundo,
-                            textColor: categoria.cor.texto,
+                            backgroundColor: categoria.cor.fundo(context),
+                            textColor: categoria.cor.texto(context),
                             largura: largura,
                             altura: altura,
                           ),
                           Spacer(),
                           IconButton(
                             tooltip: 'Editar categoria',
-                            onPressed: () {
-                              abrirDialog(categoria: categoria);
-                            },
+                            onPressed: () => abrirDialog(
+                              categoria: categoria,
+                              largura: largura,
+                              altura: altura,
+                            ),
                             icon: Icon(Icons.edit_outlined),
                           ),
                           IconButton(
                             tooltip: 'Eliminar categoria',
-                            onPressed: () {
-                              eliminar(categoria);
-                            },
+                            onPressed: () => eliminar(categoria),
                             icon: Icon(
                               Icons.delete_outline_rounded,
                               color: Theme.of(context).colorScheme.onError,

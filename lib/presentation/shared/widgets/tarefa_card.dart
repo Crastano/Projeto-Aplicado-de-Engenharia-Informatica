@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 
+// Controlador
+import 'package:pei/controller/categorias_controlador.dart';
+
 // Modelos
 import 'package:pei/models/tarefa_item.dart';
 
-// App cores
+// Widgets
+import 'package:pei/presentation/shared/widgets/categoria_chip.dart';
+
+// App Cores
 import 'package:pei/theme/app_cores.dart';
 
-// Widget partilhados
-import 'package:pei/presentation/shared/widgets/categoria_chip.dart';
+// Utils
+import 'package:pei/utils/formatador_data_hora.dart';
 
 class TarefaCard extends StatelessWidget {
   const TarefaCard({
@@ -27,21 +33,34 @@ class TarefaCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isEscuro = Theme.of(context).brightness == Brightness.dark;
+    final bool escuro = Theme.of(context).brightness == Brightness.dark;
 
     final Color cardColor = tarefa.estaCompletado
-        ? isEscuro
+        ? escuro
               ? AppCores.concluidoBackgroundEscuro
               : AppCores.concluidoBackgroundClaro
+        : tarefa.estaAtrasado
+        ? Theme.of(context).colorScheme.error
         : Theme.of(context).colorScheme.surface;
 
-    final Color cardIconColor = tarefa.estaCompletado
-        ? isEscuro
+    final Color iconColor = tarefa.estaCompletado
+        ? escuro
               ? AppCores.concluidoTextEscuro
               : AppCores.concluidoTextClaro
+        : tarefa.estaAtrasado
+        ? Theme.of(context).colorScheme.onError
         : Theme.of(context).colorScheme.onSurface;
 
-    return Card.outlined(
+    final String textoData = tarefa.temHora
+        ? FormatadorDataHora.dataHora(tarefa.dataHora)
+        : FormatadorDataHora.data(tarefa.data);
+
+    final categoria = CategoriasControlador.instancia.obterPorId(
+      tarefa.categoryId,
+    );
+
+    return Card(
+      margin: .zero,
       shape: RoundedRectangleBorder(
         borderRadius: .circular(largura * 0.05),
         side: BorderSide(
@@ -53,7 +72,7 @@ class TarefaCard extends StatelessWidget {
       clipBehavior: .antiAlias,
       child: InkWell(
         onTap: () {
-          Navigator.pushNamed(context, '/paginaTarefa', arguments: tarefa);
+          Navigator.pushNamed(context, '/paginaTarefa', arguments: tarefa.id);
         },
         child: ListTile(
           contentPadding: .symmetric(
@@ -63,13 +82,16 @@ class TarefaCard extends StatelessWidget {
           horizontalTitleGap: largura * 0.015,
           minLeadingWidth: largura * 0.1,
           leading: IconButton(
+            tooltip: tarefa.estaCompletado
+                ? 'Marcar como pendente'
+                : 'Marcar como concluída',
             padding: .zero,
             constraints: BoxConstraints(),
             icon: Icon(
               tarefa.estaCompletado
                   ? Icons.check_circle_outline
                   : Icons.radio_button_unchecked,
-              color: cardIconColor,
+              color: iconColor,
             ),
             onPressed: iconTap,
           ),
@@ -77,15 +99,23 @@ class TarefaCard extends StatelessWidget {
             tarefa.titulo,
             maxLines: 2,
             overflow: .ellipsis,
-            style: TextStyle(fontWeight: .w500, fontSize: largura * 0.04),
+            style: TextStyle(
+              fontWeight: .w500,
+              fontSize: largura * 0.04,
+              decoration: tarefa.estaCompletado
+                  ? TextDecoration.lineThrough
+                  : null,
+            ),
           ),
           subtitle: Row(
             children: [
-              Text(
-                tarefa.data,
-                maxLines: 1,
-                overflow: .ellipsis,
-                style: TextStyle(fontSize: largura * 0.03),
+              Flexible(
+                child: Text(
+                  textoData,
+                  maxLines: 1,
+                  overflow: .ellipsis,
+                  style: TextStyle(fontSize: largura * 0.03),
+                ),
               ),
               if (tarefa.estaRepetindo && mostrarIcones) ...[
                 SizedBox(width: largura * 0.012),
@@ -99,13 +129,19 @@ class TarefaCard extends StatelessWidget {
           ),
           trailing: tarefa.category == null
               ? null
-              : CategoriaChip(
-                  label: tarefa.category!,
-                  backgroundColor:
-                      tarefa.categoryBackground ?? Colors.transparent,
-                  textColor: tarefa.categoryText ?? Colors.transparent,
-                  largura: largura,
-                  altura: altura,
+              : ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: largura * 0.3),
+                  child: CategoriaChip(
+                    label: tarefa.category!,
+                    backgroundColor:
+                        categoria?.cor.fundo(context) ??
+                        Theme.of(context).colorScheme.surface,
+                    textColor:
+                        categoria?.cor.texto(context) ??
+                        Theme.of(context).colorScheme.onSurfaceVariant,
+                    largura: largura,
+                    altura: altura,
+                  ),
                 ),
         ),
       ),

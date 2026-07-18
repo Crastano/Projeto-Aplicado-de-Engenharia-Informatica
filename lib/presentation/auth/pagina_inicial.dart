@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-// Widgets personais
-import 'package:pei/presentation/inicio/widgets/intro.dart';
-import 'package:pei/presentation/inicio/widgets/butao.dart';
+// Widgets
+import 'widgets/intro.dart';
+import 'widgets/butao.dart';
 import 'package:pei/presentation/shared/layout/app_scaffold.dart';
 
 class PaginaInicial extends StatefulWidget {
@@ -42,7 +42,7 @@ class _PaginaInicialState extends State<PaginaInicial> {
                   altura: altura,
                   texto: 'Entrar com Google',
                   icon: Icons.cloud_outlined,
-                  onPressed: () {},
+                  onPressed: null,
                 ),
                 SizedBox(height: altura * 0.025),
                 Butao(
@@ -50,12 +50,11 @@ class _PaginaInicialState extends State<PaginaInicial> {
                   altura: altura,
                   texto: 'Continuar sem conta',
                   icon: Icons.login_rounded,
-                  preenchido: false,
                   onPressed: () {
                     Navigator.pushReplacementNamed(context, '/home');
                   },
                 ),
-                SizedBox(height: altura * 0.01,),
+                SizedBox(height: altura * 0.01),
                 Center(
                   child: Text(
                     'Podes ligar o Google Drive mais tarde nas configurações.',
@@ -63,10 +62,10 @@ class _PaginaInicialState extends State<PaginaInicial> {
                     style: TextStyle(
                       fontSize: largura * 0.035,
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      height: 1.3
+                      height: 1.3,
                     ),
                   ),
-                )
+                ),
               ],
             ),
           ),

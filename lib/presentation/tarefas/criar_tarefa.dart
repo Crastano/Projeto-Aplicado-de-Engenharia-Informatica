@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
-// Controlador
+// Controladores
 import 'package:pei/controller/tarefas_controlador.dart';
+import 'package:pei/controller/tarefas_estado.dart';
+
+// Modelos
+import 'package:pei/models/tarefa_item.dart';
 
 // Widgets
 import 'package:pei/presentation/shared/layout/app_scaffold.dart';
@@ -16,33 +20,69 @@ import 'widgets/criar_tarefa/tarefa_notas.dart';
 import 'widgets/criar_tarefa/tarefas_anexos.dart';
 
 class CriarTarefa extends StatefulWidget {
-  const CriarTarefa({super.key});
+  const CriarTarefa({super.key, this.tarefa});
+
+  final TarefaItem? tarefa;
 
   @override
   State<CriarTarefa> createState() => _CriarTarefaState();
 }
 
 class _CriarTarefaState extends State<CriarTarefa> {
-  final TarefasControlador controlador = TarefasControlador();
+  late final TarefasControlador controlador;
+  final TarefasEstado tarefasEstado = TarefasEstado.instancia;
+
+  @override
+  void initState() {
+    super.initState();
+    controlador = TarefasControlador(tarefaInicial: widget.tarefa);
+  }
+
+  @override
+  void dispose() {
+    controlador.dispose();
+    super.dispose();
+  }
+
+  void guardarTarefa() {
+    FocusManager.instance.primaryFocus?.unfocus();
+
+    final erro = controlador.validar();
+
+    if (erro != null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(erro)));
+      return;
+    }
+
+    final tarefa = controlador.construirTarefa();
+
+    if (controlador.editando) {
+      tarefasEstado.atualizar(tarefa);
+    } else {
+      tarefasEstado.adicionar(tarefa);
+    }
+
+    Navigator.pop(context, tarefa);
+  }
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final double largura = constraints.maxWidth;
-        final double altura = constraints.maxHeight;
+        final largura = constraints.maxWidth;
+        final altura = constraints.maxHeight;
 
         return AppScaffold(
-          title: 'Criar Tarefa',
+          title: controlador.editando ? 'Editar Tarefa' : 'Criar Tarefa',
           textSize: largura * 0.07,
           actions: [
             Padding(
-              padding: .only(right: largura * 0.05),
+              padding: .only(right: largura * 0.03),
               child: IconButton(
                 tooltip: 'Guardar tarefa',
-                onPressed: () {},
+                onPressed: guardarTarefa,
                 icon: Icon(
-                  Icons.check,
+                  Icons.check_rounded,
                   size: largura * 0.075,
                   color: Theme.of(context).colorScheme.primary,
                 ),
@@ -54,81 +94,40 @@ class _CriarTarefaState extends State<CriarTarefa> {
           floatingActionButton: false,
           bottomNavigationBar: false,
           largura: largura,
-
           body: SingleChildScrollView(
             keyboardDismissBehavior: .onDrag,
-            child: Padding(
-              padding: .all(largura * 0.06),
-              child: Column(
-                crossAxisAlignment: .start,
-                children: [
-                  CampoTitulo(
-                    controlador: controlador.tituloController,
-                    largura: largura,
-                    altura: altura,
-                  ),
-
-                  SizedBox(height: altura * 0.025),
-
-                  TarefaSelecionarCategoria(largura: largura, altura: altura),
-
-                  SizedBox(height: altura * 0.025),
-
-                  Divider(),
-
-                  SizedBox(height: altura * 0.005),
-
-                  TarefaData(largura: largura),
-
-                  SizedBox(height: altura * 0.005),
-
-                  Divider(),
-
-                  SizedBox(height: altura * 0.005),
-
-                  TarefaDataLimite(largura: largura),
-
-                  SizedBox(height: altura * 0.005),
-
-                  Divider(),
-
-                  SizedBox(height: altura * 0.005),
-
-                  TarefaHora(largura: largura),
-
-                  SizedBox(height: altura * 0.005),
-
-                  Divider(),
-
-                  SizedBox(height: altura * 0.005),
-
-                  TarefaPeriodicidade(largura: largura),
-
-                  SizedBox(height: altura * 0.005),
-
-                  Divider(),
-
-                  SizedBox(height: altura * 0.005),
-
-                  TarefaLembrete(largura: largura),
-
-                  SizedBox(height: altura * 0.005),
-
-                  Divider(),
-
-                  SizedBox(height: altura * 0.005),
-
-                  TarefaNotas(largura: largura),
-
-                  SizedBox(height: altura * 0.005),
-
-                  Divider(),
-
-                  SizedBox(height: altura * 0.005),
-
-                  TarefaAnexos(largura: largura),
-                ],
-              ),
+            padding: .all(largura * 0.06),
+            child: Column(
+              crossAxisAlignment: .start,
+              children: [
+                CampoTitulo(
+                  controlador: controlador.tituloControlador,
+                  largura: largura,
+                  altura: altura,
+                ),
+                SizedBox(height: altura * 0.025),
+                TarefaSelecionarCategoria(
+                  controlador: controlador,
+                  largura: largura,
+                  altura: altura,
+                ),
+                SizedBox(height: altura * 0.025),
+                Divider(),
+                TarefaData(controlador: controlador, largura: largura),
+                Divider(),
+                TarefaDataLimite(controlador: controlador, largura: largura),
+                Divider(),
+                TarefaHora(controlador: controlador, largura: largura),
+                Divider(),
+                TarefaPeriodicidade(controlador: controlador, largura: largura),
+                Divider(),
+                TarefaLembrete(controlador: controlador, largura: largura),
+                Divider(),
+                TarefaNotas(controlador: controlador, largura: largura),
+                Divider(),
+                TarefaAnexos(controlador: controlador, largura: largura),
+                SizedBox(height: altura * 0.05),
+              ],
             ),
           ),
         );

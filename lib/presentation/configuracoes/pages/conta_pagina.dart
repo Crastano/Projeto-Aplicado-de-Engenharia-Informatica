@@ -53,8 +53,8 @@ class ContaPage extends StatelessWidget {
             SizedBox(
               width: .infinity,
               child: FilledButton.icon(
-                onPressed: () {},
-                icon: Icon(Icons.login_rounded, size: largura * 0.06,),
+                onPressed: null,
+                icon: Icon(Icons.login_rounded, size: largura * 0.06),
                 label: Text(
                   'Iniciar sessão com Google',
                   style: TextStyle(fontSize: largura * 0.035),
@@ -68,12 +68,14 @@ class ContaPage extends StatelessWidget {
               children: [
                 ListTile(
                   leading: Icon(Icons.cloud_outlined),
-                  title: Text('Sincronização', style: TextStyle(
-                    fontSize: largura * 0.04
-                  )),
-                  subtitle: Text('Não disponível sem conta', style: TextStyle(
-                    fontSize: largura * 0.035
-                  ),),
+                  title: Text(
+                    'Sincronização',
+                    style: TextStyle(fontSize: largura * 0.04),
+                  ),
+                  subtitle: Text(
+                    'Não disponível sem conta',
+                    style: TextStyle(fontSize: largura * 0.035),
+                  ),
                   enabled: false,
                 ),
               ],

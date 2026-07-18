@@ -1,68 +1,42 @@
 import 'package:flutter/material.dart';
 
+import 'package:pei/theme/app_cores.dart';
+
 class CategoriaCor {
-  const CategoriaCor({
-    required this.nome,
-    required this.fundo,
-    required this.texto,
-  });
+  const CategoriaCor({required this.nome, required this.indice});
 
   final String nome;
-  final Color fundo;
-  final Color texto;
+
+  final int indice;
+
+  Color fundo(BuildContext context) {
+    if (Theme.of(context).brightness == Brightness.dark) {
+      return AppCores.categoriaBackgroundEscuro[indice];
+    }
+
+    return AppCores.categoriaBackgroundClaro[indice];
+  }
+
+  Color texto(BuildContext context) {
+    if (Theme.of(context).brightness == Brightness.dark) {
+      return AppCores.categoriaTextoEscuro[indice];
+    }
+
+    return AppCores.categoriaTextoClaro[indice];
+  }
 }
 
 const List<CategoriaCor> coresCategorias = [
-  CategoriaCor(
-    nome: 'Azul',
-    fundo: Color(0xFFDCEBFF),
-    texto: Color(0xFF0A56C2),
-  ),
-  CategoriaCor(
-    nome: 'Verde',
-    fundo: Color(0xFFDCFCE7),
-    texto: Color(0xFF166534),
-  ),
-  CategoriaCor(
-    nome: 'Amarelo',
-    fundo: Color(0xFFFFF3A9),
-    texto: Color(0xFF8A6A00),
-  ),
-  CategoriaCor(
-    nome: 'Rosa',
-    fundo: Color(0xFFFFD8EA),
-    texto: Color(0xFF9D174D),
-  ),
-  CategoriaCor(
-    nome: 'Roxo',
-    fundo: Color(0xFFEDE9FE),
-    texto: Color(0xFF6D28D9),
-  ),
-  CategoriaCor(
-    nome: 'Laranja',
-    fundo: Color(0xFFFFE4C7),
-    texto: Color(0xFF9A4D00),
-  ),
-  CategoriaCor(
-    nome: 'Vermelho',
-    fundo: Color(0xFFFFE0E0),
-    texto: Color(0xFFB42318),
-  ),
-  CategoriaCor(
-    nome: 'Ciano',
-    fundo: Color(0xFFCFFAFE),
-    texto: Color(0xFF0E7490),
-  ),
-  CategoriaCor(
-    nome: 'Turquesa',
-    fundo: Color(0xFFCCFBF1),
-    texto: Color(0xFF0F766E),
-  ),
-  CategoriaCor(
-    nome: 'Cinzento',
-    fundo: Color(0xFFE5E7EB),
-    texto: Color(0xFF374151),
-  ),
+  CategoriaCor(nome: 'Azul', indice: 0),
+  CategoriaCor(nome: 'Ciano', indice: 1),
+  CategoriaCor(nome: 'Rosa', indice: 2),
+  CategoriaCor(nome: 'Magenta', indice: 3),
+  CategoriaCor(nome: 'Roxo', indice: 4),
+  CategoriaCor(nome: 'Índigo', indice: 5),
+  CategoriaCor(nome: 'Laranja', indice: 6),
+  CategoriaCor(nome: 'Amarelo', indice: 7),
+  CategoriaCor(nome: 'Verde', indice: 8),
+  CategoriaCor(nome: 'Cinzento', indice: 9),
 ];
 
 class CategoriaItem {
@@ -76,14 +50,7 @@ class CategoriaItem {
   final String nome;
   final CategoriaCor cor;
 
-  CategoriaItem copyWith({
-    String? nome,
-    CategoriaCor? cor,
-  }) {
-    return CategoriaItem(
-      id: id,
-      nome: nome ?? this.nome,
-      cor: cor ?? this.cor,
-    );
+  CategoriaItem copyWith({String? nome, CategoriaCor? cor}) {
+    return CategoriaItem(id: id, nome: nome ?? this.nome, cor: cor ?? this.cor);
   }
 }

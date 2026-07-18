@@ -94,6 +94,13 @@ class ColunaDia extends StatelessWidget {
                 tarefa: tarefa,
                 largura: largura,
                 umDia: umDia,
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    '/paginaTarefa',
+                    arguments: tarefa.id,
+                  );
+                },
               ),
             );
           }),

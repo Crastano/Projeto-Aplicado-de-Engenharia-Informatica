@@ -9,10 +9,12 @@ import 'package:pei/enums/periodicidade.dart';
 class SeletorPeriodicidade extends StatefulWidget {
   const SeletorPeriodicidade({
     super.key,
+    required this.controlador,
     required this.largura,
     required this.periodicidadeInicial,
   });
 
+  final TarefasControlador controlador;
   final double largura;
   final Periodicidade periodicidadeInicial;
 
@@ -21,15 +23,12 @@ class SeletorPeriodicidade extends StatefulWidget {
 }
 
 class _SeletorPeriodicidadeState extends State<SeletorPeriodicidade> {
-  final TarefasControlador controlador = TarefasControlador();
-
-  late Periodicidade periodicidadeSelecionado;
+  late Periodicidade periodicidadeSelecionada;
 
   @override
   void initState() {
     super.initState();
-
-    periodicidadeSelecionado = widget.periodicidadeInicial;
+    periodicidadeSelecionada = widget.periodicidadeInicial;
   }
 
   @override
@@ -61,33 +60,35 @@ class _SeletorPeriodicidadeState extends State<SeletorPeriodicidade> {
               spacing: widget.largura * 0.035,
               runSpacing: widget.largura * 0.015,
               children: Periodicidade.values.map((periodicidade) {
-                final selecionado = periodicidadeSelecionado == periodicidade;
+                final selecionada = periodicidadeSelecionada == periodicidade;
 
                 return ChoiceChip(
-                  selected: selecionado,
+                  selected: selecionada,
                   showCheckmark: false,
                   avatar: Icon(
-                    controlador.obterIconePeriodicidade(periodicidade),
+                    widget.controlador.obterIconePeriodicidade(periodicidade),
                     size: widget.largura * 0.045,
-                    color: selecionado
+                    color: selecionada
                         ? Theme.of(context).colorScheme.onPrimary
                         : Theme.of(context).colorScheme.onSurface,
                   ),
-                  label: periodicidade == .personalizada
-                      ? Text('Personalizada')
-                      : Text(controlador.formatarPeriodicidade(periodicidade)),
+                  label: Text(
+                    periodicidade == .personalizada
+                        ? 'Personalizada'
+                        : widget.controlador.formatarPeriodicidade(
+                            periodicidade,
+                          ),
+                  ),
                   labelStyle: TextStyle(
-                    color: selecionado
+                    color: selecionada
                         ? Theme.of(context).colorScheme.onPrimary
                         : Theme.of(context).colorScheme.onSurface,
                     fontWeight: .w500,
                   ),
                   selectedColor: Theme.of(context).colorScheme.primary,
-                  backgroundColor: Theme.of(
-                    context,
-                  ).colorScheme.surface,
+                  backgroundColor: Theme.of(context).colorScheme.surface,
                   side: BorderSide(
-                    color: selecionado
+                    color: selecionada
                         ? Theme.of(context).colorScheme.primary
                         : Theme.of(context).colorScheme.outline,
                     width: widget.largura * 0.005,
@@ -95,7 +96,7 @@ class _SeletorPeriodicidadeState extends State<SeletorPeriodicidade> {
                   shape: StadiumBorder(),
                   onSelected: (_) {
                     setState(() {
-                      periodicidadeSelecionado = periodicidade;
+                      periodicidadeSelecionada = periodicidade;
                     });
                   },
                 );
@@ -106,7 +107,7 @@ class _SeletorPeriodicidadeState extends State<SeletorPeriodicidade> {
               width: .infinity,
               child: FilledButton(
                 onPressed: () {
-                  Navigator.pop(context, periodicidadeSelecionado);
+                  Navigator.pop(context, periodicidadeSelecionada);
                 },
                 child: Text('Confirmar'),
               ),

@@ -1,27 +1,35 @@
 import 'package:flutter/material.dart';
 
-import 'package:pei/controller/calendario_controlador.dart';
+// Controlador
+import 'package:pei/controller/categorias_controlador.dart';
+
+// Modelos
 import 'package:pei/models/tarefa_item.dart';
 
+// Utils
+import 'package:pei/utils/formatador_data_hora.dart';
+
 class TarefaDataLimiteCard extends StatelessWidget {
-  TarefaDataLimiteCard({
+  const TarefaDataLimiteCard({
     super.key,
     required this.tarefa,
     required this.largura,
     this.compacto = false,
     this.onTap,
-  }) : assert(tarefa.dataLimite != null);
+  });
 
   final TarefaItem tarefa;
   final double largura;
   final bool compacto;
   final VoidCallback? onTap;
 
-  final CalendarioControlador controlador = CalendarioControlador();
-
   @override
   Widget build(BuildContext context) {
     final dataLimite = tarefa.dataLimite!;
+
+    final categoria = CategoriasControlador.instancia.obterPorId(
+      tarefa.categoryId,
+    );
 
     return Card.outlined(
       margin: .zero,
@@ -43,12 +51,12 @@ class TarefaDataLimiteCard extends StatelessWidget {
                 width: compacto ? largura * 0.045 : largura * 0.09,
                 height: compacto ? largura * 0.045 : largura * 0.09,
                 decoration: BoxDecoration(
-                  color: tarefa.categoryBackground,
+                  color: categoria?.cor.fundo(context),
                   shape: .circle,
                 ),
                 child: Icon(
                   Icons.flag_outlined,
-                  color: tarefa.categoryText,
+                  color: categoria?.cor.texto(context),
                   size: compacto ? largura * 0.035 : largura * 0.05,
                 ),
               ),
@@ -69,9 +77,9 @@ class TarefaDataLimiteCard extends StatelessWidget {
                     SizedBox(height: largura * 0.005),
                     Text(
                       compacto
-                          ? controlador.formatarHora(dataLimite)
+                          ? 'Data limite'
                           : 'Data limite: '
-                                '${controlador.formatarDataHora(dataLimite)}',
+                                '${FormatadorDataHora.data(dataLimite)}',
                       style: TextStyle(
                         fontSize: compacto ? largura * 0.025 : largura * 0.0325,
                         color: Theme.of(context).colorScheme.onSurfaceVariant,

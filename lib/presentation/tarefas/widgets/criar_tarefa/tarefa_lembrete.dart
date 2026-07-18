@@ -3,138 +3,123 @@ import 'package:flutter/material.dart';
 // Controlador
 import 'package:pei/controller/tarefas_controlador.dart';
 
+// Enums
+import 'package:pei/enums/lembrete.dart';
+
 // Widgets
 import 'seletor_lembrete.dart';
 import 'seletor_lembrete_personalizada.dart';
 
-// Enums
-import 'package:pei/enums/lembrete.dart';
+class TarefaLembrete extends StatelessWidget {
+  const TarefaLembrete({
+    super.key,
+    required this.controlador,
+    required this.largura,
+  });
 
-class TarefaLembrete extends StatefulWidget {
-  const TarefaLembrete({super.key, required this.largura});
-
+  final TarefasControlador controlador;
   final double largura;
 
-  @override
-  State<TarefaLembrete> createState() => _TarefaLembreteState();
-}
-
-class _TarefaLembreteState extends State<TarefaLembrete> {
-  final TarefasControlador controlador = TarefasControlador();
-
-  Lembrete lembreteSelecionado = .nenhum;
-
-  Future<void> selecionarLembrete() async {
-    final Lembrete? lembreteEscolhido = await showModalBottomSheet<Lembrete>(
+  Future<void> selecionarLembrete(BuildContext context) async {
+    final escolhido = await showModalBottomSheet<Lembrete>(
       context: context,
       showDragHandle: true,
       isScrollControlled: true,
       backgroundColor: Theme.of(context).colorScheme.surface,
       builder: (context) {
         return SeletorLembrete(
-          largura: widget.largura,
-          lembreteInicial: lembreteSelecionado,
+          controlador: controlador,
+          largura: largura,
+          lembreteInicial: controlador.lembreteSelecionado,
         );
       },
     );
 
-    if (!mounted || lembreteEscolhido == null) return;
+    if (escolhido == null || !context.mounted) return;
 
-    if (lembreteEscolhido == Lembrete.personalizada) {
-      final ConfiguracaoLembrete? configuracao =
-          await showModalBottomSheet<ConfiguracaoLembrete>(
-            context: context,
-            showDragHandle: true,
-            isScrollControlled: true,
-            backgroundColor: Theme.of(context).colorScheme.surface,
-            builder: (context) {
-              return SeletorLembretePersonalizado(
-                largura: widget.largura,
-                configuracaoInicial:
-                    controlador.configuracaoLembretePersonalizada,
-              );
-            },
+    if (escolhido == .personalizada) {
+      final configuracao = await showModalBottomSheet<ConfiguracaoLembrete>(
+        context: context,
+        showDragHandle: true,
+        isScrollControlled: true,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        builder: (context) {
+          return SeletorLembretePersonalizado(
+            controlador: controlador,
+            largura: largura,
+            configuracaoInicial: controlador.configuracaoLembretePersonalizada,
           );
+        },
+      );
 
-      if (!mounted || configuracao == null) return;
+      if (configuracao == null) return;
 
-      setState(() {
-        controlador.configuracaoLembretePersonalizada = configuracao;
-        lembreteSelecionado = Lembrete.personalizada;
-      });
+      controlador.selecionarLembrete(
+        .personalizada,
+        configuracao: configuracao,
+      );
       return;
     }
 
-    setState(() {
-      lembreteSelecionado = lembreteEscolhido;
-    });
+    controlador.selecionarLembrete(escolhido);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: .center,
-      children: [
-        Row(
-          children: [
-            Icon(
-              Icons.notifications_none_outlined,
-              size: widget.largura * 0.09,
-            ),
-            SizedBox(width: widget.largura * 0.05),
-            Text(
-              'Lembrete',
-              style: TextStyle(
-                fontWeight: .w500,
-                fontSize: widget.largura * 0.045,
-              ),
-            ),
-          ],
-        ),
-        Spacer(),
-        Flexible(
-          flex: 6,
-          child: OutlinedButton(
-            onPressed: selecionarLembrete,
-            style: ButtonStyle(
-              backgroundColor: WidgetStatePropertyAll(
-                Theme.of(context).colorScheme.surfaceContainerHighest,
-              ),
-              foregroundColor: WidgetStatePropertyAll(
-                Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-              side: WidgetStatePropertyAll(
-                BorderSide(
-                  color: Theme.of(context).colorScheme.outline,
-                  width: widget.largura * 0.005,
-                ),
-              ),
-              padding: WidgetStatePropertyAll(
-                EdgeInsets.all(widget.largura * 0.025),
-              ),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  controlador.obterIconeLembrete(lembreteSelecionado),
-                  size: widget.largura * 0.045,
-                ),
-                SizedBox(width: widget.largura * 0.015),
-                Flexible(
-                  child: Text(
-                    controlador.formatarLembrete(lembreteSelecionado),
+    return ListenableBuilder(
+      listenable: controlador,
+      builder: (context, _) {
+        final lembrete = controlador.lembreteSelecionado;
+
+        return Padding(
+          padding: .symmetric(vertical: largura * 0.012),
+          child: Row(
+            children: [
+              Icon(Icons.notifications_none_outlined, size: largura * 0.075),
+              SizedBox(width: largura * 0.04),
+              Expanded(
+                child: Text(
+                  'Lembrete',
+                  style: TextStyle(
+                    fontWeight: .w500,
+                    fontSize: largura * 0.045,
                   ),
                 ),
-                SizedBox(width: widget.largura * 0.01),
-                Icon(
-                  Icons.keyboard_arrow_down_outlined,
-                  size: widget.largura * 0.05,
+              ),
+              Flexible(
+                child: OutlinedButton.icon(
+                  onPressed: () => selecionarLembrete(context),
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStatePropertyAll(
+                      Theme.of(context).colorScheme.surfaceContainerHighest,
+                    ),
+                    foregroundColor: WidgetStatePropertyAll(
+                      Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                    side: WidgetStatePropertyAll(
+                      BorderSide(
+                        color: Theme.of(context).colorScheme.outline,
+                        width: largura * 0.005,
+                      ),
+                    ),
+                    padding: WidgetStatePropertyAll(
+                      EdgeInsets.all(largura * 0.025),
+                    ),
+                  ),
+                  icon: Icon(
+                    controlador.obterIconeLembrete(lembrete),
+                    size: largura * 0.045,
+                  ),
+                  label: Text(
+                    controlador.formatarLembrete(lembrete),
+                    overflow: .ellipsis,
+                  ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ),
-      ],
+        );
+      },
     );
   }
 }

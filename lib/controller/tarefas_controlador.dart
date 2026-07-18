@@ -1,12 +1,22 @@
-import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:open_filex/open_filex.dart';
 
+// Controladores
+import 'package:pei/controller/categorias_controlador.dart';
+
 // Enums
-import 'package:pei/enums/periodicidade.dart';
-import 'package:pei/enums/unidade_periodicidade.dart';
 import 'package:pei/enums/lembrete.dart';
+import 'package:pei/enums/periodicidade.dart';
 import 'package:pei/enums/unidade_lembrete.dart';
+import 'package:pei/enums/unidade_periodicidade.dart';
+import 'package:pei/models/categoria_item.dart';
+
+// Modelos
+import 'package:pei/models/tarefa_item.dart';
+
+// Utils
+import 'package:pei/utils/formatador_data_hora.dart';
 
 class ConfiguracaoPeriodicidade {
   const ConfiguracaoPeriodicidade({
@@ -25,102 +35,268 @@ class ConfiguracaoLembrete {
   final UnidadeLembrete unidade;
 
   Duration get duracao {
-    return switch(unidade) {
+    return switch (unidade) {
       .minutos => Duration(minutes: quantidade),
       .horas => Duration(hours: quantidade),
-      .dias => Duration(days: quantidade)
+      .dias => Duration(days: quantidade),
     };
   }
 }
 
 class TarefasControlador extends ChangeNotifier {
-  String formatarData(DateTime data) {
-    final dia = data.day.toString().padLeft(2, '0');
-    final mes = data.month.toString().padLeft(2, '0');
+  TarefasControlador({TarefaItem? tarefaInicial}) {
+    tarefaOriginal = tarefaInicial;
 
-    return '$dia-$mes-${data.year}';
+    if (tarefaInicial == null) {
+      prepararNovaTarefa();
+    } else {
+      carregarTarefa(tarefaInicial);
+    }
+
+    tituloControlador.addListener(aoAlterarTitulo);
   }
 
-  int converterParaMinutos(TimeOfDay hora) {
-    return hora.hour * 60 + hora.minute;
-  }
+  TarefaItem? tarefaOriginal;
 
-  // Validação
+  final TextEditingController tituloControlador = TextEditingController();
 
-  bool validarHoras(TimeOfDay inicio, TimeOfDay fim) {
-    final minutosHoraInicial = converterParaMinutos(inicio);
+  DateTime dataSelecionada = DateTime.now();
+  DateTime? dataLimiteSelecionada;
+  TimeOfDay? horaSelecionada;
+  String? categoriaIdSelecionada;
+  Periodicidade periodicidadeSelecionada = .nenhuma;
+  Lembrete lembreteSelecionado = .nenhum;
+  String nota = '';
+  List<PlatformFile> anexos = [];
 
-    final minutosHoraFinal = converterParaMinutos(fim);
+  ConfiguracaoPeriodicidade configuracaoPeriodicidadePersonalizada =
+      ConfiguracaoPeriodicidade(intervalo: 1, unidade: .dias);
 
-    return minutosHoraFinal <= minutosHoraInicial;
-  }
+  ConfiguracaoLembrete configuracaoLembretePersonalizada = ConfiguracaoLembrete(
+    quantidade: 1,
+    unidade: .horas,
+  );
 
-  // Titulo
-  final TextEditingController tituloController = TextEditingController();
-
-  String get titulo => tituloController.text.trim();
-
+  bool get editando => tarefaOriginal != null;
+  String get titulo => tituloControlador.text.trim();
   bool get tituloValido => titulo.isNotEmpty;
 
-  // Categorias
+  DateTime? get dataHora {
+    if (horaSelecionada == null) {
+      return null;
+    }
 
-  final List<String> categorias = [
-    'Tarefa',
-    'Aniversário',
-    'Trabalho',
-    'Evento',
-    'Pagar',
-  ];
+    return DateTime(
+      dataSelecionada.year,
+      dataSelecionada.month,
+      dataSelecionada.day,
+      horaSelecionada!.hour,
+      horaSelecionada!.minute,
+    );
+  }
 
-  String categoriaSelecionada = 'Tarefa';
+  DateTime? get dataLimite {
+    return apenasDataOuNull(dataLimiteSelecionada);
+  }
 
-  void selecionarCategoria(String categoria) {
-    if (categoriaSelecionada == categoria) return;
+  void prepararNovaTarefa() {
+    final DateTime agora = DateTime.now();
 
-    categoriaSelecionada = categoria;
+    dataSelecionada = apenasData(agora);
+
+    horaSelecionada = null;
+
+    selecionarCategoriaInicial();
+  }
+
+  void carregarTarefa(TarefaItem tarefa) {
+    tituloControlador.text = tarefa.titulo;
+
+    dataSelecionada = apenasData(tarefa.data);
+    dataLimiteSelecionada = apenasDataOuNull(tarefa.dataLimite);
+    horaSelecionada = tarefa.hora;
+
+    periodicidadeSelecionada = tarefa.periodicidade;
+    lembreteSelecionado = tarefa.lembrete;
+
+    nota = tarefa.notas ?? '';
+
+    anexos = tarefa.anexos.map(platformFileAPartirDoCaminho).toList();
+
+    configuracaoPeriodicidadePersonalizada = ConfiguracaoPeriodicidade(
+      intervalo: tarefa.periodicidadeIntervalo ?? 1,
+      unidade: tarefa.periodicidadeUnidade ?? .dias,
+    );
+
+    configuracaoLembretePersonalizada = ConfiguracaoLembrete(
+      quantidade: tarefa.lembreteQuantidade ?? 1,
+      unidade: tarefa.lembreteUnidade ?? .horas,
+    );
+
+    selecionarCategoriaInicial(tarefa);
+  }
+
+  void selecionarCategoriaInicial([TarefaItem? tarefa]) {
+    final CategoriasControlador controladorCategorias = CategoriasControlador.instancia;
+
+    if (tarefa == null) {
+      categoriaIdSelecionada = null;
+      return;
+    }
+
+    final CategoriaItem? categoriaPorId = controladorCategorias.obterPorId(tarefa.categoryId);
+
+    if (categoriaPorId != null) {
+      categoriaIdSelecionada = categoriaPorId.id;
+      return;
+    }
+
+    categoriaIdSelecionada = null;
+  }
+
+  String? validar() {
+    if (!tituloValido) {
+      return 'Escreve um título para a tarefa.';
+    }
+
+    final DateTime? limite = dataLimite;
+
+    if (limite != null && limite.isBefore(dataSelecionada)) {
+      return 'A data limite não pode ser anterior à data da tarefa.';
+    }
+
+    return null;
+  }
+
+  TarefaItem construirTarefa() {
+    final categoria = CategoriasControlador.instancia.obterPorId(
+      categoriaIdSelecionada,
+    );
+
+    final caminhosAnexos = anexos
+        .map((anexo) => anexo.path)
+        .whereType<String>()
+        .where((caminho) => caminho.isNotEmpty)
+        .toList(growable: false);
+
+    return TarefaItem(
+      id:
+          tarefaOriginal?.id ??
+          DateTime.now().microsecondsSinceEpoch.toString(),
+      titulo: titulo,
+      data: apenasData(dataSelecionada),
+      hora: horaSelecionada,
+      dataLimite: dataLimite,
+      categoryId: categoria?.id,
+      category: categoria?.nome,
+      lembrete: lembreteSelecionado,
+      lembreteQuantidade: lembreteSelecionado == .personalizada
+          ? configuracaoLembretePersonalizada.quantidade
+          : null,
+      lembreteUnidade: lembreteSelecionado == .personalizada
+          ? configuracaoLembretePersonalizada.unidade
+          : null,
+      periodicidade: periodicidadeSelecionada,
+      periodicidadeIntervalo: periodicidadeSelecionada == .personalizada
+          ? configuracaoPeriodicidadePersonalizada.intervalo
+          : null,
+      periodicidadeUnidade: periodicidadeSelecionada == .personalizada
+          ? configuracaoPeriodicidadePersonalizada.unidade
+          : null,
+      notas: nota.trim().isEmpty ? null : nota.trim(),
+      anexos: caminhosAnexos,
+      estaCompletado: tarefaOriginal?.estaCompletado ?? false,
+    );
+  }
+
+  void selecionarData(DateTime data) {
+    dataSelecionada = apenasData(data);
+
+    final limite = dataLimiteSelecionada;
+    if (limite != null && apenasData(limite).isBefore(dataSelecionada)) {
+      dataLimiteSelecionada = null;
+    }
+
     notifyListeners();
   }
 
-  void adicionarCategoria(String categoria) {
-    final String novaCategoria = categoria.trim();
+  void selecionarDataLimite(DateTime? data) {
+    dataLimiteSelecionada = apenasDataOuNull(data);
+    notifyListeners();
+  }
 
-    if (novaCategoria.isEmpty) return;
+  void selecionarHora(TimeOfDay? hora) {
+    horaSelecionada = hora;
+    notifyListeners();
+  }
 
-    final bool categoriaJaExiste = categorias.any(
-      (categoriaExistente) =>
-          categoriaExistente.toLowerCase() == novaCategoria.toLowerCase(),
-    );
+  void selecionarCategoria(String? categoriaId) {
+    if (categoriaIdSelecionada == categoriaId) return;
 
-    if (categoriaJaExiste) return;
+    categoriaIdSelecionada = categoriaId;
+    notifyListeners();
+  }
 
-    categorias.add(novaCategoria);
-    categoriaSelecionada = novaCategoria;
+  void selecionarPeriodicidade(
+    Periodicidade periodicidade, {
+    ConfiguracaoPeriodicidade? configuracao,
+  }) {
+    periodicidadeSelecionada = periodicidade;
+
+    if (configuracao != null) {
+      configuracaoPeriodicidadePersonalizada = configuracao;
+    }
 
     notifyListeners();
+  }
+
+  void selecionarLembrete(
+    Lembrete lembrete, {
+    ConfiguracaoLembrete? configuracao,
+  }) {
+    lembreteSelecionado = lembrete;
+
+    if (configuracao != null) {
+      configuracaoLembretePersonalizada = configuracao;
+    }
+
+    notifyListeners();
+  }
+
+  void atualizarNota(String valor) {
+    nota = valor.trim();
+    notifyListeners();
+  }
+
+  void atualizarAnexos(List<PlatformFile> novosAnexos) {
+    anexos = List<PlatformFile>.from(novosAnexos);
+    notifyListeners();
+  }
+
+  String formatarData(DateTime data) {
+    return FormatadorDataHora.data(data);
   }
 
   // Periodicidade
 
-  ConfiguracaoPeriodicidade configuracaoPeriodicidadePersonalizada =
-      ConfiguracaoPeriodicidade(
-        intervalo: 1,
-        unidade: UnidadePeriodicidade.dias,
-      );
-
   String formatarPeriodicidade(Periodicidade periodicidade) {
-    return switch(periodicidade) {
+    return switch (periodicidade) {
       .nenhuma => 'Não repetir',
-      .diaria => 'Diaramente',
+      .diaria => 'Diariamente',
       .semanal => 'Semanalmente',
       .mensal => 'Mensalmente',
       .anual => 'Anualmente',
-      .personalizada => formatarPersonalizada(configuracaoPeriodicidadePersonalizada)
+      .personalizada => formatarPersonalizada(
+        configuracaoPeriodicidadePersonalizada,
+      ),
     };
   }
 
-
-  String formatarUnidadePeriodicidade(UnidadePeriodicidade unidade, int intervalo) {
-    return switch(unidade) {
+  String formatarUnidadePeriodicidade(
+    UnidadePeriodicidade unidade,
+    int intervalo,
+  ) {
+    return switch (unidade) {
       .dias => intervalo == 1 ? 'dia' : 'dias',
       .semanas => intervalo == 1 ? 'semana' : 'semanas',
       .meses => intervalo == 1 ? 'mês' : 'meses',
@@ -131,18 +307,17 @@ class TarefasControlador extends ChangeNotifier {
   String formatarPersonalizada(ConfiguracaoPeriodicidade configuracao) {
     final intervalo = configuracao.intervalo;
 
-    return switch(configuracao.unidade) {
+    return switch (configuracao.unidade) {
       .dias => intervalo == 1 ? 'Todos os dias' : 'A cada $intervalo dias',
-      .semanas => intervalo == 1
-            ? 'Todas as semanas'
-            : 'A cada $intervalo semanas',
+      .semanas =>
+        intervalo == 1 ? 'Todas as semanas' : 'A cada $intervalo semanas',
       .meses => intervalo == 1 ? 'Todos os meses' : 'A cada $intervalo meses',
       .anos => intervalo == 1 ? 'Todos os anos' : 'A cada $intervalo anos',
     };
   }
 
   IconData obterIconePeriodicidade(Periodicidade periodicidade) {
-    return switch(periodicidade) {
+    return switch (periodicidade) {
       .nenhuma => Icons.block_outlined,
       .diaria => Icons.today_outlined,
       .semanal => Icons.date_range_outlined,
@@ -152,13 +327,10 @@ class TarefasControlador extends ChangeNotifier {
     };
   }
 
-  // Lembrete
-
-  ConfiguracaoLembrete configuracaoLembretePersonalizada =
-      const ConfiguracaoLembrete(quantidade: 1, unidade: UnidadeLembrete.horas);
+  // Lembretes
 
   String formatarLembrete(Lembrete lembrete) {
-    return switch(lembrete) {
+    return switch (lembrete) {
       .nenhum => 'Sem lembrete',
       .noMomento => 'Na hora da tarefa',
       .cincoMinutos => '5 minutos antes',
@@ -167,28 +339,30 @@ class TarefasControlador extends ChangeNotifier {
       .trintaMinutos => '30 minutos antes',
       .umaHora => '1 hora antes',
       .umDia => '1 dia antes',
-      .personalizada => formatarLembretePersonalizado(configuracaoLembretePersonalizada),
+      .personalizada => formatarLembretePersonalizado(
+        configuracaoLembretePersonalizada,
+      ),
     };
-  }  
-
+  }
 
   String formatarLembretePersonalizado(ConfiguracaoLembrete configuracao) {
     final quantidade = configuracao.quantidade;
 
-    return switch(configuracao.unidade) {
-      .minutos => quantidade == 1 ? '1 minuto antes' : '$quantidade minutos antes',
+    return switch (configuracao.unidade) {
+      .minutos =>
+        quantidade == 1 ? '1 minuto antes' : '$quantidade minutos antes',
       .horas => quantidade == 1 ? '1 hora antes' : '$quantidade horas antes',
       .dias => quantidade == 1 ? '1 dia antes' : '$quantidade dias antes',
     };
   }
 
   IconData obterIconeLembrete(Lembrete lembrete) {
-    return switch(lembrete) {
+    return switch (lembrete) {
       .nenhum => Icons.notifications_off_outlined,
       .noMomento => Icons.notifications_active_outlined,
-      .cincoMinutos => Icons.timer_outlined,
-      .dezMinutos => Icons.timer_outlined,
-      .quinzeMinutos => Icons.timer_outlined,
+      .cincoMinutos ||
+      .dezMinutos ||
+      .quinzeMinutos ||
       .trintaMinutos => Icons.timer_outlined,
       .umaHora => Icons.schedule_outlined,
       .umDia => Icons.calendar_today_outlined,
@@ -197,7 +371,7 @@ class TarefasControlador extends ChangeNotifier {
   }
 
   String formatarUnidadeLembrete(UnidadeLembrete unidade, int quantidade) {
-    return switch(unidade) {
+    return switch (unidade) {
       .minutos => quantidade == 1 ? 'minuto' : 'minutos',
       .horas => quantidade == 1 ? 'hora' : 'horas',
       .dias => quantidade == 1 ? 'dia' : 'dias',
@@ -206,34 +380,22 @@ class TarefasControlador extends ChangeNotifier {
 
   // Anexos
 
-  List<PlatformFile> anexos = [];
-
   IconData obterIconeAnexos(String? extensao) {
-    return switch(extensao?.toLowerCase()) {
-      'jpg' => Icons.image_outlined,
-      'jpeg' => Icons.image_outlined,
-      'png' => Icons.image_outlined,
-      'webp' => Icons.image_outlined,
+    return switch (extensao?.toLowerCase()) {
+      'jpg' || 'jpeg' || 'png' || 'webp' => Icons.image_outlined,
       'pdf' => Icons.picture_as_pdf_outlined,
-      'doc' => Icons.description_outlined,
-      'docx' => Icons.description_outlined,
-      'xls' => Icons.table_chart_outlined,
-      'xlsx' => Icons.table_chart_outlined,
-      'mp3' => Icons.audio_file_outlined,
-      'wav' => Icons.audio_file_outlined,
-      'mp4' => Icons.video_file_outlined,
-      'mov' => Icons.video_file_outlined,
-      String() => Icons.insert_drive_file_outlined,
-      null => Icons.insert_drive_file_outlined,
+      'doc' || 'docx' => Icons.description_outlined,
+      'xls' || 'xlsx' => Icons.table_chart_outlined,
+      'mp3' || 'wav' => Icons.audio_file_outlined,
+      'mp4' || 'mov' => Icons.video_file_outlined,
+      _ => Icons.insert_drive_file_outlined,
     };
   }
 
   String obterNomeSemExtensao(PlatformFile anexo) {
     final extensao = anexo.extension;
 
-    if (extensao == null || extensao.isEmpty) {
-      return anexo.name;
-    }
+    if (extensao == null || extensao.isEmpty) return anexo.name;
 
     final sufixo = '.$extensao';
 
@@ -245,12 +407,39 @@ class TarefasControlador extends ChangeNotifier {
   }
 
   String mensagemAnexo(OpenResult resultado) {
-    return switch(resultado.type) {
-      .fileNotFound => 'O ficheiro já não existe.',
-      .noAppToOpen => 'Não existe nenhuma aplicação capaz de abrir este ficheiro.',
+    return switch (resultado.type) {
+      .fileNotFound => 'O ficheiro não existe.',
+      .noAppToOpen =>
+        'Não existe nenhuma aplicação capaz de abrir este ficheiro.',
       .permissionDenied => 'Não existe permissão para abrir este ficheiro.',
       .error => 'Não foi possível abrir o ficheiro.',
       .done => '',
     };
+  }
+
+  void aoAlterarTitulo() {
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    tituloControlador.removeListener(aoAlterarTitulo);
+    tituloControlador.dispose();
+    super.dispose();
+  }
+
+  static DateTime apenasData(DateTime data) {
+    return DateTime(data.year, data.month, data.day);
+  }
+
+  static DateTime? apenasDataOuNull(DateTime? data) {
+    if (data == null) return null;
+
+    return apenasData(data);
+  }
+
+  static PlatformFile platformFileAPartirDoCaminho(String caminho) {
+    final nome = caminho.split(RegExp(r'[/\\]')).last;
+    return PlatformFile(name: nome, size: 0, path: caminho);
   }
 }

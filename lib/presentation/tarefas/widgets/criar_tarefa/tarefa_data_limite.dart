@@ -3,87 +3,95 @@ import 'package:flutter/material.dart';
 // Controlador
 import 'package:pei/controller/tarefas_controlador.dart';
 
-class TarefaDataLimite extends StatefulWidget {
-  const TarefaDataLimite({super.key, required this.largura});
+class TarefaDataLimite extends StatelessWidget {
+  const TarefaDataLimite({
+    super.key,
+    required this.controlador,
+    required this.largura,
+  });
 
+  final TarefasControlador controlador;
   final double largura;
 
-  @override
-  State<TarefaDataLimite> createState() => _TarefaDataLimiteState();
-}
+  Future<void> selecionarData(BuildContext context) async {
+    final limiteAtual = controlador.dataLimiteSelecionada;
+    final dataInicial =
+        limiteAtual != null &&
+            !DateTime(
+              limiteAtual.year,
+              limiteAtual.month,
+              limiteAtual.day,
+            ).isBefore(controlador.dataSelecionada)
+        ? limiteAtual
+        : controlador.dataSelecionada;
 
-class _TarefaDataLimiteState extends State<TarefaDataLimite> {
-  final TarefasControlador controlador = TarefasControlador();
-
-  DateTime? dataSelecionada;
-
-  Future<void> selecionarData() async {
-    final DateTime? dataEscolhido = await showDatePicker(
+    final dataEscolhida = await showDatePicker(
       context: context,
-      initialDate: dataSelecionada,
-      firstDate: DateTime(2000),
+      initialDate: dataInicial,
+      firstDate: controlador.dataSelecionada,
       lastDate: DateTime(2100),
       helpText: 'Selecionar data limite',
       cancelText: 'Cancelar',
       confirmText: 'Confirmar',
     );
 
-    if (!mounted || dataEscolhido == null) return;
-
-    setState(() {
-      dataSelecionada = dataEscolhido;
-    });
-  }
-
-  void removerData() {
-    setState(() {
-      dataSelecionada = null;
-    });
+    if (dataEscolhida != null) {
+      controlador.selecionarDataLimite(dataEscolhida);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: .center,
-      children: [
-        Row(
-          children: [
-            Icon(Icons.event_busy_outlined, size: widget.largura * 0.09),
-            SizedBox(width: widget.largura * 0.05),
-            Text(
-              'Data Limite',
-              style: TextStyle(
-                fontWeight: .w500,
-                fontSize: widget.largura * 0.045,
+    return ListenableBuilder(
+      listenable: controlador,
+      builder: (context, _) {
+        final data = controlador.dataLimiteSelecionada;
+
+        return Padding(
+          padding: .symmetric(vertical: largura * 0.012),
+          child: Row(
+            children: [
+              Icon(Icons.flag_outlined, size: largura * 0.075),
+              SizedBox(width: largura * 0.04),
+              Expanded(
+                child: Text(
+                  'Data limite',
+                  style: TextStyle(
+                    fontWeight: .w500,
+                    fontSize: largura * 0.045,
+                  ),
+                ),
               ),
-            ),
-          ],
-        ),
-        Spacer(),
-        OutlinedButton(
-          onPressed: selecionarData,
-          onLongPress: dataSelecionada == null ? null : removerData,
-          style: ButtonStyle(
-            backgroundColor: WidgetStatePropertyAll(
-              Theme.of(context).colorScheme.surface,
-            ),
-            foregroundColor: WidgetStatePropertyAll(
-              Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-            side: WidgetStatePropertyAll(
-              BorderSide(
-                color: Theme.of(context).colorScheme.outline,
-                width: widget.largura * 0.005,
+              if (data != null)
+                IconButton(
+                  tooltip: 'Remover data limite',
+                  onPressed: () => controlador.selecionarDataLimite(null),
+                  icon: Icon(Icons.close_rounded),
+                ),
+              OutlinedButton(
+                onPressed: () => selecionarData(context),
+                style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(
+                    Theme.of(context).colorScheme.surface,
+                  ),
+                  foregroundColor: WidgetStatePropertyAll(
+                    Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                  side: WidgetStatePropertyAll(
+                    BorderSide(
+                      color: Theme.of(context).colorScheme.outline,
+                      width: largura * 0.005,
+                    ),
+                  ),
+                ),
+                child: Text(
+                  data == null ? 'Adicionar' : controlador.formatarData(data),
+                ),
               ),
-            ),
+            ],
           ),
-          child: Text(
-            dataSelecionada == null
-                ? 'Adicionar'
-                : controlador.formatarData(dataSelecionada!),
-            ),
-          ),
-      ],
+        );
+      },
     );
   }
 }

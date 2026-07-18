@@ -57,10 +57,7 @@ class _CategoriaDialogState extends State<CategoriaDialog> {
       return;
     }
 
-    Navigator.pop(
-      context,
-      CategoriaResultado(nome: nome, cor: corSelecionada),
-    );
+    Navigator.pop(context, CategoriaResultado(nome: nome, cor: corSelecionada));
   }
 
   @override
@@ -85,8 +82,6 @@ class _CategoriaDialogState extends State<CategoriaDialog> {
             textInputAction: .done,
             onSubmitted: (_) => guardar(),
             onChanged: (_) {
-              if (erroNome == null) return;
-
               setState(() {
                 erroNome = null;
               });
@@ -95,9 +90,7 @@ class _CategoriaDialogState extends State<CategoriaDialog> {
               labelText: 'Nome',
               hintText: 'Ex.: Trabalho',
               errorText: erroNome,
-              errorStyle: TextStyle(
-                color: Theme.of(context).colorScheme.onError,
-              ),
+              errorStyle: TextStyle(color: Theme.of(context).colorScheme.error),
               errorBorder: OutlineInputBorder(
                 borderSide: BorderSide(
                   color: Theme.of(context).colorScheme.error,
@@ -129,7 +122,7 @@ class _CategoriaDialogState extends State<CategoriaDialog> {
               labelStyle: TextStyle(
                 color: erroNome == null
                     ? Theme.of(context).colorScheme.onSurface
-                    : Theme.of(context).colorScheme.onError,
+                    : Theme.of(context).colorScheme.error,
               ),
             ),
           ),
@@ -156,7 +149,7 @@ class _CategoriaDialogState extends State<CategoriaDialog> {
                     width: widget.largura * 0.1,
                     height: widget.largura * 0.1,
                     decoration: BoxDecoration(
-                      color: cor.fundo,
+                      color: cor.fundo(context),
                       shape: .circle,
                       border: .all(
                         color: selecionada
@@ -166,7 +159,7 @@ class _CategoriaDialogState extends State<CategoriaDialog> {
                       ),
                     ),
                     child: selecionada
-                        ? Icon(Icons.check_rounded, color: cor.texto)
+                        ? Icon(Icons.check_rounded, color: cor.texto(context))
                         : null,
                   ),
                 ),
@@ -180,8 +173,8 @@ class _CategoriaDialogState extends State<CategoriaDialog> {
             label: nomeControlador.text.trim().isEmpty
                 ? 'Categoria'
                 : nomeControlador.text.trim(),
-            backgroundColor: corSelecionada.fundo,
-            textColor: corSelecionada.texto,
+            backgroundColor: corSelecionada.fundo(context),
+            textColor: corSelecionada.texto(context),
             largura: widget.largura,
             altura: widget.altura,
           ),

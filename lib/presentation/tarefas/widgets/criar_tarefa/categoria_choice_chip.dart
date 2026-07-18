@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class Categoria extends StatefulWidget {
-  const Categoria({
+class CategoriaChoiceChip extends StatelessWidget {
+  const CategoriaChoiceChip({
     super.key,
     required this.largura,
     required this.selecionada,
@@ -15,35 +15,32 @@ class Categoria extends StatefulWidget {
   final String nome;
 
   @override
-  State<Categoria> createState() => _CategoriaState();
-}
-
-class _CategoriaState extends State<Categoria> {
-  @override
   Widget build(BuildContext context) {
     return ChoiceChip(
-      label: Text(widget.nome),
-      selected: widget.selecionada,
+      label: Text(nome),
+      selected: selecionada,
       onSelected: (value) {
-        if (value) {
-          widget.onTap();
-        }
+        if (value) onTap();
       },
       showCheckmark: false,
       selectedColor: Theme.of(context).colorScheme.primary,
       backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
       labelStyle: TextStyle(
-        fontSize: widget.largura * 0.035,
-        color: widget.selecionada ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurface,
+        fontSize: largura * 0.035,
+        color: selecionada
+            ? Theme.of(context).colorScheme.onPrimary
+            : Theme.of(context).colorScheme.onSurface,
         fontWeight: .w500,
       ),
       side: BorderSide(
-        color: widget.selecionada ? Colors.transparent : Theme.of(context).colorScheme.outline,
-        width: widget.largura * 0.005,
+        color: selecionada
+            ? Colors.transparent
+            : Theme.of(context).colorScheme.outline,
+        width: largura * 0.005,
       ),
-      shape: const StadiumBorder(),
-      padding: .all(widget.largura * 0.02),
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      shape: StadiumBorder(),
+      padding: .all(largura * 0.02),
+      materialTapTargetSize: .shrinkWrap,
       visualDensity: VisualDensity.compact,
     );
   }

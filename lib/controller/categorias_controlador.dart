@@ -1,23 +1,61 @@
+import 'dart:collection';
 import 'package:flutter/material.dart';
+
+// Controladores
+import 'package:pei/controller/tarefas_estado.dart';
 
 // Modelos
 import 'package:pei/models/categoria_item.dart';
 
-class CategoriasController extends ChangeNotifier {
-  final List<CategoriaItem> categorias = [
+class CategoriasControlador extends ChangeNotifier {
+  CategoriasControlador._();
+
+  static final CategoriasControlador instancia = CategoriasControlador._();
+
+  factory CategoriasControlador() => instancia;
+
+  final List<CategoriaItem> _categorias = [
     CategoriaItem(id: 'trabalho', nome: 'Trabalho', cor: coresCategorias[0]),
-    CategoriaItem(id: 'pessoal', nome: 'Pessoal', cor: coresCategorias[1]),
+    CategoriaItem(id: 'pessoal', nome: 'Pessoal', cor: coresCategorias[8]),
+    CategoriaItem(id: 'financas', nome: 'Finanças', cor: coresCategorias[7]),
+    CategoriaItem(id: 'saude', nome: 'Saúde', cor: coresCategorias[2]),
+    CategoriaItem(id: 'estudo', nome: 'Estudo', cor: coresCategorias[4]),
+    CategoriaItem(id: 'compras', nome: 'Compras', cor: coresCategorias[6]),
     CategoriaItem(id: 'pagar', nome: 'Pagar', cor: coresCategorias[3]),
+    CategoriaItem(id: 'casa', nome: 'Casa', cor: coresCategorias[1]),
   ];
+
+  UnmodifiableListView<CategoriaItem> get categorias =>
+      UnmodifiableListView<CategoriaItem>(_categorias);
+
+  CategoriaItem? obterPorId(String? id) {
+    if (id == null) return null;
+
+    for (final categoria in _categorias) {
+      if (categoria.id == id) return categoria;
+    }
+
+    return null;
+  }
+
+  CategoriaItem? obterPorNome(String? nome) {
+    if (nome == null) return null;
+
+    final nomeNormalizado = nome.trim().toLowerCase();
+
+    for (final categoria in _categorias) {
+      if (categoria.nome.toLowerCase() == nomeNormalizado) return categoria;
+    }
+
+    return null;
+  }
 
   bool adicionarCategoria({required String nome, required CategoriaCor cor}) {
     final nomeLimpo = nome.trim();
 
-    if (nomeLimpo.isEmpty || nomeExiste(nomeLimpo)) {
-      return false;
-    }
+    if (nomeLimpo.isEmpty || nomeExiste(nomeLimpo)) return false;
 
-    categorias.add(
+    _categorias.add(
       CategoriaItem(
         id: DateTime.now().microsecondsSinceEpoch.toString(),
         nome: nomeLimpo,
@@ -25,6 +63,7 @@ class CategoriasController extends ChangeNotifier {
       ),
     );
 
+    _ordenar();
     notifyListeners();
     return true;
   }
@@ -36,38 +75,53 @@ class CategoriasController extends ChangeNotifier {
   }) {
     final nomeLimpo = nome.trim();
 
-    if (nomeLimpo.isEmpty) {
+    if (nomeLimpo.isEmpty || nomeExiste(nomeLimpo, ignorarId: id)) {
       return false;
     }
 
-    if (nomeExiste(nomeLimpo, ignorarId: id)) {
-      return false;
-    }
+    final index = _categorias.indexWhere((categoria) => categoria.id == id);
 
-    final index = categorias.indexWhere((categoria) => categoria.id == id);
+    if (index == -1) return false;
 
-    if (index == -1) {
-      return false;
-    }
+    final categoriaAnterior = _categorias[index];
+    final categoriaAtualizada = categoriaAnterior.copyWith(
+      nome: nomeLimpo,
+      cor: cor,
+    );
 
-    categorias[index] = categorias[index].copyWith(nome: nomeLimpo, cor: cor);
-
+    _categorias[index] = categoriaAtualizada;
+    _ordenar();
+    TarefasEstado.instancia.atualizarCategoria(
+      categoriaAnterior,
+      categoriaAtualizada,
+    );
     notifyListeners();
     return true;
   }
 
-  void eliminarCategoria(String id) {
-    categorias.removeWhere((categoria) => categoria.id == id);
+  bool eliminarCategoria(String id) {
+    final index = _categorias.indexWhere((categoria) => categoria.id == id);
 
+    if (index == -1) return false;
+
+    final categoria = _categorias.removeAt(index);
+    TarefasEstado.instancia.removerCategoria(categoria);
     notifyListeners();
+    return true;
   }
 
   bool nomeExiste(String nome, {String? ignorarId}) {
     final nomeNormalizado = nome.trim().toLowerCase();
 
-    return categorias.any((categoria) {
+    return _categorias.any((categoria) {
       return categoria.id != ignorarId &&
           categoria.nome.toLowerCase() == nomeNormalizado;
     });
+  }
+
+  void _ordenar() {
+    _categorias.sort(
+      (a, b) => a.nome.toLowerCase().compareTo(b.nome.toLowerCase()),
+    );
   }
 }

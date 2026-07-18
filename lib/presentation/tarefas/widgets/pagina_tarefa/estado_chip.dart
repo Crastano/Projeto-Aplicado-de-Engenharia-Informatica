@@ -16,16 +16,18 @@ class EstadoChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Chip(
       padding: .symmetric(
         horizontal: largura * 0.04,
         vertical: largura * 0.02,
       ),
-      decoration: BoxDecoration(
-        color: corFundo,
-        borderRadius: BorderRadius.circular(largura),
+      shape: StadiumBorder(),
+      side: BorderSide(
+        color: Theme.of(context).colorScheme.outline,
+        width: largura * 0.005
       ),
-      child: Text(
+      backgroundColor: corFundo,
+      label: Text(
         texto,
         style: TextStyle(
           fontSize: largura * 0.0375,

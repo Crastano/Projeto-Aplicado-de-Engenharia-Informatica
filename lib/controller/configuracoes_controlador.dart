@@ -6,7 +6,7 @@ class ConfiguracoesControlador extends ChangeNotifier {
   static final ConfiguracoesControlador instancia =
       ConfiguracoesControlador._();
 
-  ThemeMode tema = ThemeMode.light;
+  ThemeMode tema = ThemeMode.system;
 
   bool notificacoesAtivas = true;
   bool lembretesTarefas = true;
@@ -31,9 +31,6 @@ class ConfiguracoesControlador extends ChangeNotifier {
     return switch (idioma) {
       'Português' => '🇵🇹',
       'English' => '🇬🇧',
-      'Español' => '🇪🇸',
-      'Français' => '🇫🇷',
-      'Deutsch' => '🇩🇪',
       _ => '🌐',
     };
   }

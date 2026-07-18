@@ -5,12 +5,11 @@ import 'package:pei/controller/configuracoes_controlador.dart';
 import 'package:pei/presentation/configuracoes/widgets/pagina_configuracao.dart';
 
 // Widgets
-import 'package:pei/presentation/shared/layout/app_scaffold.dart';
 import '../widgets/titulo_secao.dart';
 import '../widgets/card_configuracao.dart';
 
-class TemaPage extends StatelessWidget {
-  TemaPage({super.key});
+class TemaPagina extends StatelessWidget {
+  TemaPagina({super.key});
 
   final ConfiguracoesControlador controlador =
       ConfiguracoesControlador.instancia;

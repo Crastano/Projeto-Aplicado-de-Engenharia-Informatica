@@ -31,37 +31,35 @@ class TimelineTresDia extends StatelessWidget {
     final alturaTotal = alturaHora * 24;
     final larguraHoras = largura * 0.15;
 
-    return SingleChildScrollView(
-      child: SizedBox(
-        height: alturaTotal,
-        child: Row(
-          crossAxisAlignment: .start,
-          children: [
-            SizedBox(
-              width: larguraHoras,
-              height: alturaTotal,
-              child: ColunaHoras(alturaHora: alturaHora),
-            ),
-            ...List.generate(dias.length, (index) {
-              final dia = dias[index];
-              final tarefasDoDia = controlador.tarefasAgendadasDoDia(
-                dia,
-                tarefas,
-              );
+    return SizedBox(
+      height: alturaTotal,
+      child: Row(
+        crossAxisAlignment: .start,
+        children: [
+          SizedBox(
+            width: larguraHoras,
+            height: alturaTotal,
+            child: ColunaHoras(alturaHora: alturaHora),
+          ),
+          ...List.generate(dias.length, (index) {
+            final dia = dias[index];
+            final tarefasDoDia = controlador.tarefasAgendadasDoDia(
+              dia,
+              tarefas,
+            );
 
-              return Expanded(
-                child: ColunaDia(
-                  dia: dia,
-                  tarefas: tarefasDoDia,
-                  alturaHora: alturaHora,
-                  mostrarBordaDireita: index == dias.length - 1,
-                  largura: largura,
-                  umDia: false,
-                ),
-              );
-            }),
-          ],
-        ),
+            return Expanded(
+              child: ColunaDia(
+                dia: dia,
+                tarefas: tarefasDoDia,
+                alturaHora: alturaHora,
+                mostrarBordaDireita: index == dias.length - 1,
+                largura: largura,
+                umDia: false,
+              ),
+            );
+          }),
+        ],
       ),
     );
   }

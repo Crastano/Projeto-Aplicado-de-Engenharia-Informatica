@@ -8,60 +8,46 @@ import 'package:pei/controller/tarefas_controlador.dart';
 // Widgets
 import 'pagina_anexos.dart';
 
-class TarefaAnexos extends StatefulWidget {
+class TarefaAnexos extends StatelessWidget {
   const TarefaAnexos({
     super.key,
+    required this.controlador,
     required this.largura,
-    this.anexosIniciais = const [],
   });
 
+  final TarefasControlador controlador;
   final double largura;
-  final List<PlatformFile> anexosIniciais;
 
-  @override
-  State<TarefaAnexos> createState() => _TarefaAnexosState();
-}
-
-class _TarefaAnexosState extends State<TarefaAnexos> {
-  final TarefasControlador controlador = TarefasControlador();
-
-  late List<PlatformFile> anexos = List<PlatformFile>.from(
-    widget.anexosIniciais,
-  );
-
-  Future<void> abrirPaginaAnexos() async {
+  Future<void> abrirPaginaAnexos(BuildContext context) async {
     final resultado = await Navigator.push<List<PlatformFile>>(
       context,
       MaterialPageRoute(
         builder: (context) {
-          return PaginaAnexos(largura: widget.largura, anexosIniciais: anexos);
+          return PaginaAnexos(
+            controlador: controlador,
+            largura: largura,
+            anexosIniciais: controlador.anexos,
+          );
         },
       ),
     );
 
-    if (!mounted || resultado == null) return;
-
-    setState(() {
-      anexos = resultado;
-    });
+    if (resultado != null) controlador.atualizarAnexos(resultado);
   }
 
-  Future<void> abrirAnexo(PlatformFile anexo) async {
-    final caminho = anexo.path;
+  Future<void> abrirAnexo(BuildContext context, PlatformFile anexo) async {
+    final String? caminho = anexo.path;
 
     if (caminho == null || caminho.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Não foi possível encontrar o ficheiro.')),
       );
-
       return;
     }
 
-    final resultado = await OpenFilex.open(caminho);
+    final OpenResult resultado = await OpenFilex.open(caminho);
 
-    if (!mounted || resultado.type == ResultType.done) {
-      return;
-    }
+    if (!context.mounted || resultado.type == ResultType.done) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(controlador.mensagemAnexo(resultado))),
@@ -70,77 +56,85 @@ class _TarefaAnexosState extends State<TarefaAnexos> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Icon(Icons.attach_file_outlined, size: widget.largura * 0.09),
-            SizedBox(width: widget.largura * 0.05),
-            Text(
-              'Anexos',
-              style: TextStyle(
-                fontWeight: .w500,
-                fontSize: widget.largura * 0.045,
+    return ListenableBuilder(
+      listenable: controlador,
+      builder: (context, _) {
+        final anexos = controlador.anexos;
+
+        return Padding(
+          padding: .symmetric(vertical: largura * 0.012),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.attach_file_outlined, size: largura * 0.075),
+                  SizedBox(width: largura * 0.04),
+                  Expanded(
+                    child: Text(
+                      'Anexos',
+                      style: TextStyle(
+                        fontWeight: .w500,
+                        fontSize: largura * 0.045,
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => abrirPaginaAnexos(context),
+                    child: Text(
+                      anexos.isEmpty ? 'Adicionar' : 'Editar',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        fontWeight: .w500,
+                        fontSize: largura * 0.04,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-            Spacer(),
-            TextButton(
-              onPressed: abrirPaginaAnexos,
-              child: Text(
-                anexos.isEmpty ? 'Adicionar' : 'Editar',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  fontWeight: .w500,
-                  fontSize: widget.largura * 0.04,
+              if (anexos.isNotEmpty) ...[
+                SizedBox(height: largura * 0.02),
+                ListView.separated(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: anexos.length,
+                  separatorBuilder: (context, index) {
+                    return SizedBox(height: largura * 0.01);
+                  },
+                  itemBuilder: (context, index) {
+                    final anexo = anexos[index];
+
+                    return Card(
+                      margin: .zero,
+                      color: Theme.of(context).colorScheme.surface,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(largura * 0.025),
+                        side: BorderSide(
+                          color: Theme.of(context).colorScheme.outline,
+                          width: largura * 0.005,
+                        ),
+                      ),
+                      child: ListTile(
+                        onTap: () => abrirAnexo(context, anexo),
+                        leading: Icon(
+                          controlador.obterIconeAnexos(anexo.extension),
+                        ),
+                        title: Text(
+                          controlador.obterNomeSemExtensao(anexo),
+                          maxLines: 1,
+                          overflow: .ellipsis,
+                        ),
+                        subtitle: Text(
+                          anexo.extension?.toUpperCase() ?? 'FICHEIRO',
+                        ),
+                      ),
+                    );
+                  },
                 ),
-              ),
-            ),
-          ],
-        ),
-
-        if (anexos.isNotEmpty) ...[
-          SizedBox(height: widget.largura * 0.025),
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: anexos.length,
-            separatorBuilder: (context, index) {
-              return SizedBox(height: widget.largura * 0.01);
-            },
-            itemBuilder: (context, index) {
-              final anexo = anexos[index];
-
-              return Card(
-                  color: Theme.of(context).colorScheme.surface,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(widget.largura * 0.025),
-                    side: BorderSide(
-                      color: Theme.of(context).colorScheme.outline,
-                      width: widget.largura * 0.005,
-                    ),
-                  ),
-                  child: ListTile(
-                    onTap: () {
-                      abrirAnexo(anexo);
-                    },
-                    leading: Icon(
-                      controlador.obterIconeAnexos(anexo.extension),
-                      size: widget.largura * 0.075,
-                    ),
-                    title: Text(
-                      controlador.obterNomeSemExtensao(anexo),
-                      maxLines: 1,
-                      overflow: .ellipsis,
-                    ),
-                    subtitle: Text(
-                      anexo.extension?.toUpperCase() ?? 'FICHEIRO',
-                    ),
-                  ),
-                );
-            },
+              ],
+            ],
           ),
-        ],
-      ],
+        );
+      },
     );
   }
 }

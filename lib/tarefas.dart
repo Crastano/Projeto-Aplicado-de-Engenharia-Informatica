@@ -1,120 +1,181 @@
 import 'package:flutter/material.dart';
+
+import 'package:pei/enums/lembrete.dart';
+import 'package:pei/enums/periodicidade.dart';
 import 'package:pei/models/tarefa_item.dart';
+import 'package:pei/controller/categorias_controlador.dart';
 
-final DateTime hoje = DateTime.now();
+List<TarefaItem> criarTarefasIniciais() {
+  final DateTime hoje = DateTime.now();
 
-class Tarefas123 {
-  final List<TarefaItem> tarefas = [
-    // Hoje
+  final categorias = CategoriasControlador.instancia;
+
+  final trabalho = categorias.obterPorId('trabalho')!;
+  final pessoal = categorias.obterPorId('pessoal')!;
+  final financas = categorias.obterPorId('financas')!;
+  final saude = categorias.obterPorId('saude')!;
+  final estudo = categorias.obterPorId('estudo')!;
+  final compras = categorias.obterPorId('compras')!;
+  final casa = categorias.obterPorId('casa')!;
+
+  return [
     TarefaItem(
+      id: 'demo-pequeno-almoco',
       titulo: 'Tomar pequeno-almoço',
-      dataHora: DateTime(hoje.year, hoje.month, hoje.day, 8, 0),
-      category: 'Pessoal',
-      categoryBackground: const Color(0xFFFFE0B2),
-      categoryText: const Color(0xFF8A4B00),
-      estaRepetindo: true,
+
+      data: DateTime(hoje.year, hoje.month, hoje.day),
+
+      hora: const TimeOfDay(hour: 8, minute: 0),
+
+      categoryId: pessoal.id,
+      category: pessoal.nome,
+
+      periodicidade: Periodicidade.diaria,
     ),
 
     TarefaItem(
+      id: 'demo-reuniao-projeto',
       titulo: 'Reunião do projeto',
-      dataHora: DateTime(hoje.year, hoje.month, hoje.day, 10, 30),
-      dataLimite: DateTime(hoje.year, hoje.month, hoje.day, 12, 0),
-      category: 'Trabalho',
-      categoryBackground: const Color(0xFFDCEBFF),
-      categoryText: const Color(0xFF0A56C2),
-      temLembrete: true,
+
+      data: DateTime(hoje.year, hoje.month, hoje.day),
+
+      hora: const TimeOfDay(hour: 10, minute: 30),
+
+      dataLimite: DateTime(hoje.year, hoje.month, hoje.day),
+
+      categoryId: trabalho.id,
+      category: trabalho.nome,
+
+      lembrete: Lembrete.trintaMinutos,
     ),
 
+    // Tarefa sem hora.
     TarefaItem(
+      id: 'demo-comprar-alimentos',
       titulo: 'Comprar alimentos',
-      dataHora: DateTime(hoje.year, hoje.month, hoje.day, 15, 0),
-      dataLimite: DateTime(hoje.year, hoje.month, hoje.day, 18, 0),
-      category: 'ComprasCom',
-      categoryBackground: const Color(0xFFE5F5E0),
-      categoryText: const Color(0xFF287A28),
+
+      data: DateTime(hoje.year, hoje.month, hoje.day),
+
+      dataLimite: DateTime(hoje.year, hoje.month, hoje.day),
+
+      categoryId: compras.id,
+      category: compras.nome,
     ),
 
     TarefaItem(
-      titulo: 'Treino no ginásio SandasVista',
-      dataHora: DateTime(hoje.year, hoje.month, hoje.day, 19, 30),
-      category: 'Saúde',
-      categoryBackground: const Color(0xFFFFDDE5),
-      categoryText: const Color(0xFFA52245),
-      temLembrete: true,
-      estaRepetindo: true
+      id: 'demo-treino',
+      titulo: 'Treino no ginásio',
+
+      data: DateTime(hoje.year, hoje.month, hoje.day),
+
+      hora: const TimeOfDay(hour: 19, minute: 30),
+
+      categoryId: saude.id,
+      category: saude.nome,
+
+      lembrete: Lembrete.umaHora,
+      periodicidade: Periodicidade.semanal,
     ),
 
-    // Amanhã
+    // Tarefa sem hora.
     TarefaItem(
+      id: 'demo-responder-emails',
       titulo: 'Responder aos emails',
-      dataHora: DateTime(hoje.year, hoje.month, hoje.day + 1, 9, 0),
-      category: 'Trabalho',
-      categoryBackground: const Color(0xFFDCEBFF),
-      categoryText: const Color(0xFF0A56C2),
+
+      data: DateTime(hoje.year, hoje.month, hoje.day + 1),
+
+      categoryId: trabalho.id,
+      category: trabalho.nome,
     ),
 
     TarefaItem(
+      id: 'demo-relatorio',
       titulo: 'Terminar relatório',
-      dataHora: DateTime(hoje.year, hoje.month, hoje.day + 1, 11, 30),
-      dataLimite: DateTime(hoje.year, hoje.month, hoje.day + 1, 17, 0),
-      category: 'Trabalho',
-      categoryBackground: const Color(0xFFDCEBFF),
-      categoryText: const Color(0xFF0A56C2),
-      temLembrete: true,
+
+      data: DateTime(hoje.year, hoje.month, hoje.day + 1),
+
+      hora: const TimeOfDay(hour: 11, minute: 30),
+
+      dataLimite: DateTime(hoje.year, hoje.month, hoje.day + 1),
+
+      categoryId: trabalho.id,
+      category: trabalho.nome,
+
+      lembrete: Lembrete.umaHora,
     ),
 
     TarefaItem(
+      id: 'demo-consulta',
       titulo: 'Consulta médica',
-      dataHora: DateTime(hoje.year, hoje.month, hoje.day + 1, 16, 0),
-      category: 'Saúde',
-      categoryBackground: const Color(0xFFFFDDE5),
-      categoryText: const Color(0xFFA52245),
-      temLembrete: true,
+
+      data: DateTime(hoje.year, hoje.month, hoje.day + 1),
+
+      hora: const TimeOfDay(hour: 16, minute: 0),
+
+      categoryId: saude.id,
+      category: saude.nome,
+
+      lembrete: Lembrete.umDia,
     ),
 
+    // Tarefa sem hora.
     TarefaItem(
+      id: 'demo-ler-livro',
       titulo: 'Ler um capítulo do livro',
-      dataHora: DateTime(hoje.year, hoje.month, hoje.day + 1, 21, 0),
-      category: 'Estudo',
-      categoryBackground: const Color(0xFFE8DFFF),
-      categoryText: const Color(0xFF5B2FA3),
+
+      data: DateTime(hoje.year, hoje.month, hoje.day + 1),
+
+      categoryId: estudo.id,
+      category: estudo.nome,
     ),
 
-    // Depois de amanhã
     TarefaItem(
+      id: 'demo-apresentacao',
       titulo: 'Preparar apresentação',
-      dataHora: DateTime(hoje.year, hoje.month, hoje.day + 2, 8, 30),
-      dataLimite: DateTime(hoje.year, hoje.month, hoje.day + 2, 14, 0),
-      category: 'Estudo',
-      categoryBackground: const Color(0xFFE8DFFF),
-      categoryText: const Color(0xFF5B2FA3),
-      temLembrete: true,
+
+      data: DateTime(hoje.year, hoje.month, hoje.day + 2),
+
+      hora: const TimeOfDay(hour: 8, minute: 30),
+
+      dataLimite: DateTime(hoje.year, hoje.month, hoje.day + 2),
+
+      categoryId: estudo.id,
+      category: estudo.nome,
+
+      lembrete: Lembrete.umaHora,
     ),
 
     TarefaItem(
+      id: 'demo-almoco-amigos',
       titulo: 'Almoçar com amigos',
-      dataHora: DateTime(hoje.year, hoje.month, hoje.day + 2, 13, 0),
-      category: 'Pessoal',
-      categoryBackground: const Color(0xFFFFE0B2),
-      categoryText: const Color(0xFF8A4B00),
-    ),
 
+      data: DateTime(hoje.year, hoje.month, hoje.day + 2),
+
+      hora: const TimeOfDay(hour: 13, minute: 0),
+
+      categoryId: pessoal.id,
+      category: pessoal.nome,
+    ),
+    
     TarefaItem(
+      id: 'demo-eletricidade',
       titulo: 'Pagar conta da eletricidade',
-      dataHora: DateTime(hoje.year, hoje.month, hoje.day + 2, 17, 30),
-      dataLimite: DateTime(hoje.year, hoje.month, hoje.day + 2, 23, 59),
-      category: 'Finanças',
-      categoryBackground: const Color(0xFFFFF3BF),
-      categoryText: const Color(0xFF755A00),
-      temLembrete: true,
+
+      data: DateTime(hoje.year, hoje.month, hoje.day + 2),
+
+      dataLimite: DateTime(hoje.year, hoje.month, hoje.day + 2),
+
+      categoryId: financas.id,
+      category: financas.nome,
+
+      lembrete: Lembrete.umDia,
     ),
 
     TarefaItem(
+      id: 'demo-organizar-quarto',
       titulo: 'Organizar o quarto',
-      dataHora: DateTime(hoje.year, hoje.month, hoje.day + 2, 20, 0),
-      category: 'Casa',
-      categoryBackground: const Color(0xFFDDF4F1),
-      categoryText: const Color(0xFF176B62),
+
+      data: DateTime(hoje.year, hoje.month, hoje.day + 2),
     ),
   ];
 }

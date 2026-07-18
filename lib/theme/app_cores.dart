@@ -36,30 +36,54 @@ class AppCores {
   static const atrasadoTextEscuro = Color(0xFFFFB3B3);
 
   static const categoriaBackgroundClaro = [
-    Color(0xFFDCEBFF), Color(0xFFD7F0F7), Color(0xFFFFDDF1),
-    Color(0xFFF8DDFF), Color(0xFFF1E4FF), Color(0xFFE4E0FF),
-    Color(0xFFFFE8D6), Color(0xFFFEF3C7), Color(0xFFD9F7EC),
+    Color(0xFFDCEBFF),
+    Color(0xFFD7F0F7),
+    Color(0xFFFFDDF1),
+    Color(0xFFF8DDFF),
+    Color(0xFFF1E4FF),
+    Color(0xFFE4E0FF),
+    Color(0xFFFFE8D6),
+    Color(0xFFFEF3C7),
+    Color(0xFFD9F7EC),
     Color(0xFFE5E7EB),
   ];
 
   static const categoriaTextoClaro = [
-    Color(0xFF0A56C2), Color(0xFF0E7490), Color(0xFFB83280),
-    Color(0xFFA21CAF), Color(0xFF7A4BB3), Color(0xFF4B3CBF),
-    Color(0xFFC96A00), Color(0xFF92400E), Color(0xFF13795B),
+    Color(0xFF0A56C2),
+    Color(0xFF0E7490),
+    Color(0xFFB83280),
+    Color(0xFFA21CAF),
+    Color(0xFF7A4BB3),
+    Color(0xFF4B3CBF),
+    Color(0xFFC96A00),
+    Color(0xFF92400E),
+    Color(0xFF13795B),
     Color(0xFF374151),
   ];
 
   static const categoriaBackgroundEscuro = [
-    Color(0xFF173D7A), Color(0xFF164E63), Color(0xFF5C2343),
-    Color(0xFF701A75), Color(0xFF4A2F66), Color(0xFF2E2666),
-    Color(0xFF5A3310), Color(0xFF78350F), Color(0xFF123D31),
+    Color(0xFF173D7A),
+    Color(0xFF164E63),
+    Color(0xFF5C2343),
+    Color(0xFF701A75),
+    Color(0xFF4A2F66),
+    Color(0xFF2E2666),
+    Color(0xFF5A3310),
+    Color(0xFF78350F),
+    Color(0xFF123D31),
     Color(0xFF1F2937),
   ];
 
-  static const categoriaTextoescuro = [
-    Color(0xFFAFCBFF), Color(0xFFA5F3FC), Color(0xFFFFB8E0),
-    Color(0xFFF0ABFC), Color(0xFFDFC8FF), Color(0xFFC8BEFF),
-    Color(0xFFFFC98A), Color(0xFFFDE68A), Color(0xFF8DE8C9),
+  static const categoriaTextoEscuro = [
+    Color(0xFFAFCBFF),
+    Color(0xFFA5F3FC),
+    Color(0xFFFFB8E0),
+    Color(0xFFF0ABFC),
+    Color(0xFFDFC8FF),
+    Color(0xFFC8BEFF),
+    Color(0xFFFFC98A),
+    Color(0xFFFDE68A),
+    Color(0xFF8DE8C9),
     Color(0xFFD1D5DB),
   ];
 }

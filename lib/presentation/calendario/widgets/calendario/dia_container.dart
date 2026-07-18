@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 
-// ignore: must_be_immutable
 class DiaContainer extends StatelessWidget {
   const DiaContainer({
     super.key,
-    required this.context,
     required this.dia,
     required this.largura,
     this.selecionado = false,
@@ -12,7 +10,6 @@ class DiaContainer extends StatelessWidget {
     this.hoje = false,
   });
 
-  final BuildContext context;
   final DateTime dia;
   final double largura;
   final bool selecionado;
@@ -21,14 +18,16 @@ class DiaContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color corTexto;
+    final Color corTexto;
 
     if (selecionado) {
       corTexto = Theme.of(context).colorScheme.onPrimary;
     } else if (hoje) {
       corTexto = Theme.of(context).colorScheme.primary;
     } else if (outside) {
-      corTexto = Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5);
+      corTexto = Theme.of(
+        context,
+      ).colorScheme.onSurfaceVariant.withValues(alpha: 0.5);
     } else {
       corTexto = Theme.of(context).colorScheme.onSurface;
     }
@@ -36,6 +35,7 @@ class DiaContainer extends StatelessWidget {
     return Center(
       child: Container(
         width: largura * 0.09,
+        height: largura * 0.09,
         alignment: .center,
         decoration: BoxDecoration(
           shape: .circle,

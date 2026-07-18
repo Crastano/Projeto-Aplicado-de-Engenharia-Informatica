@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-//Controlador
+//Controladores
 import 'package:pei/controller/calendario_controlador.dart';
+import 'package:pei/controller/configuracoes_controlador.dart';
 
 // Modelos
 import 'package:pei/models/tarefa_item.dart';
@@ -48,7 +49,10 @@ class CalendarioWidget extends StatelessWidget {
       focusedDay: focusedDay,
       calendarFormat: .month,
       availableCalendarFormats: const {.month: 'Mês'},
-      startingDayOfWeek: .monday,
+      startingDayOfWeek:
+          ConfiguracoesControlador.instancia.primeiroDiaSemana == 'Domingo'
+          ? .sunday
+          : .monday,
       selectedDayPredicate: (day) => isSameDay(selectedDay, day),
       eventLoader: (day) {
         return controlador.tarefasIndicadasNoDia(day, tarefas);
@@ -93,31 +97,16 @@ class CalendarioWidget extends StatelessWidget {
           );
         },
         defaultBuilder: (context, day, focusedDay) {
-          return DiaContainer(context: context, dia: day, largura: largura);
+          return DiaContainer(dia: day, largura: largura);
         },
         todayBuilder: (context, day, focusedDay) {
-          return DiaContainer(
-            context: context,
-            dia: day,
-            largura: largura,
-            hoje: true,
-          );
+          return DiaContainer(dia: day, largura: largura, hoje: true);
         },
         outsideBuilder: (context, day, focusedDay) {
-          return DiaContainer(
-            context: context,
-            dia: day,
-            largura: largura,
-            outside: true,
-          );
+          return DiaContainer(dia: day, largura: largura, outside: true);
         },
         selectedBuilder: (context, day, focusedDay) {
-          return DiaContainer(
-            context: context,
-            dia: day,
-            largura: largura,
-            selecionado: true,
-          );
+          return DiaContainer(dia: day, largura: largura, selecionado: true);
         },
         markerBuilder: (context, day, events) {
           if (!marcaTarefa || events.isEmpty) {

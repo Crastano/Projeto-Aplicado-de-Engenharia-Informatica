@@ -1,12 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 
-// Controlador
+// Controladores
 import 'package:pei/controller/calendario_controlador.dart';
-
-// Modelos
-import 'package:pei/models/tarefa_item.dart';
-import 'package:pei/tarefas.dart';
+import 'package:pei/controller/tarefas_estado.dart';
 
 // Widgets
 import 'package:pei/presentation/shared/layout/app_scaffold.dart';
@@ -15,11 +12,10 @@ import 'widgets/calendario_tres_dias/cabecalho.dart';
 import 'widgets/calendario_tres_dias/timeline.dart';
 import 'widgets/datas_limite_calendario.dart';
 import 'widgets/selecionar_tipo_calendario.dart';
+import 'widgets/sem_hora_calendario.dart';
 
 class CalendarioTresDias extends StatefulWidget {
-  const CalendarioTresDias({super.key, this.tarefas});
-
-  final List<TarefaItem>? tarefas;
+  const CalendarioTresDias({super.key});
 
   @override
   State<CalendarioTresDias> createState() => _CalendarioTresDiasState();
@@ -29,7 +25,7 @@ class _CalendarioTresDiasState extends State<CalendarioTresDias>
     with WidgetsBindingObserver {
   final CalendarioControlador controlador = CalendarioControlador();
 
-  late final List<TarefaItem> tarefas;
+  final TarefasEstado tarefasEstado = TarefasEstado.instancia;
   late DateTime diaInicial;
 
   Timer? temporizadorMeiaNoite;
@@ -40,7 +36,7 @@ class _CalendarioTresDiasState extends State<CalendarioTresDias>
     super.initState();
 
     WidgetsBinding.instance.addObserver(this);
-    tarefas = widget.tarefas ?? Tarefas123().tarefas;
+    tarefasEstado.addListener(_atualizarTarefas);
     diaInicial = controlador.normalizarData(DateTime.now());
     agendarMudancaDeDia();
   }
@@ -49,7 +45,12 @@ class _CalendarioTresDiasState extends State<CalendarioTresDias>
   void dispose() {
     temporizadorMeiaNoite?.cancel();
     WidgetsBinding.instance.removeObserver(this);
+    tarefasEstado.removeListener(_atualizarTarefas);
     super.dispose();
+  }
+
+  void _atualizarTarefas() {
+    if (mounted) setState(() {});
   }
 
   void mudarDia(int quantidadeDias) {
@@ -114,6 +115,7 @@ class _CalendarioTresDiasState extends State<CalendarioTresDias>
       builder: (context, constraints) {
         final largura = constraints.maxWidth;
         final altura = constraints.maxHeight;
+        final tarefas = tarefasEstado.tarefas;
         final diasVisiveis = controlador.diasVisiveis(diaInicial);
 
         return AppScaffold(
@@ -159,28 +161,34 @@ class _CalendarioTresDiasState extends State<CalendarioTresDias>
                     onHorizontalDragCancel: () {
                       deslocamentoHorizontal = 0;
                     },
-                    child: Column(
-                      children: [
-                        DatasLimiteCalendario(
-                          dias: diasVisiveis,
-                          tarefas: tarefas,
-                          largura: largura,
-                          altura: altura,
-                        ),
-                        CabecalhoTresDias(
-                          dias: diasVisiveis,
-                          largura: largura,
-                          altura: altura,
-                        ),
-                        Expanded(
-                          child: TimelineTresDia(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          DatasLimiteCalendario(
+                            dias: diasVisiveis,
+                            tarefas: tarefas,
+                            largura: largura,
+                            altura: altura,
+                          ),
+                          TarefasSemHoraCalendario(
+                            dias: diasVisiveis,
+                            tarefas: tarefas,
+                            largura: largura,
+                          ),
+                          CabecalhoTresDias(
+                            dias: diasVisiveis,
+                            largura: largura,
+                            altura: altura,
+                          ),
+                          TimelineTresDia(
                             dias: diasVisiveis,
                             tarefas: tarefas,
                             alturaHora: altura * 0.075,
                             largura: largura,
                           ),
-                        ),
-                      ],
+                          SizedBox(height: altura * 0.05),
+                        ],
+                      ),
                     ),
                   ),
                 ),

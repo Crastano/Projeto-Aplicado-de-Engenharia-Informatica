@@ -1,44 +1,28 @@
 import 'package:flutter/material.dart';
 
-// Controlador
-import 'package:pei/controller/pesquisar_controlador.dart';
 import 'package:pei/controller/categorias_controlador.dart';
-
-// Modelos
-import 'package:pei/models/tarefa_item.dart';
-
-// Widgets
-import 'package:pei/presentation/shared/widgets/tarefa_card.dart';
+import 'package:pei/controller/pesquisar_controlador.dart';
+import 'package:pei/controller/tarefas_estado.dart';
 import 'package:pei/presentation/shared/layout/app_scaffold.dart';
+import 'package:pei/presentation/shared/widgets/tarefa_card.dart';
 
 class PesquisarPage extends StatefulWidget {
-  const PesquisarPage({super.key, this.tarefas = const []});
-
-  final List<TarefaItem> tarefas;
+  const PesquisarPage({super.key});
 
   @override
   State<PesquisarPage> createState() => _PesquisarPageState();
 }
 
 class _PesquisarPageState extends State<PesquisarPage> {
-  late final PesquisarController controlador;
-  late final CategoriasController categoriasControlador;
+  late final PesquisarControlador controlador;
+  final CategoriasControlador categoriasControlador =
+      CategoriasControlador.instancia;
+  final TarefasEstado tarefasEstado = TarefasEstado.instancia;
 
   @override
   void initState() {
     super.initState();
-
-    controlador = PesquisarController(tarefas: widget.tarefas);
-    categoriasControlador = CategoriasController();
-  }
-
-  @override
-  void didUpdateWidget(covariant PesquisarPage oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (oldWidget.tarefas != widget.tarefas) {
-      controlador.atualizarTarefas(widget.tarefas);
-    }
+    controlador = PesquisarControlador(tarefasEstado: tarefasEstado);
   }
 
   @override
@@ -62,17 +46,15 @@ class _PesquisarPageState extends State<PesquisarPage> {
           floatingActionButton: false,
           bottomNavigationBar: false,
           largura: largura,
-          actions: [],
-          
           body: Padding(
             padding: .all(largura * 0.06),
             child: Column(
               children: [
-                AnimatedBuilder(
-                  animation: controlador,
-                  builder: (context, child) {
+                ListenableBuilder(
+                  listenable: controlador,
+                  builder: (context, _) {
                     return TextField(
-                      controller: controlador.pesquisaController,
+                      controller: controlador.pesquisaControlador,
                       textInputAction: .search,
                       style: TextStyle(fontSize: largura * 0.04),
                       decoration: InputDecoration(
@@ -82,14 +64,11 @@ class _PesquisarPageState extends State<PesquisarPage> {
                           size: largura * 0.075,
                         ),
                         suffixIcon:
-                            controlador.pesquisaController.text.isNotEmpty
+                            controlador.pesquisaControlador.text.isNotEmpty
                             ? IconButton(
                                 tooltip: 'Limpar pesquisa',
                                 onPressed: controlador.limparPesquisa,
-                                icon: Icon(
-                                  Icons.close_rounded,
-                                  size: largura * 0.06,
-                                ),
+                                icon: const Icon(Icons.close_rounded),
                               )
                             : null,
                         filled: true,
@@ -119,17 +98,13 @@ class _PesquisarPageState extends State<PesquisarPage> {
                     );
                   },
                 ),
-
-                SizedBox(height: altura * 0.018),
-
+                SizedBox(height: altura * 0.02),
                 AnimatedBuilder(
-                  animation: controlador,
-                  builder: (context, child) {
-                    return AnimatedBuilder(
-                      animation: categoriasControlador,
-                      builder: (context, child) {
-                        final categorias = categoriasControlador.categorias;
-
+                  animation: categoriasControlador,
+                  builder: (context, _) {
+                    return ListenableBuilder(
+                      listenable: controlador,
+                      builder: (context, _) {
                         return SizedBox(
                           width: .infinity,
                           child: SingleChildScrollView(
@@ -142,75 +117,78 @@ class _PesquisarPageState extends State<PesquisarPage> {
                                     Icons.category_outlined,
                                     size: largura * 0.045,
                                     color:
-                                        controlador.categoriaSelecionada == null
+                                        controlador.categoriaIdSelecionada ==
+                                            null
                                         ? Theme.of(
                                             context,
-                                          ).colorScheme.onSurface
+                                          ).colorScheme.onPrimary
                                         : Theme.of(
                                             context,
                                           ).colorScheme.onSurfaceVariant,
                                   ),
                                   selected:
-                                      controlador.categoriaSelecionada == null,
+                                      controlador.categoriaIdSelecionada ==
+                                      null,
                                   showCheckmark: false,
                                   onSelected: (_) {
                                     controlador.selecionarCategoria(null);
                                   },
                                   side: BorderSide(
                                     color:
-                                        controlador.categoriaSelecionada == null
+                                        controlador.categoriaIdSelecionada ==
+                                            null
                                         ? Colors.transparent
                                         : Theme.of(context).colorScheme.outline,
                                     width: largura * 0.005,
                                   ),
                                 ),
                                 SizedBox(width: largura * 0.025),
-                                ...categorias.map((categoria) {
+                                ...categoriasControlador.categorias.map((
+                                  categoria,
+                                ) {
                                   final selecionada =
-                                      controlador.categoriaSelecionada ==
-                                      categoria.nome;
+                                      controlador.categoriaIdSelecionada ==
+                                      categoria.id;
 
                                   return Padding(
                                     padding: .only(right: largura * 0.025),
                                     child: ChoiceChip(
-                                      label: Text(
-                                        categoria.nome,
-                                        overflow: .ellipsis,
-                                      ),
+                                      label: Text(categoria.nome),
                                       avatar: Icon(
                                         Icons.label_outline_rounded,
-                                        size: largura * 0.045,
                                         color: selecionada
-                                            ? categoria.cor.texto
+                                            ? categoria.cor.texto(context)
                                             : Theme.of(
                                                 context,
                                               ).colorScheme.onSurfaceVariant,
                                       ),
                                       selected: selecionada,
                                       showCheckmark: false,
-                                      selectedColor: categoria.cor.fundo,
-                                      side: BorderSide(
-                                        color: selecionada
-                                            ? categoria.cor.texto
-                                            : Theme.of(
-                                                context,
-                                              ).colorScheme.outline,
-                                        width: largura * 0.005,
+                                      selectedColor: categoria.cor.fundo(
+                                        context,
                                       ),
                                       labelStyle: TextStyle(
                                         fontSize: largura * 0.035,
                                         fontWeight: .w500,
                                         color: selecionada
-                                            ? categoria.cor.texto
+                                            ? categoria.cor.texto(context)
                                             : Theme.of(
                                                 context,
                                               ).colorScheme.onSurfaceVariant,
                                       ),
                                       onSelected: (_) {
                                         controlador.selecionarCategoria(
-                                          categoria.nome,
+                                          categoria.id,
                                         );
                                       },
+                                      side: BorderSide(
+                                        color: selecionada
+                                            ? categoria.cor.texto(context)
+                                            : Theme.of(
+                                                context,
+                                              ).colorScheme.outline,
+                                        width: largura * 0.005,
+                                      ),
                                     ),
                                   );
                                 }),
@@ -222,39 +200,32 @@ class _PesquisarPageState extends State<PesquisarPage> {
                     );
                   },
                 ),
-
-                SizedBox(height: altura * 0.035),
-
-                SizedBox(height: altura * 0.07),
-
+                SizedBox(height: altura * 0.03),
                 Expanded(
-                  child: AnimatedBuilder(
-                    animation: controlador,
-                    builder: (context, child) {
+                  child: ListenableBuilder(
+                    listenable: controlador,
+                    builder: (context, _) {
                       final tarefas = controlador.tarefasFiltradas;
 
                       if (tarefas.isEmpty) {
                         return Center(
-                          child: Padding(
-                            padding: .only(bottom: altura * 0.15),
-                            child: Column(
-                              mainAxisSize: .min,
-                              children: [
-                                Icon(
-                                  Icons.search_off_rounded,
-                                  size: largura * 0.2,
+                          child: Column(
+                            mainAxisSize: .min,
+                            children: [
+                              Icon(
+                                Icons.search_off_rounded,
+                                size: largura * 0.2,
+                              ),
+                              SizedBox(height: altura * 0.02),
+                              Text(
+                                'Nenhuma tarefa encontrada',
+                                textAlign: .center,
+                                style: TextStyle(
+                                  fontSize: largura * 0.045,
+                                  fontWeight: .w500,
                                 ),
-                                SizedBox(height: altura * 0.02),
-                                Text(
-                                  'Nenhuma tarefa encontrada',
-                                  textAlign: .center,
-                                  style: TextStyle(
-                                    fontSize: largura * 0.045,
-                                    fontWeight: .w500,
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         );
                       }
@@ -274,8 +245,10 @@ class _PesquisarPageState extends State<PesquisarPage> {
                             tarefa: tarefa,
                             largura: largura,
                             altura: altura,
-                            iconTap: () {},
-                            mostrarIcones: false,
+                            iconTap: () {
+                              tarefasEstado.alternarConclusao(tarefa.id);
+                            },
+                            mostrarIcones: true,
                           );
                         },
                       );

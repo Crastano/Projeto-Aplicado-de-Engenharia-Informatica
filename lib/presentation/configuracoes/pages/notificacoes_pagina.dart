@@ -8,8 +8,8 @@ import 'package:pei/presentation/configuracoes/widgets/pagina_configuracao.dart'
 import '../widgets/titulo_secao.dart';
 import '../widgets/card_configuracao.dart';
 
-class NotificacoesPage extends StatelessWidget {
-  NotificacoesPage({super.key});
+class NotificacoesPagina extends StatelessWidget {
+  NotificacoesPagina({super.key});
 
   final ConfiguracoesControlador controlador =
       ConfiguracoesControlador.instancia;

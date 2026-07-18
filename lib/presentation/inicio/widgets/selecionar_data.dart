@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 // Controlador
-import 'package:pei/controller/home_controlador.dart';
+import 'package:pei/controller/inicio_controlador.dart';
 
 // Enums
 import 'package:pei/enums/filter_data.dart';
@@ -23,7 +23,7 @@ class SelecionarData extends StatefulWidget {
 }
 
 class _SelecionarDataState extends State<SelecionarData> {
-  final HomeControlador controlador = HomeControlador();
+  final InicioControlador controlador = InicioControlador();
 
   bool aberto = false;
 

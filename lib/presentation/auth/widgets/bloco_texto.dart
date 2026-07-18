@@ -33,10 +33,7 @@ class BlocoTexto extends StatelessWidget {
         Expanded(
           child: Text(
             texto,
-            style: TextStyle(
-              fontSize: largura * 0.04,
-              fontWeight: .w500,
-            ),
+            style: TextStyle(fontSize: largura * 0.04, fontWeight: .w500),
           ),
         ),
       ],

@@ -5,8 +5,8 @@ import 'package:pei/presentation/configuracoes/widgets/pagina_configuracao.dart'
 import '../widgets/titulo_secao.dart';
 import '../widgets/card_configuracao.dart';
 
-class SobrePage extends StatelessWidget {
-  const SobrePage({super.key});
+class SobrePagina extends StatelessWidget {
+  const SobrePagina({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -64,8 +64,8 @@ class SobrePage extends StatelessWidget {
                     'Termos de utilização',
                     style: TextStyle(fontSize: largura * 0.04),
                   ),
-                  trailing: Icon(Icons.chevron_right_rounded),
-                  onTap: () {},
+                  subtitle: Text('Conteúdo ainda não adicionado'),
+                  enabled: false,
                 ),
                 Divider(height: 1),
                 ListTile(
@@ -77,8 +77,8 @@ class SobrePage extends StatelessWidget {
                     'Política de privacidade',
                     style: TextStyle(fontSize: largura * 0.04),
                   ),
-                  trailing: Icon(Icons.chevron_right_rounded),
-                  onTap: () {},
+                  subtitle: Text('Conteúdo ainda não adicionado'),
+                  enabled: false,
                 ),
                 Divider(height: 1),
                 ListTile(

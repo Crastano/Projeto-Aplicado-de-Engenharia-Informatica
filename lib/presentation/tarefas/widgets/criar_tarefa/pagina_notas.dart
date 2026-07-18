@@ -15,18 +15,18 @@ class PaginaNotas extends StatefulWidget {
 }
 
 class _PaginaNotasState extends State<PaginaNotas> {
-  late final TextEditingController notaController;
+  late final TextEditingController notaControlador;
 
   @override
   void initState() {
     super.initState();
 
-    notaController = TextEditingController(text: widget.notaInicial);
+    notaControlador = TextEditingController(text: widget.notaInicial);
   }
 
   @override
   void dispose() {
-    notaController.dispose();
+    notaControlador.dispose();
     super.dispose();
   }
 
@@ -38,7 +38,7 @@ class _PaginaNotasState extends State<PaginaNotas> {
           title: Text('Notas'),
           leading: IconButton(
             onPressed: () {
-              Navigator.pop(context, notaController.text.trim());
+              Navigator.pop(context, notaControlador.text.trim());
             },
             icon: Icon(
               Icons.chevron_left_outlined,
@@ -49,7 +49,7 @@ class _PaginaNotasState extends State<PaginaNotas> {
         body: Padding(
           padding: .all(widget.largura * 0.06),
           child: TextField(
-            controller: notaController,
+            controller: notaControlador,
             autofocus: true,
             expands: true,
             minLines: null,

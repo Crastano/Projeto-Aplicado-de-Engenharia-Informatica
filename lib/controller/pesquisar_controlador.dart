@@ -1,62 +1,62 @@
 import 'package:flutter/material.dart';
 
-// Modelos
+import 'package:pei/controller/tarefas_estado.dart';
 import 'package:pei/models/tarefa_item.dart';
 
-class PesquisarController extends ChangeNotifier {
-  PesquisarController({List<TarefaItem> tarefas = const []})
-    : tarefas = List<TarefaItem>.from(tarefas) {
-    pesquisaController.addListener(aoPesquisar);
+class PesquisarControlador extends ChangeNotifier {
+  PesquisarControlador({TarefasEstado? tarefasEstado})
+    : _tarefasEstado = tarefasEstado ?? TarefasEstado.instancia {
+    pesquisaControlador.addListener(aoAlterarPesquisa);
+    _tarefasEstado.addListener(aoAlterarTarefas);
   }
 
-  final TextEditingController pesquisaController = TextEditingController();
+  final TarefasEstado _tarefasEstado;
+  final TextEditingController pesquisaControlador = TextEditingController();
 
-  List<TarefaItem> tarefas;
-
-  String? categoriaSelecionada;
+  String? categoriaIdSelecionada;
 
   List<TarefaItem> get tarefasFiltradas {
-    final pesquisa = pesquisaController.text.trim().toLowerCase();
+    final pesquisa = pesquisaControlador.text.trim().toLowerCase();
+    final categoriaId = categoriaIdSelecionada;
 
-    final categoria = categoriaSelecionada?.trim().toLowerCase();
-
-    return tarefas.where((tarefa) {
+    final resultado = _tarefasEstado.tarefas.where((tarefa) {
       final tituloTarefa = tarefa.titulo.trim().toLowerCase();
-
-      final categoriaTarefa = tarefa.category?.trim().toLowerCase();
-
       final correspondeAoNome =
           pesquisa.isEmpty || tituloTarefa.contains(pesquisa);
-
       final correspondeACategoria =
-          categoria == null || categoriaTarefa == categoria;
+          categoriaId == null || tarefa.categoryId == categoriaId;
 
       return correspondeAoNome && correspondeACategoria;
     }).toList();
+
+    resultado.sort((a, b) => a.dataHora.compareTo(b.dataHora));
+    return resultado;
   }
 
-  void selecionarCategoria(String? categoria) {
-    categoriaSelecionada = categoria;
-    notifyListeners();
-  }
+  void selecionarCategoria(String? categoriaId) {
+    if (categoriaIdSelecionada == categoriaId) return;
 
-  void atualizarTarefas(List<TarefaItem> tarefas) {
-    this.tarefas = List<TarefaItem>.from(tarefas);
+    categoriaIdSelecionada = categoriaId;
     notifyListeners();
   }
 
   void limparPesquisa() {
-    pesquisaController.clear();
+    pesquisaControlador.clear();
   }
 
-  void aoPesquisar() {
+  void aoAlterarPesquisa() {
+    notifyListeners();
+  }
+
+  void aoAlterarTarefas() {
     notifyListeners();
   }
 
   @override
   void dispose() {
-    pesquisaController.removeListener(aoPesquisar);
-    pesquisaController.dispose();
+    _tarefasEstado.removeListener(aoAlterarTarefas);
+    pesquisaControlador.removeListener(aoAlterarPesquisa);
+    pesquisaControlador.dispose();
     super.dispose();
   }
 }

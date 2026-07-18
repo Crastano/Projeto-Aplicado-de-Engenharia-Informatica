@@ -9,10 +9,12 @@ import 'package:pei/enums/unidade_periodicidade.dart';
 class SeletorPeriodicidadePersonalizada extends StatefulWidget {
   const SeletorPeriodicidadePersonalizada({
     super.key,
+    required this.controlador,
     required this.largura,
     required this.configuracaoInicial,
   });
 
+  final TarefasControlador controlador;
   final double largura;
   final ConfiguracaoPeriodicidade configuracaoInicial;
 
@@ -23,15 +25,12 @@ class SeletorPeriodicidadePersonalizada extends StatefulWidget {
 
 class _SeletorPeriodicidadePersonalizadaState
     extends State<SeletorPeriodicidadePersonalizada> {
-  final TarefasControlador controlador = TarefasControlador();
-
   late int intervalo;
   late UnidadePeriodicidade unidade;
 
   @override
   void initState() {
     super.initState();
-
     intervalo = widget.configuracaoInicial.intervalo;
     unidade = widget.configuracaoInicial.unidade;
   }
@@ -66,9 +65,7 @@ class _SeletorPeriodicidadePersonalizadaState
                 IconButton.outlined(
                   onPressed: intervalo > 1
                       ? () {
-                          setState(() {
-                            intervalo--;
-                          });
+                          setState(() => intervalo--);
                         }
                       : null,
                   icon: Icon(Icons.remove),
@@ -84,20 +81,17 @@ class _SeletorPeriodicidadePersonalizadaState
                 SizedBox(width: widget.largura * 0.025),
                 Container(
                   width: widget.largura * 0.15,
-                  padding: EdgeInsets.symmetric(
-                    vertical: widget.largura * 0.02,
-                  ),
+                  padding: .symmetric(vertical: widget.largura * 0.02),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    borderRadius: BorderRadius.circular(widget.largura * 0.025),
-                    border: Border.all(
+                    borderRadius: .circular(widget.largura * 0.025),
+                    border: .all(
                       color: Theme.of(context).colorScheme.outline,
                       width: widget.largura * 0.005,
                     ),
                   ),
                   child: Text(
                     '$intervalo',
-                    textAlign: TextAlign.center,
+                    textAlign: .center,
                     style: TextStyle(
                       fontSize: widget.largura * 0.05,
                       fontWeight: .w500,
@@ -107,11 +101,9 @@ class _SeletorPeriodicidadePersonalizadaState
                 SizedBox(width: widget.largura * 0.025),
                 IconButton.outlined(
                   onPressed: () {
-                    setState(() {
-                      intervalo++;
-                    });
+                    setState(() => intervalo++);
                   },
-                  icon: const Icon(Icons.add),
+                  icon: Icon(Icons.add),
                   style: ButtonStyle(
                     side: WidgetStatePropertyAll(
                       BorderSide(
@@ -149,16 +141,15 @@ class _SeletorPeriodicidadePersonalizadaState
                       return DropdownMenuItem(
                         value: item,
                         child: Text(
-                          controlador.formatarUnidadePeriodicidade(item, intervalo),
+                          widget.controlador.formatarUnidadePeriodicidade(
+                            item,
+                            intervalo,
+                          ),
                         ),
                       );
                     }).toList(),
                     onChanged: (value) {
-                      if (value == null) return;
-
-                      setState(() {
-                        unidade = value;
-                      });
+                      if (value != null) setState(() => unidade = value);
                     },
                   ),
                 ),
@@ -166,7 +157,7 @@ class _SeletorPeriodicidadePersonalizadaState
             ),
             SizedBox(height: widget.largura * 0.06),
             SizedBox(
-              width: double.infinity,
+              width: .infinity,
               child: FilledButton(
                 onPressed: () {
                   Navigator.pop(
@@ -177,7 +168,7 @@ class _SeletorPeriodicidadePersonalizadaState
                     ),
                   );
                 },
-                child: const Text('Confirmar'),
+                child: Text('Confirmar'),
               ),
             ),
           ],

@@ -1,6 +1,10 @@
 import 'dart:math' as math;
 
+// Modelos
 import 'package:pei/models/tarefa_item.dart';
+
+// Utils
+import 'package:pei/utils/formatador_data_hora.dart';
 
 class CalendarioControlador {
   DateTime normalizarData(DateTime data) {
@@ -17,15 +21,61 @@ class CalendarioControlador {
     return List.generate(3, (index) => inicio.add(Duration(days: index)));
   }
 
+  List<TarefaItem> tarefasDoDia(DateTime dia, List<TarefaItem> tarefas) {
+    final resultado = tarefas.where((tarefa) {
+      return mesmoDia(tarefa.data, dia);
+    }).toList();
+
+    resultado.sort((a, b) {
+      if (a.hora != null && b.hora != null) {
+        final minutosA = a.hora!.hour * 60 + a.hora!.minute;
+
+        final minutosB = b.hora!.hour * 60 + b.hora!.minute;
+
+        return minutosA.compareTo(minutosB);
+      }
+
+      if (a.hora != null) {
+        return -1;
+      }
+
+      if (b.hora != null) {
+        return 1;
+      }
+
+      return a.titulo.toLowerCase().compareTo(b.titulo.toLowerCase());
+    });
+
+    return resultado;
+  }
+
   List<TarefaItem> tarefasAgendadasDoDia(
     DateTime dia,
     List<TarefaItem> tarefas,
   ) {
-    final resultado = tarefas
-        .where((tarefa) => mesmoDia(tarefa.dataHora, dia))
-        .toList();
+    final resultado = tarefas.where((tarefa) {
+      final pertenceAoDia = mesmoDia(tarefa.data, dia);
 
-    resultado.sort((a, b) => a.dataHora.compareTo(b.dataHora));
+      return pertenceAoDia && tarefa.temHora;
+    }).toList();
+
+    resultado.sort((a, b) {
+      return a.dataHora.compareTo(b.dataHora);
+    });
+
+    return resultado;
+  }
+
+  List<TarefaItem> tarefasSemHoraDoDia(DateTime dia, List<TarefaItem> tarefas) {
+    final resultado = tarefas.where((tarefa) {
+      final pertenceAoDia = mesmoDia(tarefa.data, dia);
+
+      return pertenceAoDia && !tarefa.temHora;
+    }).toList();
+
+    resultado.sort((a, b) {
+      return a.titulo.toLowerCase().compareTo(b.titulo.toLowerCase());
+    });
 
     return resultado;
   }
@@ -50,7 +100,7 @@ class CalendarioControlador {
     List<TarefaItem> tarefas,
   ) {
     return tarefas.where((tarefa) {
-      final tarefaMarcada = mesmoDia(tarefa.dataHora, dia);
+      final tarefaMarcada = mesmoDia(tarefa.data, dia);
 
       final terminaNesteDia =
           tarefa.dataLimite != null && mesmoDia(tarefa.dataLimite!, dia);
@@ -65,7 +115,6 @@ class CalendarioControlador {
     return (minutos / 60) * alturaHora;
   }
 
-  /// Cada tarefa ocupa exatamente uma hora.
   double calcularAlturaTarefa(TarefaItem tarefa, double alturaHora) {
     final alturaTotal = alturaHora * 24;
     final top = calcularTopTarefa(tarefa, alturaHora);
@@ -76,20 +125,11 @@ class CalendarioControlador {
   }
 
   String formatarHora(DateTime data) {
-    final hora = data.hour.toString().padLeft(2, '0');
-
-    final minuto = data.minute.toString().padLeft(2, '0');
-
-    return '$hora:$minuto';
+    return FormatadorDataHora.hora(data);
   }
 
   String formatarDataHora(DateTime data) {
-    final dia = data.day.toString().padLeft(2, '0');
-
-    final mes = data.month.toString().padLeft(2, '0');
-
-    return '$dia/$mes/${data.year} '
-        '${formatarHora(data)}';
+    return FormatadorDataHora.dataHora(data);
   }
 
   String formatarData(

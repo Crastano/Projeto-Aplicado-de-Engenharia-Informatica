@@ -19,19 +19,13 @@ class LinhaDetalhesTarefa extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(
-        vertical: altura * 0.012,
-      ),
+      padding: EdgeInsets.symmetric(vertical: altura * 0.012),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
             width: largura * 0.09,
-            child: Icon(
-              icone,
-              size: largura * 0.075,
-              color: Theme.of(context).colorScheme.outline,
-            ),
+            child: Icon(icone, size: largura * 0.075),
           ),
 
           SizedBox(width: largura * 0.035),
@@ -43,7 +37,7 @@ class LinhaDetalhesTarefa extends StatelessWidget {
                 Text(
                   titulo,
                   style: TextStyle(
-                    fontSize: largura * 0.042,
+                    fontSize: largura * 0.045,
                     fontWeight: FontWeight.w500,
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
@@ -55,9 +49,7 @@ class LinhaDetalhesTarefa extends StatelessWidget {
                   valor,
                   style: TextStyle(
                     fontSize: largura * 0.04,
-                    color: Theme.of(context).colorScheme.onSurface.withValues(
-                      alpha: 0.6,
-                    ),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
               ],

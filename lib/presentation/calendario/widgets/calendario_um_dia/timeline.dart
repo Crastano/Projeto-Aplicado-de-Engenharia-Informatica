@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 
-// Controlador
 import 'package:pei/controller/calendario_controlador.dart';
+import 'package:pei/models/tarefa_item.dart';
 
-// Widgets
 import '../coluna_dia.dart';
 import '../coluna_horas.dart';
-
-// Modelos
-import 'package:pei/models/tarefa_item.dart';
 
 class TimelineUmDia extends StatelessWidget {
   TimelineUmDia({
@@ -33,30 +29,28 @@ class TimelineUmDia extends StatelessWidget {
 
     final tarefasDoDia = controlador.tarefasAgendadasDoDia(dia, tarefas);
 
-    return SingleChildScrollView(
-      child: SizedBox(
-        height: alturaTotal,
-        child: Row(
-          crossAxisAlignment: .start,
-          children: [
-            SizedBox(
-              width: larguraHoras,
-              height: alturaTotal,
-              child: ColunaHoras(alturaHora: alturaHora),
+    return SizedBox(
+      height: alturaTotal,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: larguraHoras,
+            height: alturaTotal,
+            child: ColunaHoras(alturaHora: alturaHora),
+          ),
+          Expanded(
+            child: ColunaDia(
+              key: ValueKey<DateTime>(dia),
+              dia: dia,
+              tarefas: tarefasDoDia,
+              alturaHora: alturaHora,
+              mostrarBordaDireita: true,
+              largura: largura,
+              umDia: true,
             ),
-            Expanded(
-              child: ColunaDia(
-                key: ValueKey<DateTime>(dia),
-                dia: dia,
-                tarefas: tarefasDoDia,
-                alturaHora: alturaHora,
-                mostrarBordaDireita: true,
-                largura: largura,
-                umDia: true,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

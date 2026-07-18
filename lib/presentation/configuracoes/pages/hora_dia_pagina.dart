@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 
 // Controladores
 import 'package:pei/controller/configuracoes_controlador.dart';
+import 'package:pei/utils/formatador_data_hora.dart';
 
 // Widgets
 import 'package:pei/presentation/configuracoes/widgets/pagina_configuracao.dart';
 import '../widgets/titulo_secao.dart';
 import '../widgets/card_configuracao.dart';
 
-class HoraDiaPage extends StatelessWidget {
-  HoraDiaPage({super.key});
+class HoraDiaPagina extends StatelessWidget {
+  HoraDiaPagina({super.key});
 
   final ConfiguracoesControlador controlador =
       ConfiguracoesControlador.instancia;
@@ -162,9 +163,7 @@ class HoraDiaPage extends StatelessWidget {
                             fontSize: largura * 0.04,
                           )),
                           subtitle: Text(
-                            controlador.formato24Horas
-                                ? '16/07/2026 às 18:30'
-                                : '16/07/2026 às 6:30 PM',
+                            FormatadorDataHora.dataHora(DateTime.now()),
                                 style: TextStyle(fontSize: largura * 0.035),
                           ),
                         ),

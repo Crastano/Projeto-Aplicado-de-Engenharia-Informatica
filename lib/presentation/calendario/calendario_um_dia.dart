@@ -1,12 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 
-// Controlador
+// Controladores
 import 'package:pei/controller/calendario_controlador.dart';
-
-// Modelos
-import 'package:pei/models/tarefa_item.dart';
-import 'package:pei/tarefas.dart';
+import 'package:pei/controller/tarefas_estado.dart';
 
 // Widgets
 import 'package:pei/presentation/shared/layout/app_scaffold.dart';
@@ -15,11 +12,10 @@ import 'widgets/calendario_um_dia/cabecalho.dart';
 import 'widgets/calendario_um_dia/timeline.dart';
 import 'widgets/datas_limite_calendario.dart';
 import 'widgets/selecionar_tipo_calendario.dart';
+import 'widgets/sem_hora_calendario.dart';
 
 class CalendarioUmDia extends StatefulWidget {
-  const CalendarioUmDia({super.key, this.tarefas});
-
-  final List<TarefaItem>? tarefas;
+  const CalendarioUmDia({super.key});
 
   @override
   State<CalendarioUmDia> createState() => _CalendarioUmDiaState();
@@ -29,7 +25,7 @@ class _CalendarioUmDiaState extends State<CalendarioUmDia>
     with WidgetsBindingObserver {
   final CalendarioControlador controlador = CalendarioControlador();
 
-  late final List<TarefaItem> tarefas;
+  final TarefasEstado tarefasEstado = TarefasEstado.instancia;
   late DateTime diaVisivel;
 
   Timer? temporizadorMeiaNoite;
@@ -41,7 +37,7 @@ class _CalendarioUmDiaState extends State<CalendarioUmDia>
     super.initState();
 
     WidgetsBinding.instance.addObserver(this);
-    tarefas = widget.tarefas ?? Tarefas123().tarefas;
+    tarefasEstado.addListener(_atualizarTarefas);
     diaVisivel = controlador.normalizarData(DateTime.now());
     agendarMudancaDeDia();
   }
@@ -50,7 +46,12 @@ class _CalendarioUmDiaState extends State<CalendarioUmDia>
   void dispose() {
     temporizadorMeiaNoite?.cancel();
     WidgetsBinding.instance.removeObserver(this);
+    tarefasEstado.removeListener(_atualizarTarefas);
     super.dispose();
+  }
+
+  void _atualizarTarefas() {
+    if (mounted) setState(() {});
   }
 
   void mudarDia(int quantidadeDias) {
@@ -115,6 +116,7 @@ class _CalendarioUmDiaState extends State<CalendarioUmDia>
       builder: (context, constraints) {
         final largura = constraints.maxWidth;
         final altura = constraints.maxHeight;
+        final tarefas = tarefasEstado.tarefas;
 
         return AppScaffold(
           title: '1 Dia',
@@ -159,28 +161,34 @@ class _CalendarioUmDiaState extends State<CalendarioUmDia>
                     onHorizontalDragCancel: () {
                       deslocamentoHorizontal = 0;
                     },
-                    child: Column(
-                      children: [
-                        DatasLimiteCalendario(
-                          dias: [diaVisivel],
-                          tarefas: tarefas,
-                          largura: largura,
-                          altura: altura,
-                        ),
-                        CabecalhoUmDia(
-                          dia: diaVisivel,
-                          largura: largura,
-                          altura: altura,
-                        ),
-                        Expanded(
-                          child: TimelineUmDia(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          DatasLimiteCalendario(
+                            dias: [diaVisivel],
+                            tarefas: tarefas,
+                            largura: largura,
+                            altura: altura,
+                          ),
+                          TarefasSemHoraCalendario(
+                            dias: [diaVisivel],
+                            tarefas: tarefas,
+                            largura: largura,
+                          ),
+                          CabecalhoUmDia(
+                            dia: diaVisivel,
+                            largura: largura,
+                            altura: altura,
+                          ),
+                          TimelineUmDia(
                             dia: diaVisivel,
                             tarefas: tarefas,
                             alturaHora: altura * 0.075,
                             largura: largura,
                           ),
-                        ),
-                      ],
+                          SizedBox(height: altura * 0.05),
+                        ],
+                      ),
                     ),
                   ),
                 ),

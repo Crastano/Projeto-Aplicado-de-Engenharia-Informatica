@@ -11,8 +11,8 @@ import '../widgets/card_configuracao.dart';
 // Modelos
 import 'package:pei/models/idioma_item.dart';
 
-class IdiomaPage extends StatelessWidget {
-  IdiomaPage({super.key});
+class IdiomaPagina extends StatelessWidget {
+  IdiomaPagina({super.key});
 
   final ConfiguracoesControlador controlador =
       ConfiguracoesControlador.instancia;
@@ -20,9 +20,6 @@ class IdiomaPage extends StatelessWidget {
   final List<IdiomaItem> idiomas = const [
     IdiomaItem(nome: 'Português', bandeira: '🇵🇹'),
     IdiomaItem(nome: 'English', bandeira: '🇬🇧'),
-    IdiomaItem(nome: 'Español', bandeira: '🇪🇸'),
-    IdiomaItem(nome: 'Français', bandeira: '🇫🇷'),
-    IdiomaItem(nome: 'Deutsch', bandeira: '🇩🇪'),
   ];
 
   @override
@@ -49,8 +46,9 @@ class IdiomaPage extends StatelessWidget {
                     largura: largura,
                     children: [
                       for (int index = 0; index < idiomas.length; index++) ...[
-                        RadioListTile(
+                        RadioListTile<String>(
                           value: idiomas[index].nome,
+                          enabled: idiomas[index].nome == 'Português',
                           secondary: Text(
                             idiomas[index].bandeira,
                             style: TextStyle(fontSize: largura * 0.06),
@@ -59,23 +57,17 @@ class IdiomaPage extends StatelessWidget {
                             idiomas[index].nome,
                             style: TextStyle(fontSize: largura * 0.045),
                           ),
+                          subtitle: idiomas[index].nome == 'Português'
+                              ? null
+                              : Text('Tradução ainda não implementada'),
                         ),
 
-                        if (index != idiomas.length - 1) Divider(height: 1,),
+                        if (index != idiomas.length - 1) Divider(height: 1),
                       ],
                     ],
                   ),
                 );
               },
-            ),
-
-            const SizedBox(height: 20),
-
-            Text(
-              'Algumas alterações de idioma podem precisar de reiniciar a aplicação.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
             ),
           ],
         );
