@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:pei/controller/tarefas_estado.dart';
-import 'package:pei/models/tarefa_item.dart';
+import 'package:pei/models/tarefa_modelo.dart';
 
 class PesquisarControlador extends ChangeNotifier {
   PesquisarControlador({TarefasEstado? tarefasEstado})
@@ -15,7 +15,7 @@ class PesquisarControlador extends ChangeNotifier {
 
   String? categoriaIdSelecionada;
 
-  List<TarefaItem> get tarefasFiltradas {
+  List<TarefaModelo> get tarefasFiltradas {
     final pesquisa = pesquisaControlador.text.trim().toLowerCase();
     final categoriaId = categoriaIdSelecionada;
 

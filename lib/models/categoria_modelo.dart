@@ -6,7 +6,6 @@ class CategoriaCor {
   const CategoriaCor({required this.nome, required this.indice});
 
   final String nome;
-
   final int indice;
 
   Color fundo(BuildContext context) {
@@ -39,8 +38,8 @@ const List<CategoriaCor> coresCategorias = [
   CategoriaCor(nome: 'Cinzento', indice: 9),
 ];
 
-class CategoriaItem {
-  const CategoriaItem({
+class CategoriaModelo {
+  const CategoriaModelo({
     required this.id,
     required this.nome,
     required this.cor,
@@ -50,7 +49,7 @@ class CategoriaItem {
   final String nome;
   final CategoriaCor cor;
 
-  CategoriaItem copyWith({String? nome, CategoriaCor? cor}) {
-    return CategoriaItem(id: id, nome: nome ?? this.nome, cor: cor ?? this.cor);
+  CategoriaModelo copyWith({String? nome, CategoriaCor? cor}) {
+    return CategoriaModelo(id: id, nome: nome ?? this.nome, cor: cor ?? this.cor);
   }
 }

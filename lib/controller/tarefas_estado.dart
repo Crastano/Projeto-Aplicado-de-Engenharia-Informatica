@@ -2,8 +2,8 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 
 // Modelos
-import 'package:pei/models/categoria_item.dart';
-import 'package:pei/models/tarefa_item.dart';
+import 'package:pei/models/categoria_modelo.dart';
+import 'package:pei/models/tarefa_modelo.dart';
 
 import 'package:pei/tarefas.dart';
 
@@ -12,12 +12,12 @@ class TarefasEstado extends ChangeNotifier {
 
   static final TarefasEstado instancia = TarefasEstado._();
 
-  final List<TarefaItem> _tarefas;
+  final List<TarefaModelo> _tarefas;
 
-  UnmodifiableListView<TarefaItem> get tarefas =>
-      UnmodifiableListView<TarefaItem>(_tarefas);
+  UnmodifiableListView<TarefaModelo> get tarefas =>
+      UnmodifiableListView<TarefaModelo>(_tarefas);
 
-  TarefaItem? obterPorId(String id) {
+  TarefaModelo? obterPorId(String id) {
     for (final tarefa in _tarefas) {
       if (tarefa.id == id) return tarefa;
     }
@@ -25,7 +25,7 @@ class TarefasEstado extends ChangeNotifier {
     return null;
   }
 
-  void adicionar(TarefaItem tarefa) {
+  void adicionar(TarefaModelo tarefa) {
     if (_tarefas.any((item) => item.id == tarefa.id)) return;
 
     _tarefas.add(tarefa);
@@ -33,7 +33,7 @@ class TarefasEstado extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool atualizar(TarefaItem tarefa) {
+  bool atualizar(TarefaModelo tarefa) {
     final index = _tarefas.indexWhere((item) => item.id == tarefa.id);
 
     if (index == -1) return false;
@@ -55,8 +55,8 @@ class TarefasEstado extends ChangeNotifier {
   }
 
   void atualizarCategoria(
-    CategoriaItem categoriaAnterior,
-    CategoriaItem categoriaAtualizada,
+    CategoriaModelo categoriaAnterior,
+    CategoriaModelo categoriaAtualizada,
   ) {
     bool alterou = false;
 
@@ -79,7 +79,7 @@ class TarefasEstado extends ChangeNotifier {
     if (alterou) notifyListeners();
   }
 
-  void removerCategoria(CategoriaItem categoria) {
+  void removerCategoria(CategoriaModelo categoria) {
     bool alterou = false;
 
     for (var index = 0; index < _tarefas.length; index++) {

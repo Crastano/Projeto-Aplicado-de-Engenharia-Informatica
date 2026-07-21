@@ -10,10 +10,10 @@ import 'package:pei/enums/lembrete.dart';
 import 'package:pei/enums/periodicidade.dart';
 import 'package:pei/enums/unidade_lembrete.dart';
 import 'package:pei/enums/unidade_periodicidade.dart';
-import 'package:pei/models/categoria_item.dart';
+import 'package:pei/models/categoria_modelo.dart';
 
 // Modelos
-import 'package:pei/models/tarefa_item.dart';
+import 'package:pei/models/tarefa_modelo.dart';
 
 // Utils
 import 'package:pei/utils/formatador_data_hora.dart';
@@ -44,7 +44,7 @@ class ConfiguracaoLembrete {
 }
 
 class TarefasControlador extends ChangeNotifier {
-  TarefasControlador({TarefaItem? tarefaInicial}) {
+  TarefasControlador({TarefaModelo? tarefaInicial}) {
     tarefaOriginal = tarefaInicial;
 
     if (tarefaInicial == null) {
@@ -56,7 +56,7 @@ class TarefasControlador extends ChangeNotifier {
     tituloControlador.addListener(aoAlterarTitulo);
   }
 
-  TarefaItem? tarefaOriginal;
+  TarefaModelo? tarefaOriginal;
 
   final TextEditingController tituloControlador = TextEditingController();
 
@@ -109,7 +109,7 @@ class TarefasControlador extends ChangeNotifier {
     selecionarCategoriaInicial();
   }
 
-  void carregarTarefa(TarefaItem tarefa) {
+  void carregarTarefa(TarefaModelo tarefa) {
     tituloControlador.text = tarefa.titulo;
 
     dataSelecionada = apenasData(tarefa.data);
@@ -136,7 +136,7 @@ class TarefasControlador extends ChangeNotifier {
     selecionarCategoriaInicial(tarefa);
   }
 
-  void selecionarCategoriaInicial([TarefaItem? tarefa]) {
+  void selecionarCategoriaInicial([TarefaModelo? tarefa]) {
     final CategoriasControlador controladorCategorias = CategoriasControlador.instancia;
 
     if (tarefa == null) {
@@ -144,7 +144,7 @@ class TarefasControlador extends ChangeNotifier {
       return;
     }
 
-    final CategoriaItem? categoriaPorId = controladorCategorias.obterPorId(tarefa.categoryId);
+    final CategoriaModelo? categoriaPorId = controladorCategorias.obterPorId(tarefa.categoryId);
 
     if (categoriaPorId != null) {
       categoriaIdSelecionada = categoriaPorId.id;
@@ -168,7 +168,7 @@ class TarefasControlador extends ChangeNotifier {
     return null;
   }
 
-  TarefaItem construirTarefa() {
+  TarefaModelo construirTarefa() {
     final categoria = CategoriasControlador.instancia.obterPorId(
       categoriaIdSelecionada,
     );
@@ -179,7 +179,7 @@ class TarefasControlador extends ChangeNotifier {
         .where((caminho) => caminho.isNotEmpty)
         .toList(growable: false);
 
-    return TarefaItem(
+    return TarefaModelo(
       id:
           tarefaOriginal?.id ??
           DateTime.now().microsecondsSinceEpoch.toString(),

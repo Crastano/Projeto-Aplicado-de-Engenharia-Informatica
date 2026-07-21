@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pei/controller/categorias_controlador.dart';
 
 // Modelos
-import 'package:pei/models/tarefa_item.dart';
+import 'package:pei/models/tarefa_modelo.dart';
 
 // Widgets
 import 'package:pei/presentation/shared/widgets/categoria_chip.dart';
@@ -25,7 +25,7 @@ class TarefaCard extends StatelessWidget {
     required this.mostrarIcones,
   });
 
-  final TarefaItem tarefa;
+  final TarefaModelo tarefa;
   final double largura;
   final double altura;
   final VoidCallback iconTap;

@@ -6,7 +6,7 @@ import 'package:pei/controller/calendario_controlador.dart';
 import 'package:pei/controller/configuracoes_controlador.dart';
 
 // Modelos
-import 'package:pei/models/tarefa_item.dart';
+import 'package:pei/models/tarefa_modelo.dart';
 
 // Widgets
 import 'calendario/dia_container.dart';
@@ -36,14 +36,14 @@ class CalendarioWidget extends StatelessWidget {
   final void Function(DateTime, DateTime) noDiaSelecionado;
   final bool headerVisibilidade;
   final bool marcaTarefa;
-  final List<TarefaItem> tarefas;
+  final List<TarefaModelo> tarefas;
   final ValueChanged<DateTime>? onPageChanged;
 
   final CalendarioControlador controlador = CalendarioControlador();
 
   @override
   Widget build(BuildContext context) {
-    return TableCalendar<TarefaItem>(
+    return TableCalendar<TarefaModelo>(
       firstDay: primeiroDia,
       lastDay: ultimoDia,
       focusedDay: focusedDay,
@@ -80,7 +80,7 @@ class CalendarioWidget extends StatelessWidget {
           color: Theme.of(context).colorScheme.primary,
         ),
       ),
-      calendarBuilders: CalendarBuilders<TarefaItem>(
+      calendarBuilders: CalendarBuilders<TarefaModelo>(
         headerTitleBuilder: (context, day) {
           return Text(
             controlador.formatarData(day, false, false, true),

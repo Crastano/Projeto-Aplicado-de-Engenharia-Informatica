@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pei/controller/categorias_controlador.dart';
 
 // Modelos
-import 'package:pei/models/categoria_item.dart';
+import 'package:pei/models/categoria_modelo.dart';
 
 // Widgets
 import 'package:pei/presentation/shared/layout/app_scaffold.dart';
@@ -22,7 +22,7 @@ class _CategoriasPageState extends State<CategoriasPage> {
   final CategoriasControlador controlador = CategoriasControlador.instancia;
 
   Future<void> abrirDialog({
-    CategoriaItem? categoria,
+    CategoriaModelo? categoria,
     required double largura,
     required double altura,
   }) async {
@@ -57,7 +57,7 @@ class _CategoriasPageState extends State<CategoriasPage> {
     );
   }
 
-  Future<void> eliminar(CategoriaItem categoria) async {
+  Future<void> eliminar(CategoriaModelo categoria) async {
     final confirmado = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pei/controller/categorias_controlador.dart';
 
 // Modelos
-import 'package:pei/models/tarefa_item.dart';
+import 'package:pei/models/tarefa_modelo.dart';
 
 // Utils
 import 'package:pei/utils/formatador_data_hora.dart';
@@ -18,7 +18,7 @@ class TarefaDataLimiteCard extends StatelessWidget {
     this.onTap,
   });
 
-  final TarefaItem tarefa;
+  final TarefaModelo tarefa;
   final double largura;
   final bool compacto;
   final VoidCallback? onTap;

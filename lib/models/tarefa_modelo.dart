@@ -5,9 +5,10 @@ import 'package:pei/enums/lembrete.dart';
 import 'package:pei/enums/periodicidade.dart';
 import 'package:pei/enums/unidade_lembrete.dart';
 import 'package:pei/enums/unidade_periodicidade.dart';
+import 'package:pei/enums/estado_tarefa.dart';
 
-class TarefaItem {
-  const TarefaItem({
+class TarefaModelo {
+  const TarefaModelo({
     required this.id,
     required this.titulo,
     required this.data,
@@ -24,6 +25,8 @@ class TarefaItem {
     this.notas,
     this.anexos = const [],
     this.estaCompletado = false,
+    this.estaCancelada = false,
+    this.criadoEm,
   });
 
   final String id;
@@ -42,6 +45,8 @@ class TarefaItem {
   final String? notas;
   final List<String> anexos;
   final bool estaCompletado;
+  final bool estaCancelada;
+  final DateTime? criadoEm;
 
   bool get temHora => hora != null;
   bool get temDataLimite => dataLimite != null;
@@ -82,7 +87,14 @@ class TarefaItem {
     return dataHora.isBefore(agora);
   }
 
-  TarefaItem copyWith({
+  EstadoTarefa get estado {
+    if (estaCancelada) return EstadoTarefa.cancelada;
+    if (estaCompletado) return EstadoTarefa.concluida;
+    if (estaAtrasado) return EstadoTarefa.atrasada;
+    return EstadoTarefa.pendente;
+  }
+
+  TarefaModelo copyWith({
     String? titulo,
     DateTime? data,
     TimeOfDay? hora,
@@ -104,8 +116,10 @@ class TarefaItem {
     bool removerNotas = false,
     List<String>? anexos,
     bool? estaCompletado,
+    bool? estaCancelada,
+    DateTime? criadoEm,
   }) {
-    return TarefaItem(
+    return TarefaModelo(
       id: id,
       titulo: titulo ?? this.titulo,
       data: data ?? this.data,
@@ -130,6 +144,8 @@ class TarefaItem {
       notas: removerNotas ? null : notas ?? this.notas,
       anexos: anexos ?? this.anexos,
       estaCompletado: estaCompletado ?? this.estaCompletado,
+      estaCancelada: estaCancelada ?? this.estaCancelada,
+      criadoEm: criadoEm ?? this.criadoEm,
     );
   }
 }

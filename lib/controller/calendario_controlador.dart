@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
 // Modelos
-import 'package:pei/models/tarefa_item.dart';
+import 'package:pei/models/tarefa_modelo.dart';
 
 // Utils
 import 'package:pei/utils/formatador_data_hora.dart';
@@ -21,7 +21,7 @@ class CalendarioControlador {
     return List.generate(3, (index) => inicio.add(Duration(days: index)));
   }
 
-  List<TarefaItem> tarefasDoDia(DateTime dia, List<TarefaItem> tarefas) {
+  List<TarefaModelo> tarefasDoDia(DateTime dia, List<TarefaModelo> tarefas) {
     final resultado = tarefas.where((tarefa) {
       return mesmoDia(tarefa.data, dia);
     }).toList();
@@ -49,9 +49,9 @@ class CalendarioControlador {
     return resultado;
   }
 
-  List<TarefaItem> tarefasAgendadasDoDia(
+  List<TarefaModelo> tarefasAgendadasDoDia(
     DateTime dia,
-    List<TarefaItem> tarefas,
+    List<TarefaModelo> tarefas,
   ) {
     final resultado = tarefas.where((tarefa) {
       final pertenceAoDia = mesmoDia(tarefa.data, dia);
@@ -66,7 +66,7 @@ class CalendarioControlador {
     return resultado;
   }
 
-  List<TarefaItem> tarefasSemHoraDoDia(DateTime dia, List<TarefaItem> tarefas) {
+  List<TarefaModelo> tarefasSemHoraDoDia(DateTime dia, List<TarefaModelo> tarefas) {
     final resultado = tarefas.where((tarefa) {
       final pertenceAoDia = mesmoDia(tarefa.data, dia);
 
@@ -80,9 +80,9 @@ class CalendarioControlador {
     return resultado;
   }
 
-  List<TarefaItem> tarefasComDataLimiteNoDia(
+  List<TarefaModelo> tarefasComDataLimiteNoDia(
     DateTime dia,
-    List<TarefaItem> tarefas,
+    List<TarefaModelo> tarefas,
   ) {
     final resultado = tarefas.where((tarefa) {
       final dataLimite = tarefa.dataLimite;
@@ -95,9 +95,9 @@ class CalendarioControlador {
     return resultado;
   }
 
-  List<TarefaItem> tarefasIndicadasNoDia(
+  List<TarefaModelo> tarefasIndicadasNoDia(
     DateTime dia,
-    List<TarefaItem> tarefas,
+    List<TarefaModelo> tarefas,
   ) {
     return tarefas.where((tarefa) {
       final tarefaMarcada = mesmoDia(tarefa.data, dia);
@@ -109,13 +109,13 @@ class CalendarioControlador {
     }).toList();
   }
 
-  double calcularTopTarefa(TarefaItem tarefa, double alturaHora) {
+  double calcularTopTarefa(TarefaModelo tarefa, double alturaHora) {
     final minutos = tarefa.dataHora.hour * 60 + tarefa.dataHora.minute;
 
     return (minutos / 60) * alturaHora;
   }
 
-  double calcularAlturaTarefa(TarefaItem tarefa, double alturaHora) {
+  double calcularAlturaTarefa(TarefaModelo tarefa, double alturaHora) {
     final alturaTotal = alturaHora * 24;
     final top = calcularTopTarefa(tarefa, alturaHora);
 

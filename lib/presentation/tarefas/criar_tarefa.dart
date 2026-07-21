@@ -5,7 +5,7 @@ import 'package:pei/controller/tarefas_controlador.dart';
 import 'package:pei/controller/tarefas_estado.dart';
 
 // Modelos
-import 'package:pei/models/tarefa_item.dart';
+import 'package:pei/models/tarefa_modelo.dart';
 
 // Widgets
 import 'package:pei/presentation/shared/layout/app_scaffold.dart';
@@ -22,7 +22,7 @@ import 'widgets/criar_tarefa/tarefas_anexos.dart';
 class CriarTarefa extends StatefulWidget {
   const CriarTarefa({super.key, this.tarefa});
 
-  final TarefaItem? tarefa;
+  final TarefaModelo? tarefa;
 
   @override
   State<CriarTarefa> createState() => _CriarTarefaState();

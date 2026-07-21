@@ -1,5 +1,5 @@
-class IdiomaItem {
-  const IdiomaItem({
+class IdiomaModelo {
+  const IdiomaModelo({
     required this.nome,
     required this.bandeira,
   });

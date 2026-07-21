@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:pei/enums/lembrete.dart';
 import 'package:pei/enums/periodicidade.dart';
-import 'package:pei/models/tarefa_item.dart';
+import 'package:pei/models/tarefa_modelo.dart';
 import 'package:pei/controller/categorias_controlador.dart';
 
-List<TarefaItem> criarTarefasIniciais() {
+List<TarefaModelo> criarTarefasIniciais() {
   final DateTime hoje = DateTime.now();
 
   final categorias = CategoriasControlador.instancia;
@@ -19,7 +19,7 @@ List<TarefaItem> criarTarefasIniciais() {
   final casa = categorias.obterPorId('casa')!;
 
   return [
-    TarefaItem(
+    TarefaModelo(
       id: 'demo-pequeno-almoco',
       titulo: 'Tomar pequeno-almoço',
 
@@ -33,7 +33,7 @@ List<TarefaItem> criarTarefasIniciais() {
       periodicidade: Periodicidade.diaria,
     ),
 
-    TarefaItem(
+    TarefaModelo(
       id: 'demo-reuniao-projeto',
       titulo: 'Reunião do projeto',
 
@@ -50,7 +50,7 @@ List<TarefaItem> criarTarefasIniciais() {
     ),
 
     // Tarefa sem hora.
-    TarefaItem(
+    TarefaModelo(
       id: 'demo-comprar-alimentos',
       titulo: 'Comprar alimentos',
 
@@ -62,7 +62,7 @@ List<TarefaItem> criarTarefasIniciais() {
       category: compras.nome,
     ),
 
-    TarefaItem(
+    TarefaModelo(
       id: 'demo-treino',
       titulo: 'Treino no ginásio',
 
@@ -78,7 +78,7 @@ List<TarefaItem> criarTarefasIniciais() {
     ),
 
     // Tarefa sem hora.
-    TarefaItem(
+    TarefaModelo(
       id: 'demo-responder-emails',
       titulo: 'Responder aos emails',
 
@@ -88,7 +88,7 @@ List<TarefaItem> criarTarefasIniciais() {
       category: trabalho.nome,
     ),
 
-    TarefaItem(
+    TarefaModelo(
       id: 'demo-relatorio',
       titulo: 'Terminar relatório',
 
@@ -104,7 +104,7 @@ List<TarefaItem> criarTarefasIniciais() {
       lembrete: Lembrete.umaHora,
     ),
 
-    TarefaItem(
+    TarefaModelo(
       id: 'demo-consulta',
       titulo: 'Consulta médica',
 
@@ -119,7 +119,7 @@ List<TarefaItem> criarTarefasIniciais() {
     ),
 
     // Tarefa sem hora.
-    TarefaItem(
+    TarefaModelo(
       id: 'demo-ler-livro',
       titulo: 'Ler um capítulo do livro',
 
@@ -129,7 +129,7 @@ List<TarefaItem> criarTarefasIniciais() {
       category: estudo.nome,
     ),
 
-    TarefaItem(
+    TarefaModelo(
       id: 'demo-apresentacao',
       titulo: 'Preparar apresentação',
 
@@ -145,7 +145,7 @@ List<TarefaItem> criarTarefasIniciais() {
       lembrete: Lembrete.umaHora,
     ),
 
-    TarefaItem(
+    TarefaModelo(
       id: 'demo-almoco-amigos',
       titulo: 'Almoçar com amigos',
 
@@ -157,7 +157,7 @@ List<TarefaItem> criarTarefasIniciais() {
       category: pessoal.nome,
     ),
     
-    TarefaItem(
+    TarefaModelo(
       id: 'demo-eletricidade',
       titulo: 'Pagar conta da eletricidade',
 
@@ -171,7 +171,7 @@ List<TarefaItem> criarTarefasIniciais() {
       lembrete: Lembrete.umDia,
     ),
 
-    TarefaItem(
+    TarefaModelo(
       id: 'demo-organizar-quarto',
       titulo: 'Organizar o quarto',
 

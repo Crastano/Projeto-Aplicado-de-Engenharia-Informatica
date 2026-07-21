@@ -11,7 +11,7 @@ import 'package:pei/enums/unidade_lembrete.dart';
 import 'package:pei/enums/unidade_periodicidade.dart';
 
 // Modelos
-import 'package:pei/models/tarefa_item.dart';
+import 'package:pei/models/tarefa_modelo.dart';
 
 // Widgets
 import 'package:pei/presentation/shared/layout/app_scaffold.dart';
@@ -30,14 +30,14 @@ class PaginaTarefa extends StatelessWidget {
 
   final String tarefaId;
 
-  Future<void> editar(BuildContext context, TarefaItem tarefa) async {
-    await Navigator.push<TarefaItem>(
+  Future<void> editar(BuildContext context, TarefaModelo tarefa) async {
+    await Navigator.push<TarefaModelo>(
       context,
       MaterialPageRoute(builder: (context) => CriarTarefa(tarefa: tarefa)),
     );
   }
 
-  Future<void> eliminar(BuildContext context, TarefaItem tarefa) async {
+  Future<void> eliminar(BuildContext context, TarefaModelo tarefa) async {
     final confirmado = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
@@ -76,7 +76,7 @@ class PaginaTarefa extends StatelessWidget {
     return FormatadorDataHora.hora(data);
   }
 
-  String formatarPeriodicidade(TarefaItem tarefa) {
+  String formatarPeriodicidade(TarefaModelo tarefa) {
     final periodicidade = tarefa.periodicidade;
 
     if (periodicidade == Periodicidade.personalizada) {
@@ -107,7 +107,7 @@ class PaginaTarefa extends StatelessWidget {
     };
   }
 
-  String formatarLembrete(TarefaItem tarefa) {
+  String formatarLembrete(TarefaModelo tarefa) {
     final lembrete = tarefa.lembrete;
 
     if (lembrete == Lembrete.personalizada) {

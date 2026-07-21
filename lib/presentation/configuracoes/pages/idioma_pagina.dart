@@ -9,7 +9,7 @@ import '../widgets/titulo_secao.dart';
 import '../widgets/card_configuracao.dart';
 
 // Modelos
-import 'package:pei/models/idioma_item.dart';
+import 'package:pei/models/idioma_modelo.dart';
 
 class IdiomaPagina extends StatelessWidget {
   IdiomaPagina({super.key});
@@ -17,9 +17,9 @@ class IdiomaPagina extends StatelessWidget {
   final ConfiguracoesControlador controlador =
       ConfiguracoesControlador.instancia;
 
-  final List<IdiomaItem> idiomas = const [
-    IdiomaItem(nome: 'Português', bandeira: '🇵🇹'),
-    IdiomaItem(nome: 'English', bandeira: '🇬🇧'),
+  final List<IdiomaModelo> idiomas = const [
+    IdiomaModelo(nome: 'Português', bandeira: '🇵🇹'),
+    IdiomaModelo(nome: 'English', bandeira: '🇬🇧'),
   ];
 
   @override

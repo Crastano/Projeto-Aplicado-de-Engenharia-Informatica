@@ -1,0 +1,1 @@
+enum TipoUtilizador { naoRegistado, registado }

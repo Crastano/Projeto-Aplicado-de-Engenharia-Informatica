@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pei/controller/calendario_controlador.dart';
 
 // Modelos
-import 'package:pei/models/tarefa_item.dart';
+import 'package:pei/models/tarefa_modelo.dart';
 
 // Widgets
 import '../coluna_dia.dart';
@@ -20,7 +20,7 @@ class TimelineTresDia extends StatelessWidget {
   });
 
   final List<DateTime> dias;
-  final List<TarefaItem> tarefas;
+  final List<TarefaModelo> tarefas;
   final double alturaHora;
   final double largura;
 

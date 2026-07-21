@@ -5,7 +5,7 @@ import 'package:pei/controller/calendario_controlador.dart';
 import 'package:pei/controller/tarefas_estado.dart';
 
 // Modelos
-import 'package:pei/models/tarefa_item.dart';
+import 'package:pei/models/tarefa_modelo.dart';
 
 //Widgets
 import 'package:pei/presentation/shared/widgets/tarefa_card.dart';
@@ -20,7 +20,7 @@ class CalendarioListaTarefas extends StatelessWidget {
     required this.altura,
   });
 
-  final List<TarefaItem> tarefas;
+  final List<TarefaModelo> tarefas;
   final DateTime dia;
   final double largura;
   final double altura;

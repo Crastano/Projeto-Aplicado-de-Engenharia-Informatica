@@ -5,13 +5,13 @@ import 'package:pei/enums/filter_data.dart';
 import 'package:pei/enums/filter_tarefa.dart';
 
 // Modelos
-import 'package:pei/models/tarefa_item.dart';
+import 'package:pei/models/tarefa_modelo.dart';
 
 class InicioControlador {
   FilterData dataSelecionada = .nenhuma;
   FilterTarefa filtroSelecionado = .todos;
 
-  List<TarefaItem> filtrarTarefas(Iterable<TarefaItem> tarefas) {
+  List<TarefaModelo> filtrarTarefas(Iterable<TarefaModelo> tarefas) {
     final resultado = tarefas.where((tarefa) {
       return passaFiltroData(tarefa) && passaFiltroEstado(tarefa);
     }).toList();
@@ -20,7 +20,7 @@ class InicioControlador {
     return resultado;
   }
 
-  bool passaFiltroEstado(TarefaItem tarefa) {
+  bool passaFiltroEstado(TarefaModelo tarefa) {
     return switch (filtroSelecionado) {
       .todos => true,
       .pendentes => !tarefa.estaCompletado && !tarefa.estaAtrasado,
@@ -29,7 +29,7 @@ class InicioControlador {
     };
   }
 
-  bool passaFiltroData(TarefaItem tarefa) {
+  bool passaFiltroData(TarefaModelo tarefa) {
     final hoje = DateTime.now();
 
     return switch (dataSelecionada) {

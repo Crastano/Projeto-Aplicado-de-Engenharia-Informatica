@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pei/controller/calendario_controlador.dart';
 
 // Modelos
-import 'package:pei/models/tarefa_item.dart';
+import 'package:pei/models/tarefa_modelo.dart';
 
 // Widgets
 import 'tarefa_data_limite_card.dart';
@@ -19,7 +19,7 @@ class DatasLimiteCalendario extends StatelessWidget {
   });
 
   final List<DateTime> dias;
-  final List<TarefaItem> tarefas;
+  final List<TarefaModelo> tarefas;
   final double largura;
   final double altura;
 
@@ -27,7 +27,7 @@ class DatasLimiteCalendario extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<List<TarefaItem>> tarefasPorDia = dias.map((dia) {
+    final List<List<TarefaModelo>> tarefasPorDia = dias.map((dia) {
       return controlador.tarefasComDataLimiteNoDia(dia, tarefas);
     }).toList();
 

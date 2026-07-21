@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 // Modelos
-import 'package:pei/models/tarefa_item.dart';
+import 'package:pei/models/tarefa_modelo.dart';
 
 class TarefaSemHoraCard extends StatelessWidget {
   const TarefaSemHoraCard({
@@ -12,7 +12,7 @@ class TarefaSemHoraCard extends StatelessWidget {
     this.onTap,
   });
 
-  final TarefaItem tarefa;
+  final TarefaModelo tarefa;
   final double largura;
   final bool compacto;
   final VoidCallback? onTap;

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:pei/controller/tarefas_estado.dart';
 
 // Modelos
-import 'package:pei/models/categoria_item.dart';
+import 'package:pei/models/categoria_modelo.dart';
 
 class CategoriasControlador extends ChangeNotifier {
   CategoriasControlador._();
@@ -14,21 +14,21 @@ class CategoriasControlador extends ChangeNotifier {
 
   factory CategoriasControlador() => instancia;
 
-  final List<CategoriaItem> _categorias = [
-    CategoriaItem(id: 'trabalho', nome: 'Trabalho', cor: coresCategorias[0]),
-    CategoriaItem(id: 'pessoal', nome: 'Pessoal', cor: coresCategorias[8]),
-    CategoriaItem(id: 'financas', nome: 'Finanças', cor: coresCategorias[7]),
-    CategoriaItem(id: 'saude', nome: 'Saúde', cor: coresCategorias[2]),
-    CategoriaItem(id: 'estudo', nome: 'Estudo', cor: coresCategorias[4]),
-    CategoriaItem(id: 'compras', nome: 'Compras', cor: coresCategorias[6]),
-    CategoriaItem(id: 'pagar', nome: 'Pagar', cor: coresCategorias[3]),
-    CategoriaItem(id: 'casa', nome: 'Casa', cor: coresCategorias[1]),
+  final List<CategoriaModelo> _categorias = [
+    CategoriaModelo(id: 'trabalho', nome: 'Trabalho', cor: coresCategorias[0]),
+    CategoriaModelo(id: 'pessoal', nome: 'Pessoal', cor: coresCategorias[8]),
+    CategoriaModelo(id: 'financas', nome: 'Finanças', cor: coresCategorias[7]),
+    CategoriaModelo(id: 'saude', nome: 'Saúde', cor: coresCategorias[2]),
+    CategoriaModelo(id: 'estudo', nome: 'Estudo', cor: coresCategorias[4]),
+    CategoriaModelo(id: 'compras', nome: 'Compras', cor: coresCategorias[6]),
+    CategoriaModelo(id: 'pagar', nome: 'Pagar', cor: coresCategorias[3]),
+    CategoriaModelo(id: 'casa', nome: 'Casa', cor: coresCategorias[1]),
   ];
 
-  UnmodifiableListView<CategoriaItem> get categorias =>
-      UnmodifiableListView<CategoriaItem>(_categorias);
+  UnmodifiableListView<CategoriaModelo> get categorias =>
+      UnmodifiableListView<CategoriaModelo>(_categorias);
 
-  CategoriaItem? obterPorId(String? id) {
+  CategoriaModelo? obterPorId(String? id) {
     if (id == null) return null;
 
     for (final categoria in _categorias) {
@@ -38,7 +38,7 @@ class CategoriasControlador extends ChangeNotifier {
     return null;
   }
 
-  CategoriaItem? obterPorNome(String? nome) {
+  CategoriaModelo? obterPorNome(String? nome) {
     if (nome == null) return null;
 
     final nomeNormalizado = nome.trim().toLowerCase();
@@ -56,7 +56,7 @@ class CategoriasControlador extends ChangeNotifier {
     if (nomeLimpo.isEmpty || nomeExiste(nomeLimpo)) return false;
 
     _categorias.add(
-      CategoriaItem(
+      CategoriaModelo(
         id: DateTime.now().microsecondsSinceEpoch.toString(),
         nome: nomeLimpo,
         cor: cor,

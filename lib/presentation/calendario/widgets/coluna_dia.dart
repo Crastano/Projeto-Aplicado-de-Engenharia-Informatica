@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pei/controller/calendario_controlador.dart';
 
 // Modelos
-import 'package:pei/models/tarefa_item.dart';
+import 'package:pei/models/tarefa_modelo.dart';
 
 // Widgets
 import 'linha_hora_atual.dart';
@@ -22,7 +22,7 @@ class ColunaDia extends StatelessWidget {
   });
 
   final DateTime dia;
-  final List<TarefaItem> tarefas;
+  final List<TarefaModelo> tarefas;
   final double alturaHora;
   final bool mostrarBordaDireita;
   final double largura;

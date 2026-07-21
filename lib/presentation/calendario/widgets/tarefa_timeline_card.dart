@@ -5,7 +5,7 @@ import 'package:pei/controller/calendario_controlador.dart';
 import 'package:pei/controller/categorias_controlador.dart';
 
 // Modelos
-import 'package:pei/models/tarefa_item.dart';
+import 'package:pei/models/tarefa_modelo.dart';
 
 class TarefaTimelineCard extends StatelessWidget {
   TarefaTimelineCard({
@@ -16,7 +16,7 @@ class TarefaTimelineCard extends StatelessWidget {
     this.onTap,
   });
 
-  final TarefaItem tarefa;
+  final TarefaModelo tarefa;
   final double largura;
   final bool umDia;
   final VoidCallback? onTap;

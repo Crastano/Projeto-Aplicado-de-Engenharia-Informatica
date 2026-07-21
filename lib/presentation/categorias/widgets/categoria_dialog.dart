@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 // Modelos
-import 'package:pei/models/categoria_item.dart';
+import 'package:pei/models/categoria_modelo.dart';
 
 // Widgets
 import 'package:pei/presentation/shared/widgets/categoria_chip.dart';
@@ -21,7 +21,7 @@ class CategoriaDialog extends StatefulWidget {
     required this.altura,
   });
 
-  final CategoriaItem? categoria;
+  final CategoriaModelo? categoria;
   final double largura;
   final double altura;
 

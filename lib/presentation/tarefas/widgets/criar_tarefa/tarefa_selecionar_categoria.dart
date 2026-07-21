@@ -5,7 +5,7 @@ import 'package:pei/controller/categorias_controlador.dart';
 import 'package:pei/controller/tarefas_controlador.dart';
 
 // Modelos
-import 'package:pei/models/categoria_item.dart';
+import 'package:pei/models/categoria_modelo.dart';
 
 // Widgets
 import 'package:pei/presentation/categorias/widgets/categoria_dialog.dart';
@@ -47,7 +47,7 @@ class TarefaSelecionarCategoria extends StatelessWidget {
       return;
     }
 
-    final CategoriaItem? criada = categorias.obterPorNome(resultado.nome);
+    final CategoriaModelo? criada = categorias.obterPorNome(resultado.nome);
     controlador.selecionarCategoria(criada?.id);
   }
 

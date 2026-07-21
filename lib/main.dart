@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pei/controller/configuracoes_controlador.dart';
 
 // Modelos
-import 'package:pei/models/tarefa_item.dart';
+import 'package:pei/models/tarefa_modelo.dart';
 
 // Paginas
 import 'package:pei/presentation/calendario/calendario.dart';
@@ -72,7 +72,7 @@ class MyApp extends StatelessWidget {
               final argumentos = settings.arguments;
               final tarefaId = switch (argumentos) {
                 String id => id,
-                TarefaItem tarefa => tarefa.id,
+                TarefaModelo tarefa => tarefa.id,
                 _ => null,
               };
 
