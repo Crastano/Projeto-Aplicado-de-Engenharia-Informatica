@@ -121,8 +121,8 @@ class _MinhasTarefasState extends State<MinhasTarefas> {
                                   tarefa: tarefa,
                                   largura: largura,
                                   altura: altura,
-                                  iconTap: () {
-                                    tarefasEstado.alternarConclusao(tarefa.id);
+                                  iconTap: () async {
+                                    await tarefasEstado.alternarConclusao(tarefa.id);
                                   },
                                   mostrarIcones: true,
                                 );

@@ -35,7 +35,7 @@ class TarefaSelecionarCategoria extends StatelessWidget {
     if (resultado == null || !context.mounted) return;
 
     final CategoriasControlador categorias = CategoriasControlador.instancia;
-    final bool sucesso = categorias.adicionarCategoria(
+    final bool sucesso = await categorias.adicionarCategoria(
       nome: resultado.nome,
       cor: resultado.cor,
     );

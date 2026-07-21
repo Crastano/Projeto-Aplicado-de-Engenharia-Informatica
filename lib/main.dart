@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 
+// Base de dados
+import 'package:pei/data/database/base_de_dados.dart';
+
 // Controladores
+import 'package:pei/controller/categorias_controlador.dart';
 import 'package:pei/controller/configuracoes_controlador.dart';
+import 'package:pei/controller/tarefas_estado.dart';
 
 // Modelos
 import 'package:pei/models/tarefa_modelo.dart';
@@ -28,8 +33,60 @@ import 'package:pei/presentation/tarefas/pagina_tarefa.dart';
 import 'package:pei/theme/tema_claro.dart';
 import 'package:pei/theme/tema_escuro.dart';
 
-void main() {
-  runApp(MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  try {
+    await AppDatabase.instancia.database;
+    await CategoriasControlador.instancia.inicializar();
+    await ConfiguracoesControlador.instancia.inicializar();
+    await TarefasEstado.instancia.inicializar();
+    runApp(MyApp());
+  } catch (erro) {
+    runApp(AppErroInicializacao(erro: erro));
+  }
+}
+
+class AppErroInicializacao extends StatelessWidget {
+  const AppErroInicializacao({super.key, required this.erro});
+
+  final Object erro;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double largura = constraints.maxWidth;
+
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          home: Scaffold(
+            body: SafeArea(
+              child: Center(
+                child: Padding(
+                  padding: .all(largura * 0.06),
+                  child: Column(
+                    mainAxisSize: .min,
+                    children: [
+                      Icon(Icons.storage_rounded, size: largura * 0.075),
+                      SizedBox(height: largura * 0.1),
+                      Text(
+                        'Não foi possível abrir a base de dados local.',
+                        textAlign: .center,
+                        style: TextStyle(fontSize: largura * 0.1, fontWeight: .w600),
+                      ),
+                      SizedBox(height: largura * 0.01),
+                      Text('$erro', textAlign: .center),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      }
+    );
+  }
 }
 
 class MyApp extends StatelessWidget {

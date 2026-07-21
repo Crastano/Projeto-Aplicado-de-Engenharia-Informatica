@@ -64,8 +64,8 @@ class PaginaTarefa extends StatelessWidget {
 
     if (confirmado != true || !context.mounted) return;
 
-    TarefasEstado.instancia.eliminar(tarefa.id);
-    Navigator.pop(context);
+    final eliminada = await TarefasEstado.instancia.eliminar(tarefa.id);
+    if (eliminada && context.mounted) Navigator.pop(context);
   }
 
   String formatarData(DateTime data) {
@@ -191,10 +191,9 @@ class PaginaTarefa extends StatelessWidget {
                 ? 'Atrasada'
                 : 'Pendente';
 
-            final categoria =
-      CategoriasControlador.instancia.obterPorId(
-        tarefa.categoryId,
-      );
+            final categoria = CategoriasControlador.instancia.obterPorId(
+              tarefa.categoryId,
+            );
 
             return AppScaffold(
               title: '',
@@ -333,8 +332,8 @@ class PaginaTarefa extends StatelessWidget {
                       child: SizedBox(
                         width: .infinity,
                         child: FilledButton.icon(
-                          onPressed: () {
-                            tarefasEstado.alternarConclusao(tarefa.id);
+                          onPressed: () async {
+                            await tarefasEstado.alternarConclusao(tarefa.id);
                           },
                           icon: Icon(
                             tarefa.estaCompletado

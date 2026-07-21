@@ -40,11 +40,11 @@ class _CategoriasPageState extends State<CategoriasPage> {
     if (resultado == null || !mounted) return;
 
     final sucesso = categoria == null
-        ? controlador.adicionarCategoria(
+        ? await controlador.adicionarCategoria(
             nome: resultado.nome,
             cor: resultado.cor,
           )
-        : controlador.editarCategoria(
+        : await controlador.editarCategoria(
             id: categoria.id,
             nome: resultado.nome,
             cor: resultado.cor,
@@ -82,7 +82,9 @@ class _CategoriasPageState extends State<CategoriasPage> {
       },
     );
 
-    if (confirmado == true) controlador.eliminarCategoria(categoria.id);
+    if (confirmado == true) {
+      await controlador.eliminarCategoria(categoria.id);
+    }
   }
 
   @override

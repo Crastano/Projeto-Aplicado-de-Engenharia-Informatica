@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
+// Controlador
 import 'package:pei/controller/tarefas_estado.dart';
+
+// Modelos
 import 'package:pei/models/tarefa_modelo.dart';
 
 class PesquisarControlador extends ChangeNotifier {
@@ -19,7 +22,7 @@ class PesquisarControlador extends ChangeNotifier {
     final pesquisa = pesquisaControlador.text.trim().toLowerCase();
     final categoriaId = categoriaIdSelecionada;
 
-    final resultado = _tarefasEstado.tarefas.where((tarefa) {
+    final resultado = _tarefasEstado.tarefas.where((TarefaModelo tarefa) {
       final tituloTarefa = tarefa.titulo.trim().toLowerCase();
       final correspondeAoNome =
           pesquisa.isEmpty || tituloTarefa.contains(pesquisa);
@@ -29,7 +32,7 @@ class PesquisarControlador extends ChangeNotifier {
       return correspondeAoNome && correspondeACategoria;
     }).toList();
 
-    resultado.sort((a, b) => a.dataHora.compareTo(b.dataHora));
+    resultado.sort((TarefaModelo a,TarefaModelo b) => a.dataHora.compareTo(b.dataHora));
     return resultado;
   }
 

@@ -10,9 +10,9 @@ import 'package:pei/enums/lembrete.dart';
 import 'package:pei/enums/periodicidade.dart';
 import 'package:pei/enums/unidade_lembrete.dart';
 import 'package:pei/enums/unidade_periodicidade.dart';
-import 'package:pei/models/categoria_modelo.dart';
 
 // Modelos
+import 'package:pei/models/categoria_modelo.dart';
 import 'package:pei/models/tarefa_modelo.dart';
 
 // Utils
@@ -206,6 +206,8 @@ class TarefasControlador extends ChangeNotifier {
       notas: nota.trim().isEmpty ? null : nota.trim(),
       anexos: caminhosAnexos,
       estaCompletado: tarefaOriginal?.estaCompletado ?? false,
+      estaCancelada: tarefaOriginal?.estaCancelada ?? false,
+      criadoEm: tarefaOriginal?.criadoEm ?? DateTime.now(),
     );
   }
 

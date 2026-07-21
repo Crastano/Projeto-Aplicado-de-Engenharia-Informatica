@@ -1,21 +1,44 @@
 import 'dart:collection';
 import 'package:flutter/material.dart';
 
+// Repositorio
+import 'package:pei/data/repositories/tarefa_repositorio.dart';
+
 // Modelos
-import 'package:pei/models/categoria_modelo.dart';
 import 'package:pei/models/tarefa_modelo.dart';
 
-import 'package:pei/tarefas.dart';
-
 class TarefasEstado extends ChangeNotifier {
-  TarefasEstado._() : _tarefas = criarTarefasIniciais();
+  TarefasEstado._();
 
   static final TarefasEstado instancia = TarefasEstado._();
 
-  final List<TarefaModelo> _tarefas;
+  final TarefaRepositorio _repositorio = TarefaRepositorio();
+  final List<TarefaModelo> _tarefas = [];
+
+  bool _inicializado = false;
 
   UnmodifiableListView<TarefaModelo> get tarefas =>
       UnmodifiableListView<TarefaModelo>(_tarefas);
+
+  Future<void> inicializar() async {
+    if (_inicializado) return;
+
+    _tarefas
+      ..clear()
+      ..addAll(await _repositorio.listar());
+
+    _ordenar();
+    _inicializado = true;
+    notifyListeners();
+  }
+
+  Future<void> recarregar() async {
+    _tarefas
+      ..clear()
+      ..addAll(await _repositorio.listar());
+    _ordenar();
+    notifyListeners();
+  }
 
   TarefaModelo? obterPorId(String id) {
     for (final tarefa in _tarefas) {
@@ -25,85 +48,52 @@ class TarefasEstado extends ChangeNotifier {
     return null;
   }
 
-  void adicionar(TarefaModelo tarefa) {
-    if (_tarefas.any((item) => item.id == tarefa.id)) return;
+  Future<bool> adicionar(TarefaModelo tarefa) async {
+    if (_tarefas.any((item) => item.id == tarefa.id)) return false;
 
-    _tarefas.add(tarefa);
-    _ordenar();
-    notifyListeners();
+    await _repositorio.inserir(tarefa);
+    await recarregar();
+    return true;
   }
 
-  bool atualizar(TarefaModelo tarefa) {
+  Future<bool> atualizar(TarefaModelo tarefa) async {
     final index = _tarefas.indexWhere((item) => item.id == tarefa.id);
-
     if (index == -1) return false;
 
-    _tarefas[index] = tarefa;
-    _ordenar();
-    notifyListeners();
+    final atualizada = await _repositorio.atualizar(tarefa);
+    if (!atualizada) return false;
+
+    await recarregar();
     return true;
   }
 
-  bool eliminar(String id) {
-    final removidas = _tarefas.where((tarefa) => tarefa.id == id).length;
+  Future<bool> eliminar(String id) async {
+    final eliminada = await _repositorio.eliminar(id);
+    if (!eliminada) return false;
+
     _tarefas.removeWhere((tarefa) => tarefa.id == id);
-
-    if (removidas == 0) return false;
-
     notifyListeners();
     return true;
   }
 
-  void atualizarCategoria(
-    CategoriaModelo categoriaAnterior,
-    CategoriaModelo categoriaAtualizada,
-  ) {
-    bool alterou = false;
-
-    for (int index = 0; index < _tarefas.length; index++) {
-      final tarefa = _tarefas[index];
-      final usaCategoria = tarefa.categoryId == categoriaAnterior.id ||
-          (tarefa.categoryId == null &&
-              tarefa.category?.toLowerCase() ==
-                  categoriaAnterior.nome.toLowerCase());
-
-      if (!usaCategoria) continue;
-
-      _tarefas[index] = tarefa.copyWith(
-        categoryId: categoriaAtualizada.id,
-        category: categoriaAtualizada.nome,
-      );
-      alterou = true;
-    }
-
-    if (alterou) notifyListeners();
-  }
-
-  void removerCategoria(CategoriaModelo categoria) {
-    bool alterou = false;
-
-    for (var index = 0; index < _tarefas.length; index++) {
-      final tarefa = _tarefas[index];
-      final usaCategoria = tarefa.categoryId == categoria.id ||
-          (tarefa.categoryId == null &&
-              tarefa.category?.toLowerCase() == categoria.nome.toLowerCase());
-
-      if (!usaCategoria) continue;
-
-      _tarefas[index] = tarefa.copyWith(removerCategoria: true);
-      alterou = true;
-    }
-
-    if (alterou) notifyListeners();
-  }
-
-  bool alternarConclusao(String id) {
+  Future<bool> alternarConclusao(String id) async {
     final tarefa = obterPorId(id);
-
     if (tarefa == null) return false;
 
     return atualizar(
-      tarefa.copyWith(estaCompletado: !tarefa.estaCompletado),
+      tarefa.copyWith(
+        estaCompletado: !tarefa.estaCompletado,
+        estaCancelada: false,
+      ),
+    );
+  }
+
+  Future<bool> cancelar(String id) async {
+    final tarefa = obterPorId(id);
+    if (tarefa == null) return false;
+
+    return atualizar(
+      tarefa.copyWith(estaCompletado: false, estaCancelada: true),
     );
   }
 

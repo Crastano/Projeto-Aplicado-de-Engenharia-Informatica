@@ -16,7 +16,7 @@ class ContaPage extends StatelessWidget {
         final altura = constraints.maxHeight;
 
         return PaginaConfiguracao(
-          titulo: 'Conta',
+          titulo: 'Conta local',
           children: [
             Center(
               child: Container(
@@ -35,13 +35,13 @@ class ContaPage extends StatelessWidget {
             ),
             SizedBox(height: altura * 0.05),
             Text(
-              'Não tens sessão iniciada',
+              'Utilizador local',
               textAlign: .center,
               style: TextStyle(fontWeight: .w500, fontSize: largura * 0.06),
             ),
             SizedBox(height: altura * 0.015),
             Text(
-              'Inicia sessão para sincronizar as tuas tarefas e configurações entre dispositivos.',
+              'As tarefas, categorias e preferências ficam guardadas apenas neste dispositivo através de SQLite.',
               textAlign: .center,
               style: TextStyle(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -50,33 +50,20 @@ class ContaPage extends StatelessWidget {
               ),
             ),
             SizedBox(height: altura * 0.035),
-            SizedBox(
-              width: .infinity,
-              child: FilledButton.icon(
-                onPressed: null,
-                icon: Icon(Icons.login_rounded, size: largura * 0.06),
-                label: Text(
-                  'Iniciar sessão com Google',
-                  style: TextStyle(fontSize: largura * 0.035),
-                ),
-              ),
-            ),
-            SizedBox(height: altura * 0.025),
-            TituloSecao(texto: 'Dados', largura: largura),
+            TituloSecao(texto: 'Armazenamento', largura: largura),
             CardConfiguracao(
               largura: largura,
               children: [
                 ListTile(
-                  leading: Icon(Icons.cloud_outlined),
+                  leading: Icon(Icons.storage_rounded),
                   title: Text(
-                    'Sincronização',
+                    'Base de dados SQLite',
                     style: TextStyle(fontSize: largura * 0.04),
                   ),
                   subtitle: Text(
-                    'Não disponível sem conta',
+                    'Dados locais, sem sincronização na cloud',
                     style: TextStyle(fontSize: largura * 0.035),
                   ),
-                  enabled: false,
                 ),
               ],
             ),

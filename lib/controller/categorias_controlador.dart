@@ -1,8 +1,12 @@
 import 'dart:collection';
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 
 // Controladores
 import 'package:pei/controller/tarefas_estado.dart';
+
+// Repositorio
+import 'package:pei/data/repositories/categoria_repositorio.dart';
 
 // Modelos
 import 'package:pei/models/categoria_modelo.dart';
@@ -14,19 +18,31 @@ class CategoriasControlador extends ChangeNotifier {
 
   factory CategoriasControlador() => instancia;
 
-  final List<CategoriaModelo> _categorias = [
-    CategoriaModelo(id: 'trabalho', nome: 'Trabalho', cor: coresCategorias[0]),
-    CategoriaModelo(id: 'pessoal', nome: 'Pessoal', cor: coresCategorias[8]),
-    CategoriaModelo(id: 'financas', nome: 'Finanças', cor: coresCategorias[7]),
-    CategoriaModelo(id: 'saude', nome: 'Saúde', cor: coresCategorias[2]),
-    CategoriaModelo(id: 'estudo', nome: 'Estudo', cor: coresCategorias[4]),
-    CategoriaModelo(id: 'compras', nome: 'Compras', cor: coresCategorias[6]),
-    CategoriaModelo(id: 'pagar', nome: 'Pagar', cor: coresCategorias[3]),
-    CategoriaModelo(id: 'casa', nome: 'Casa', cor: coresCategorias[1]),
-  ];
+  final CategoriaRepositorio _repositorio = CategoriaRepositorio();
+  final List<CategoriaModelo> _categorias = [];
+
+  bool _inicializado = false;
 
   UnmodifiableListView<CategoriaModelo> get categorias =>
       UnmodifiableListView<CategoriaModelo>(_categorias);
+
+  Future<void> inicializar() async {
+    if (_inicializado) return;
+    _categorias
+      ..clear()
+      ..addAll(await _repositorio.listar());
+    _ordenar();
+    _inicializado = true;
+    notifyListeners();
+  }
+
+  Future<void> recarregar() async {
+    _categorias
+      ..clear()
+      ..addAll(await _repositorio.listar());
+    _ordenar();
+    notifyListeners();
+  }
 
   CategoriaModelo? obterPorId(String? id) {
     if (id == null) return null;
@@ -50,63 +66,74 @@ class CategoriasControlador extends ChangeNotifier {
     return null;
   }
 
-  bool adicionarCategoria({required String nome, required CategoriaCor cor}) {
+  Future<bool> adicionarCategoria({
+    required String nome,
+    required CategoriaCor cor,
+  }) async {
     final nomeLimpo = nome.trim();
-
     if (nomeLimpo.isEmpty || nomeExiste(nomeLimpo)) return false;
 
-    _categorias.add(
-      CategoriaModelo(
-        id: DateTime.now().microsecondsSinceEpoch.toString(),
-        nome: nomeLimpo,
-        cor: cor,
-      ),
+    final categoria = CategoriaModelo(
+      id: DateTime.now().microsecondsSinceEpoch.toString(),
+      nome: nomeLimpo,
+      cor: cor,
     );
 
+    try {
+      await _repositorio.inserir(categoria);
+    } on DatabaseException {
+      return false;
+    }
+
+    _categorias.add(categoria);
     _ordenar();
     notifyListeners();
     return true;
   }
 
-  bool editarCategoria({
+  Future<bool> editarCategoria({
     required String id,
     required String nome,
     required CategoriaCor cor,
-  }) {
+  }) async {
     final nomeLimpo = nome.trim();
-
     if (nomeLimpo.isEmpty || nomeExiste(nomeLimpo, ignorarId: id)) {
       return false;
     }
 
     final index = _categorias.indexWhere((categoria) => categoria.id == id);
-
     if (index == -1) return false;
 
-    final categoriaAnterior = _categorias[index];
-    final categoriaAtualizada = categoriaAnterior.copyWith(
+    final categoriaAtualizada = _categorias[index].copyWith(
       nome: nomeLimpo,
       cor: cor,
     );
 
+    try {
+      final atualizada = await _repositorio.atualizar(categoriaAtualizada);
+      if (!atualizada) return false;
+    } on DatabaseException {
+      return false;
+    }
+
     _categorias[index] = categoriaAtualizada;
     _ordenar();
-    TarefasEstado.instancia.atualizarCategoria(
-      categoriaAnterior,
-      categoriaAtualizada,
-    );
     notifyListeners();
+    await TarefasEstado.instancia.recarregar();
     return true;
   }
 
-  bool eliminarCategoria(String id) {
+  Future<bool> eliminarCategoria(String id) async {
     final index = _categorias.indexWhere((categoria) => categoria.id == id);
-
     if (index == -1) return false;
 
-    final categoria = _categorias.removeAt(index);
-    TarefasEstado.instancia.removerCategoria(categoria);
+    final eliminada = await _repositorio.eliminar(id);
+    if (!eliminada) return false;
+
+    _categorias.removeAt(index);
     notifyListeners();
+
+    await TarefasEstado.instancia.recarregar();
     return true;
   }
 

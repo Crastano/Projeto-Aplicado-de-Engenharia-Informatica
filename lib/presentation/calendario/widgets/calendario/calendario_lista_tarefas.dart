@@ -83,8 +83,8 @@ class CalendarioListaTarefas extends StatelessWidget {
                     tarefa: tarefasDoDia[index],
                     largura: largura * 0.9,
                     altura: altura * 0.9,
-                    iconTap: () {
-                      tarefasEstado.alternarConclusao(tarefasDoDia[index].id);
+                    iconTap: () async {
+                      await tarefasEstado.alternarConclusao(tarefasDoDia[index].id);
                     },
                     mostrarIcones: false,
                   );

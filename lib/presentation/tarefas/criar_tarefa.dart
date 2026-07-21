@@ -31,6 +31,7 @@ class CriarTarefa extends StatefulWidget {
 class _CriarTarefaState extends State<CriarTarefa> {
   late final TarefasControlador controlador;
   final TarefasEstado tarefasEstado = TarefasEstado.instancia;
+  bool aGuardar = false;
 
   @override
   void initState() {
@@ -44,25 +45,43 @@ class _CriarTarefaState extends State<CriarTarefa> {
     super.dispose();
   }
 
-  void guardarTarefa() {
+  Future<void> guardarTarefa() async {
+    if (aGuardar) return;
+
     FocusManager.instance.primaryFocus?.unfocus();
 
     final erro = controlador.validar();
-
     if (erro != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(erro)));
       return;
     }
 
-    final tarefa = controlador.construirTarefa();
+    setState(() => aGuardar = true);
 
-    if (controlador.editando) {
-      tarefasEstado.atualizar(tarefa);
-    } else {
-      tarefasEstado.adicionar(tarefa);
+    try {
+      final tarefa = controlador.construirTarefa();
+      final guardada = controlador.editando
+          ? await tarefasEstado.atualizar(tarefa)
+          : await tarefasEstado.adicionar(tarefa);
+
+      if (!mounted) return;
+
+      if (!guardada) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Não foi possível guardar a tarefa.')),
+        );
+        return;
+      }
+
+      Navigator.pop(context, tarefa);
+    } catch (erro) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao guardar a tarefa: $erro')),
+      );
+    } finally {
+      if (mounted) setState(() => aGuardar = false);
     }
-
-    Navigator.pop(context, tarefa);
   }
 
   @override
@@ -80,7 +99,7 @@ class _CriarTarefaState extends State<CriarTarefa> {
               padding: .only(right: largura * 0.03),
               child: IconButton(
                 tooltip: 'Guardar tarefa',
-                onPressed: guardarTarefa,
+                onPressed: aGuardar ? null : guardarTarefa,
                 icon: Icon(
                   Icons.check_rounded,
                   size: largura * 0.075,

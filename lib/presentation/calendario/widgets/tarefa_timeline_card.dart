@@ -63,17 +63,6 @@ class TarefaTimelineCard extends StatelessWidget {
                       height: 1.1,
                     ),
                   ),
-                  if (umDia) ...[
-                    SizedBox(height: largura * 0.005),
-                    Text(
-                      '${controlador.formatarHora(tarefa.dataHora)}'
-                      " · ${tarefa.category ?? 'Sem categoria'}",
-                      style: TextStyle(
-                        color: categoria?.cor.texto(context),
-                        fontSize: largura * 0.03,
-                      ),
-                    ),
-                  ],
                 ],
               ),
             );
