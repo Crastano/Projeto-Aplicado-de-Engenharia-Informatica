@@ -121,6 +121,51 @@ class TarefaRepositorio {
     }
   }
 
+  Future<bool> atualizarConclusaoComRepeticao({
+    required TarefaModelo tarefaAtualizada,
+    TarefaModelo? proximaOcorrencia,
+  }) async {
+    final db = await AppDatabase.instancia.database;
+
+    return db.transaction((tx) async {
+      final alteradas = await tx.update(
+        'tarefas',
+        _mapaTarefa(tarefaAtualizada, incluirCriadoEm: false),
+        where: 'id = ? AND utilizador_id = ?',
+        whereArgs: [tarefaAtualizada.id, AppDatabase.utilizadorLocalId],
+      );
+
+      if (alteradas == 0) return false;
+
+      if (proximaOcorrencia == null) return true;
+
+      final repeticaoExistente = await tx.query(
+        'repeticoes_tarefas',
+        columns: ['tarefa_gerada_id'],
+        where: 'tarefa_origem_id = ?',
+        whereArgs: [tarefaAtualizada.id],
+        limit: 1,
+      );
+
+      if (repeticaoExistente.isNotEmpty) return true;
+
+      await tx.insert(
+        'tarefas',
+        _mapaTarefa(proximaOcorrencia),
+        conflictAlgorithm: ConflictAlgorithm.abort,
+      );
+
+      await _guardarDependencias(tx, proximaOcorrencia, const <String>[]);
+
+      await tx.insert('repeticoes_tarefas', {
+        'tarefa_origem_id': tarefaAtualizada.id,
+        'tarefa_gerada_id': proximaOcorrencia.id,
+      });
+
+      return true;
+    });
+  }
+
   Future<bool> eliminar(String id) async {
     final db = await AppDatabase.instancia.database;
     final anexos = await _listarUrisAnexos(db, id);

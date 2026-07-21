@@ -7,6 +7,9 @@ import 'package:pei/data/repositories/tarefa_repositorio.dart';
 // Modelos
 import 'package:pei/models/tarefa_modelo.dart';
 
+// Utils
+import 'package:pei/utils/periodicidade.dart';
+
 class TarefasEstado extends ChangeNotifier {
   TarefasEstado._();
 
@@ -80,12 +83,25 @@ class TarefasEstado extends ChangeNotifier {
     final tarefa = obterPorId(id);
     if (tarefa == null) return false;
 
-    return atualizar(
-      tarefa.copyWith(
-        estaCompletado: !tarefa.estaCompletado,
-        estaCancelada: false,
-      ),
+    final vaiFicarConcluida = !tarefa.estaCompletado;
+    final tarefaAtualizada = tarefa.copyWith(
+      estaCompletado: vaiFicarConcluida,
+      estaCancelada: false,
     );
+
+    final proximaOcorrencia = vaiFicarConcluida
+        ? PeriodicidadeUtils.criarProximaOcorrencia(tarefa)
+        : null;
+
+    final atualizada = await _repositorio.atualizarConclusaoComRepeticao(
+      tarefaAtualizada: tarefaAtualizada,
+      proximaOcorrencia: proximaOcorrencia,
+    );
+
+    if (!atualizada) return false;
+
+    await recarregar();
+    return true;
   }
 
   Future<bool> cancelar(String id) async {
